@@ -1,6 +1,9 @@
 """
 Django settings for the Sooniverse project.
-Environment-aware configuration loaded via django-environ.
+Single-file environment-aware configuration loaded via django-environ.
+
+The active environment is selected with the DJANGO_ENV variable
+(local | production). Defaults to "local" for development.
 """
 
 import os
@@ -11,7 +14,12 @@ import environ
 # ──────────────────────────────────────────────
 # Paths
 # ──────────────────────────────────────────────
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ──────────────────────────────────────────────
+# Environment selection
+# ──────────────────────────────────────────────
+DJANGO_ENV = os.getenv("DJANGO_ENV", "local").lower()
 
 # ──────────────────────────────────────────────
 # Environment variables
@@ -29,8 +37,10 @@ if env_file.exists():
 # Core
 # ──────────────────────────────────────────────
 SECRET_KEY = env("SECRET_KEY", default="insecure-dev-key-change-me")
-DEBUG = env("DEBUG", default=False)
-LOCAL = env("LOCAL", default=False)
+# DEBUG and LOCAL are derived from DJANGO_ENV (not the .env file) so that
+# promoting an environment to production is a one-line change.
+DEBUG = DJANGO_ENV != "production"
+LOCAL = DJANGO_ENV != "production"
 ALLOWED_HOSTS = env.get_value("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
 ROOT_URLCONF = "config.urls"
@@ -183,3 +193,25 @@ AWS_SES_REGION_ENDPOINT = env(
     "AWS_SES_REGION_ENDPOINT", default="email.us-east-1.amazonaws.com"
 )
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="no-reply@sooniverse.com")
+
+# ──────────────────────────────────────────────
+# Security (production)
+# ──────────────────────────────────────────────
+if not DEBUG:
+    print("DEBUG is False, setting security settings")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
+
+# ──────────────────────────────────────────────
+# Active environment banner
+# ──────────────────────────────────────────────
+if DJANGO_ENV == "production":
+    print(f"Running with PRODUCTION settings (DJANGO_ENV={DJANGO_ENV})")
+else:
+    print(f"Running with LOCAL settings (DJANGO_ENV={DJANGO_ENV})")
