@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sooniverse · The universe of services, connected</title>
+    <meta name="description" content="Sooniverse — Marketplace de servicios profesionales con reservas, pagos y agenda unificada.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .gradient-text {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-glow {
+            background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.18), transparent 50%),
+                        radial-gradient(circle at 80% 60%, rgba(236, 72, 153, 0.18), transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+
+    <!-- Navbar -->
+    <header class="absolute inset-x-0 top-0 z-50">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between p-6 lg:px-8">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center font-bold text-white">S</div>
+                <span class="text-xl font-semibold tracking-tight">Sooniverse</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm text-slate-300">
+                <a href="#features" class="hover:text-white transition">Producto</a>
+                <a href="#how" class="hover:text-white transition">Cómo funciona</a>
+                <a href="#stack" class="hover:text-white transition">Stack</a>
+                <a href="#contact" class="hover:text-white transition">Contacto</a>
+            </div>
+            <a href="#contact" class="rounded-full bg-white text-slate-900 px-4 py-2 text-sm font-semibold hover:bg-slate-200 transition">
+                Solicitar demo
+            </a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative hero-glow pt-32 pb-24 sm:pt-40 sm:pb-32">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1 text-xs text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                MVP en construcción
+            </span>
+            <h1 class="mt-6 text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight">
+                El universo de los <span class="gradient-text">servicios profesionales</span><br>
+                conectado en un solo lugar.
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-300">
+                Sooniverse centraliza reservas, agenda, pagos y reputación para que profesionales y clientes
+                operen en una sola plataforma — rápida, segura y desacoplada.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+                <a href="#contact" class="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 hover:opacity-90 transition">
+                    Empezar ahora
+                </a>
+                <a href="#how" class="rounded-full border border-slate-700 px-6 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-900 transition">
+                    Ver cómo funciona
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                    <p class="text-3xl font-bold text-white">99.9%</p>
+                    <p class="text-xs text-slate-400 mt-1">Uptime AWS</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                    <p class="text-3xl font-bold text-white">&lt;200ms</p>
+                    <p class="text-xs text-slate-400 mt-1">Latencia p95</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                    <p class="text-3xl font-bold text-white">SOC2</p>
+                    <p class="text-xs text-slate-400 mt-1">Listo para auditoría</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                    <p class="text-3xl font-bold text-white">Multi-tenant</p>
+                    <p class="text-xs text-slate-400 mt-1">Aislamiento por workspace</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-24 sm:py-32">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-2xl">
+                <h2 class="text-base font-semibold text-indigo-400">Producto</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                    Todo lo que tu negocio de servicios necesita.
+                </p>
+            </div>
+            <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-indigo-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl">📅</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">Agenda unificada</h3>
+                    <p class="mt-2 text-sm text-slate-400">Sincronización en tiempo real con Google, iCal y Outlook. Sin dobles reservas.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-pink-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center text-xl">💳</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">Pagos integrados</h3>
+                    <p class="mt-2 text-sm text-slate-400">Cobros, propinas, reembolsos y payouts vía Stripe Connect con KYC.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-emerald-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">⭐</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">Reputación</h3>
+                    <p class="mt-2 text-sm text-slate-400">Reseñas verificadas, moderación y scoring automático de profesionales.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-amber-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl">🔔</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">Notificaciones</h3>
+                    <p class="mt-2 text-sm text-slate-400">Email transaccional vía AWS SES, push y SMS listos para producción.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-cyan-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xl">📊</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">Analítica</h3>
+                    <p class="mt-2 text-sm text-slate-400">KPIs, cohortes y embudos en dashboards listos para tomar decisiones.</p>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-violet-500/50 transition">
+                    <div class="w-10 h-10 rounded-lg bg-violet-500/10 text-violet-400 flex items-center justify-center text-xl">🔌</div>
+                    <h3 class="mt-4 text-lg font-semibold text-white">API primero</h3>
+                    <p class="mt-2 text-sm text-slate-400">REST y webhooks versionados. Integra con cualquier herramienta.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="py-24 sm:py-32 bg-slate-900/40 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-2xl">
+                <h2 class="text-base font-semibold text-pink-400">Cómo funciona</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white">De la búsqueda a la reserva en 60 segundos.</p>
+            </div>
+            <ol class="mt-12 grid gap-6 md:grid-cols-3">
+                <li class="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+                    <span class="text-pink-400 text-sm font-mono">01</span>
+                    <h3 class="mt-2 text-lg font-semibold text-white">Descubre</h3>
+                    <p class="mt-2 text-sm text-slate-400">El cliente busca por servicio, ubicación y disponibilidad real.</p>
+                </li>
+                <li class="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+                    <span class="text-indigo-400 text-sm font-mono">02</span>
+                    <h3 class="mt-2 text-lg font-semibold text-white">Reserva</h3>
+                    <p class="mt-2 text-sm text-slate-400">Pago y confirmación inmediata. Sincronización con la agenda del profesional.</p>
+                </li>
+                <li class="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+                    <span class="text-emerald-400 text-sm font-mono">03</span>
+                    <h3 class="mt-2 text-lg font-semibold text-white">Disfruta</h3>
+                    <p class="mt-2 text-sm text-slate-400">Servicio prestado, recibo automático y reseña verificada.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Stack -->
+    <section id="stack" class="py-24 sm:py-32">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-2xl">
+                <h2 class="text-base font-semibold text-emerald-400">Stack</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white">Construido para escalar desde el día uno.</p>
+            </div>
+            <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">Django 5</div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">PostgreSQL</div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">Redis</div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">AWS SES</div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">Django Q2</div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-center text-sm text-slate-300">Tailwind CSS</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Contact -->
+    <section id="contact" class="py-24 sm:py-32">
+        <div class="max-w-4xl mx-auto px-6 lg:px-8">
+            <div class="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-10 sm:p-16 text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white">¿Listo para entrar al Sooniverse?</h2>
+                <p class="mt-4 text-slate-400">Cuéntanos sobre tu negocio y te contactamos en menos de 24h.</p>
+                <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+                    <input type="email" required placeholder="tu@email.com"
+                           class="flex-1 rounded-full bg-slate-950 border border-slate-700 px-5 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit"
+                            class="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 hover:opacity-90 transition">
+                        Quiero participar
+                    </button>
+                </form>
+                <p class="mt-4 text-xs text-slate-500">Sin spam. Cumplimiento RGPD.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-slate-500">© {% now "Y" %} Sooniverse. Todos los derechos reservados.</p>
+            <div class="flex items-center gap-6 text-sm text-slate-500">
+                <a href="#" class="hover:text-slate-300">Privacidad</a>
+                <a href="#" class="hover:text-slate-300">Términos</a>
+                <a href="#" class="hover:text-slate-300">Status</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
