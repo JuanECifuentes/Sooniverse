@@ -36,16 +36,17 @@
         }
     </script>
     <style>
+        html { scroll-behavior: smooth; }
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #070A12; color: #FFFFFF; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .noise-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.018; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-        #main-header { transition: padding 0.4s ease-in-out, background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, backdrop-filter 0.4s ease-in-out; }
-        #main-header.scrolled { padding-top: 0.875rem; padding-bottom: 0.875rem; background-color: rgba(7, 10, 18, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(96, 239, 255, 0.1); }
+        #main-header { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding-top: 1.5rem; padding-bottom: 1.5rem; background-color: transparent; border-bottom: 1px solid transparent; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        #main-header.scrolled { left: 1rem; right: 1rem; top: 1rem; border-radius: 9999px; padding-top: 0.75rem; padding-bottom: 0.75rem; background-color: rgba(7, 10, 18, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(96, 239, 255, 0.1); }
         .text-cosmic { background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .btn-primary { background: linear-gradient(135deg, #00FF87, #60EFFF, #8A2BE2, #00FF87); background-size: 200% 200%; animation: gradientShift 4s ease infinite; transition: transform 0.3s ease, filter 0.3s ease; }
         .btn-primary:hover { transform: translateY(-2px); filter: drop-shadow(0 0 12px rgba(0, 255, 135, 0.6)); }
         .btn-secondary { border: 1.5px solid #60EFFF; background: transparent; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .btn-secondary:hover { background: rgba(96, 239, 255, 0.08); box-shadow: 0 0 18px rgba(96, 239, 255, 0.2);transform: translateY(-3px); }
+        .btn-secondary:hover { transform: translate(-2px, -2px); }
         .nav-link { position: relative; transition: color 0.3s ease; }
         .nav-link::after { content: ''; position: absolute; left: 50%; bottom: -4px; width: 0; height: 1.5px; background-color: #60EFFF; transition: width 0.3s ease, left 0.3s ease; }
         .nav-link:hover { color: #FFFFFF; }
@@ -84,27 +85,26 @@
 
     <div class="noise-overlay"></div>
 
-    <header id="main-header" class="fixed inset-x-0 top-0 z-50 py-6 bg-transparent border-b border-transparent">
-        <nav class="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-8">
-            <a href="#" class="flex flex-col gap-0.5 group">
+    <header id="main-header" class="transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
+        <nav class="max-w-7xl mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-8">
+            <a href="#" class="flex flex-col gap-0.5 group justify-self-start">
                 <img src="{% static 'logos_v1/logo_completo_sin_fondo.svg' %}" alt="Sooniverse" class="h-24 w-auto">
             </a>
 
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate">
+            <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-slate">
                 <a href="#evidencia" class="nav-link">Evidencia</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
                 <a href="#calculadora" class="nav-link">Calculadora</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
             </div>
 
-            <div class="hidden md:flex items-center gap-4">
-                <a href="#contacto" class="nav-link text-sm font-medium text-slate">Login</a>
-                <a href="#contacto" class="btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
+            <div class="flex items-center justify-end gap-4">
+                <a href="#contacto" class="hidden md:inline nav-link text-sm font-medium text-slate">Login</a>
+                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
+                <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
             </div>
-
-            <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
         </nav>
 
         <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 pt-2">
@@ -118,7 +118,7 @@
         </div>
     </header>
 
-    <section class="relative hero-glow min-h-screen flex items-center pt-24 pb-16">
+    <section class="relative hero-glow min-h-screen flex items-center pt-32 pb-16 md:pt-24">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
@@ -215,7 +215,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-14">
                 <h2 class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3">Servicios</h2>
-                <p class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Infraestructura de IA sin complejidad.</p>
+                <p class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">La base tecnológica privada que tu organización necesita para crecer sin límites de facturación.</p>
             </div>
 
             <div class="mb-16 p-[1px] rounded-2xl bg-gradient-to-br from-neon/20 via-cyan/20 to-violet/20">
@@ -307,21 +307,19 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-10 items-start">
                 <div class="glow-card p-8">
-                    <h3 class="font-mono text-xs font-bold uppercase tracking-brand text-slate mb-4">El problema</h3>
+                    <h3 class="font-mono text-xs font-bold uppercase tracking-brand text-slate mb-4">El Problema</h3>
                     <ul class="space-y-4">
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Los costos de inferencia crecen exponencialmente sin control de FinOps.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Latencia inconsistente que degrada la experiencia del usuario final.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Falta de visibilidad sobre que features consumen mas tokens.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Dependencia de un unico proveedor de modelos sin estrategia de fallback.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Facturación impredecible y descontrolada que aumenta con cada nuevo proceso que consuma tokens.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Filtración involuntaria de información sensible de la empresa al procesarse en servidores de terceros.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0"></span><span>Dependencia absoluta y pérdida de control sobre los datos, obligando a la organización a adaptarse a las políticas y precios de un proveedor externo.</span></li>
                     </ul>
                 </div>
                 <div class="glow-card p-8">
-                    <h3 class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-4">La solucion Sooniverse</h3>
+                    <h3 class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-4">La Solucion Sooniverse</h3>
                     <ul class="space-y-4">
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Auditoria continua de costos con recomendaciones automatizadas.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Optimizacion de prompts y cache semantica para reducir tokens.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Routing inteligente que equilibra calidad, velocidad y precio.</span></li>
-                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Arquitectura multi-modelo y multi-cloud sin vendor lock-in.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span><span class="font-bold text-white">Costo fijo mensual</span>, el presupuesto deja de crecer con el consumo de tokens, permitiendo expandirte a coste marginal cero.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Toda la información es procesada y resguardada dentro de tu entorno privado, <span class="font-bold text-white">donde solo tú tienes acceso.</span></li>
+                        <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Aprovechamiento intensivo de la capacidad del servidor para incorporar múltiples procesos <span class="font-bold text-white">sin pagar un peso extra.</span></li>
                     </ul>
                 </div>
             </div>
@@ -449,7 +447,7 @@
 
             const header = document.getElementById('main-header');
             function updateHeader() {
-                if (window.scrollY > 50) header.classList.add('scrolled');
+                if (window.scrollY > 40) header.classList.add('scrolled');
                 else header.classList.remove('scrolled');
             }
             window.addEventListener('scroll', updateHeader, { passive: true });
