@@ -36,12 +36,102 @@
         }
     </script>
     <style>
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: auto; }
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #070A12; color: #FFFFFF; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .noise-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.018; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-        #main-header { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding-top: 1.5rem; padding-bottom: 1.5rem; background-color: transparent; border-bottom: 1px solid transparent; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        #main-header.scrolled { left: 1rem; right: 1rem; top: 1rem; border-radius: 9999px; padding-top: 0.75rem; padding-bottom: 0.75rem; background-color: rgba(7, 10, 18, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(96, 239, 255, 0.1); }
+        #main-header {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            background-color: transparent;
+            border-bottom: 1px solid transparent;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #main-header.scrolled {
+            top: 0.75rem;
+            width: calc(100% - 1.5rem);
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 12px;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            background-color: rgba(7, 10, 18, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(96, 239, 255, 0.1);
+        }
+        #main-header .logo-img {
+            height: 2.25rem;
+            transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #main-header.scrolled .logo-img {
+            height: 1.75rem;
+        }
+        #main-header nav {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #main-header.scrolled nav {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        #mobile-menu {
+            margin-top: 0.75rem;
+            padding: 1.25rem;
+            background-color: rgba(7, 10, 18, 0.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 12px;
+            border: 1px solid rgba(96, 239, 255, 0.1);
+        }
+        #main-header.scrolled #mobile-menu {
+            margin-top: 0.5rem;
+            padding: 0.75rem 0 0 0;
+            background-color: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-radius: 0;
+            border: none;
+        }
+        
+        @media (min-width: 768px) {
+            #main-header {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            #main-header.scrolled {
+                top: 1rem;
+                width: calc(100% - 2rem);
+                max-width: 80rem;
+                border-radius: 16px;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            #main-header .logo-img {
+                height: 3.25rem;
+            }
+            #main-header.scrolled .logo-img {
+                height: 2.25rem;
+            }
+            #main-header nav {
+                padding-left: 3rem;
+                padding-right: 3rem;
+            }
+            #main-header.scrolled nav {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
         .text-cosmic { background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .btn-primary { background: linear-gradient(135deg, #00FF87, #60EFFF, #8A2BE2, #00FF87); background-size: 200% 200%; animation: gradientShift 4s ease infinite; transition: transform 0.3s ease, filter 0.3s ease; }
         .btn-primary:hover { transform: translateY(-2px); filter: drop-shadow(0 0 12px rgba(0, 255, 135, 0.6)); }
@@ -85,10 +175,10 @@
 
     <div class="noise-overlay"></div>
 
-    <header id="main-header" class="transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
-        <nav class="max-w-7xl mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-8">
+    <header id="main-header">
+        <nav class="grid grid-cols-[1fr_auto_1fr] items-center">
             <a href="#" class="flex flex-col gap-0.5 group justify-self-start">
-                <img src="{% static 'logos_v1/logo_completo_sin_fondo.svg' %}" alt="Sooniverse" class="h-24 w-auto">
+                <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="logo-img w-auto">
             </a>
 
             <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-slate">
@@ -107,7 +197,7 @@
             </div>
         </nav>
 
-        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 pt-2">
+        <div id="mobile-menu" class="hidden md:hidden">
             <div class="flex flex-col gap-3 text-sm font-medium text-slate">
                 <a href="#evidencia" class="hover:text-white transition">Evidencia</a>
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
@@ -428,8 +518,8 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <a href="#" class="flex flex-col gap-0.5">
-                    <img src="{% static 'logos_v1/logo_completo_sin_fondo.svg' %}" alt="Sooniverse" class="h-7 w-auto">
-                    <span class="font-mono text-[9px] font-bold uppercase tracking-brand text-neon">ADVANCED TECH UNIVERSE</span>
+                    <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto">
+                    <!-- <span class="font-mono text-[9px] font-bold uppercase tracking-brand text-neon">ADVANCED TECH UNIVERSE</span> -->
                 </a>
                 <div class="flex items-center gap-6 text-sm text-slate">
                     <a href="#" class="hover:text-white transition">Privacidad</a>
@@ -452,6 +542,56 @@
             }
             window.addEventListener('scroll', updateHeader, { passive: true });
             updateHeader();
+
+            // Custom smooth scroll implementation (pure JS) with easeInOutCubic easing
+            function smoothScroll(targetY, duration) {
+                const startY = window.scrollY;
+                const distance = targetY - startY;
+                let startTime = null;
+
+                function easeInOutCubic(t, b, c, d) {
+                    t /= d / 2;
+                    if (t < 1) return c / 2 * t * t * t + b;
+                    t -= 2;
+                    return c / 2 * (t * t * t + 2) + b;
+                }
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    const elapsed = currentTime - startTime;
+                    const progress = easeInOutCubic(elapsed, startY, distance, duration);
+                    window.scrollTo(0, progress);
+                    if (elapsed < duration) {
+                        requestAnimationFrame(animation);
+                    } else {
+                        window.scrollTo(0, targetY);
+                    }
+                }
+                requestAnimationFrame(animation);
+            }
+
+            function scrollToElement(targetSelector, duration) {
+                const target = document.querySelector(targetSelector);
+                if (!target) return;
+                const headerHeight = header ? header.offsetHeight : 80;
+                // Subtract header height plus some extra padding (e.g. 16px) for perfect spacing
+                const targetY = Math.max(0, target.getBoundingClientRect().top + window.scrollY - headerHeight - 16);
+                smoothScroll(targetY, duration);
+            }
+
+            // Bind click handlers to all anchor tags with hash links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') {
+                        e.preventDefault();
+                        smoothScroll(0, 900); // 0.9s scroll to top
+                    } else if (href && href.startsWith('#') && href.length > 1) {
+                        e.preventDefault();
+                        scrollToElement(href, 900); // 0.9s scroll to section
+                    }
+                });
+            });
 
             const menuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
