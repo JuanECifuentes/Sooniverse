@@ -47,89 +47,76 @@
             top: 0;
             z-index: 50;
             width: 100%;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
             background-color: transparent;
-            border-bottom: 1px solid transparent;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #main-header.scrolled {
-            top: 0.75rem;
-            width: calc(100% - 1.5rem);
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 12px;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            background-color: rgba(7, 10, 18, 0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(96, 239, 255, 0.1);
-        }
-        #main-header .logo-img {
-            height: 2.25rem;
-            transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #main-header.scrolled .logo-img {
-            height: 1.75rem;
+            border: none;
+            padding: 0;
         }
         #main-header nav {
             width: 100%;
             margin-left: auto;
             margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 0px;
+            transform: translateY(0);
+            will-change: transform, width, max-width, padding, background-color, border-color, border-radius;
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #main-header.scrolled nav {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            width: calc(100% - 1.5rem);
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            /*background-color: rgba(7, 10, 18, 0.85);*/
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(96, 239, 255, 0.1);
+            transform: translateY(0.75rem);
+        }
+        #main-header .logo-img {
+            height: 2.25rem;
+            will-change: height;
+            transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #main-header.scrolled .logo-img {
+            height: 1.75rem;
         }
         #mobile-menu {
             margin-top: 0.75rem;
+            margin-left: 0.75rem;
+            margin-right: 0.75rem;
             padding: 1.25rem;
             background-color: rgba(7, 10, 18, 0.95);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border-radius: 12px;
             border: 1px solid rgba(96, 239, 255, 0.1);
+            will-change: transform, margin-top;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #main-header.scrolled #mobile-menu {
-            margin-top: 0.5rem;
-            padding: 0.75rem 0 0 0;
-            background-color: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-radius: 0;
-            border: none;
+            margin-top: 1.25rem;
         }
         
         @media (min-width: 768px) {
-            #main-header {
-                padding-top: 1rem;
-                padding-bottom: 1rem;
+            #main-header nav {
+                padding: 1.25rem 3rem;
             }
-            #main-header.scrolled {
-                top: 1rem;
+            #main-header.scrolled nav {
                 width: calc(100% - 2rem);
                 max-width: 80rem;
                 border-radius: 16px;
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
+                padding: 0.6rem 2rem;
+                transform: translateY(1rem);
             }
             #main-header .logo-img {
                 height: 3.25rem;
             }
             #main-header.scrolled .logo-img {
                 height: 2.25rem;
-            }
-            #main-header nav {
-                padding-left: 3rem;
-                padding-right: 3rem;
-            }
-            #main-header.scrolled nav {
-                padding-left: 2rem;
-                padding-right: 2rem;
             }
         }
         .text-cosmic { background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
