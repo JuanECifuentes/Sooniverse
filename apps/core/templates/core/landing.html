@@ -166,8 +166,8 @@
     <div id="trm-value" data-value="{{ trm_contractual|default:4100.0 }}" class="hidden"></div>
 
     <header id="main-header">
-        <nav class="grid grid-cols-[1fr_auto_1fr] items-center">
-            <a href="#" class="flex flex-col gap-0.5 group justify-self-start">
+        <nav class="flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
+            <a href="#" class="flex flex-col gap-0.5 group md:justify-self-start">
                 <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="logo-img w-auto">
             </a>
 
@@ -178,7 +178,7 @@
                 <a href="#contacto" class="nav-link">Contacto</a>
             </div>
 
-            <div class="flex items-center justify-end gap-4">
+            <div class="flex items-center justify-end gap-4 md:justify-self-end">
                 <a href="#contacto" class="hidden md:inline nav-link text-sm font-medium text-slate">Login</a>
                 <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
                 <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
@@ -668,10 +668,12 @@
             const savingsCopEl = document.getElementById('savings-cop');
             const trmValueEl = document.getElementById('trm-value');
 
-            const SOONIVERSE_MACHINE_COST = 695;
             const SOONIVERSE_MACHINE_CAPACITY = 15000_000_000;
             const SOONIVERSE_BUFFER = 0.80;
             const SOONIVERSE_THRESHOLD = SOONIVERSE_MACHINE_CAPACITY * SOONIVERSE_BUFFER;
+            const SOONIVERSE_BATCH_THRESHOLD = 32_000_000;
+            const SOONIVERSE_MACHINE_COST_SMALL = 695;
+            const SOONIVERSE_MACHINE_COST_LARGE = 1384.58;
             const TRM = parseFloat(trmValueEl?.dataset.value || '4100');
 
             function formatNumber(num) { return new Intl.NumberFormat('es-ES').format(Math.round(num)); }
@@ -688,11 +690,36 @@
                 if (absNum >= 1_000) return sign + '$' + (absNum / 1_000).toFixed(1).replace('.', ',') + 'k';
                 return sign + '$' + absNum.toFixed(2).replace('.', ',');
             }
+            function formatCardCurrency(num) {
+                const sign = num < 0 ? '-' : '';
+                const absNum = Math.abs(num);
+                let value, suffix;
+                if (absNum >= 1_000_000) {
+                    value = absNum / 1_000_000;
+                    suffix = 'M';
+                } else if (absNum >= 1_000) {
+                    value = absNum / 1_000;
+                    suffix = 'k';
+                } else {
+                    value = absNum;
+                    suffix = '';
+                }
+                const rounded = Math.round(value * 10) / 10;
+                const hasDecimal = rounded % 1 !== 0;
+                const integerPart = Math.floor(rounded);
+                const decimalPart = hasDecimal ? (rounded - integerPart).toFixed(1).slice(1).replace('.', ',') : '';
+                const formattedInteger = new Intl.NumberFormat('es-ES').format(integerPart);
+                return sign + '$' + formattedInteger + decimalPart + suffix;
+            }
             function formatCop(num) {
                 return '$' + new Intl.NumberFormat('es-CO').format(Math.round(num));
             }
             function formatPercent(num) {
                 return num.toFixed(1).replace('.', ',');
+            }
+
+            function machineCost(tokensPerExecution) {
+                return tokensPerExecution > SOONIVERSE_BATCH_THRESHOLD ? SOONIVERSE_MACHINE_COST_LARGE : SOONIVERSE_MACHINE_COST_SMALL;
             }
 
             function requiredMachines(totalTokens) {
@@ -707,7 +734,8 @@
                 const inRateVal = parseFloat(inputRate.value) || 0;
                 const outRateVal = parseFloat(outputRate.value) || 0;
 
-                const totalTokens = execs * (inTokensPerExec + outTokensPerExec);
+                const tokensPerExecution = inTokensPerExec + outTokensPerExec;
+                const totalTokens = execs * tokensPerExecution;
                 const inputTokensTotal = execs * inTokensPerExec;
                 const outputTokensTotal = execs * outTokensPerExec;
 
@@ -721,7 +749,8 @@
                 const baseTotal = baseInputCost + baseOutputCost;
 
                 const machines = requiredMachines(totalTokens);
-                const optimizedTotal = machines * SOONIVERSE_MACHINE_COST;
+                const unitMachineCost = machineCost(tokensPerExecution);
+                const optimizedTotal = machines * unitMachineCost;
                 const savings = baseTotal - optimizedTotal;
                 const savingsPercent = baseTotal > 0 ? ((savings / baseTotal) * 100) : 0;
 
@@ -731,9 +760,9 @@
                 capacityUsed.textContent = capacityRatio.toFixed(1).replace('.', ',') + '% de ' + machines + (machines === 1 ? ' maquina' : ' maquinas');
                 machinesCount.textContent = machines + (machines === 1 ? ' maquina' : ' maquinas') + ' (' + formatCompact(totalCapacity) + ' tokens/mes)';
 
-                baseCostEl.textContent = formatCurrency(baseTotal);
-                optimizedCostEl.textContent = formatCurrency(optimizedTotal);
-                savingsEl.textContent = formatCurrency(savings);
+                baseCostEl.textContent = formatCardCurrency(baseTotal);
+                optimizedCostEl.textContent = formatCardCurrency(optimizedTotal);
+                savingsEl.textContent = formatCardCurrency(savings);
                 savingsPercentEl.textContent = formatPercent(savingsPercent);
 
                 if (baseCostCopEl) baseCostCopEl.textContent = '~ ' + formatCop(baseTotal * TRM) + ' COP';
