@@ -27,6 +27,7 @@ DJANGO_ENV = os.getenv("DJANGO_ENV", "local").lower()
 env = environ.Env(
     DEBUG=(bool, False),
     LOCAL=(bool, False),
+    TRM_CONTRACTUAL=(float, 4100.0),
 )
 
 env_file = BASE_DIR / ".env"
@@ -207,6 +208,11 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
+
+# ──────────────────────────────────────────────
+# Commercial settings
+# ──────────────────────────────────────────────
+TRM_CONTRACTUAL = env("TRM_CONTRACTUAL")
 
 # ──────────────────────────────────────────────
 # Active environment banner

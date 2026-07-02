@@ -156,11 +156,14 @@
         @keyframes pulseSlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         @keyframes energeticVibe { 0%, 100% { transform: translateY(-3px) scale(1); } 50% { transform: translateY(-3px) scale(1.04); } }
         .animate-pulse-slow { animation: pulseSlow 3s ease-in-out infinite; }
+        .hero-bar { height: var(--bar-height); transform: scaleY(0); transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .hero-bar.loaded { transform: scaleY(1); }
     </style>
 </head>
 <body class="antialiased">
 
     <div class="noise-overlay"></div>
+    <div id="trm-value" data-value="{{ trm_contractual|default:4100.0 }}" class="hidden"></div>
 
     <header id="main-header">
         <nav class="grid grid-cols-[1fr_auto_1fr] items-center">
@@ -233,22 +236,22 @@
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="p-4 rounded-lg bg-deep border border-border">
                                 <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Antes</div>
-                                <div class="mt-1 text-2xl font-bold text-white">$48.2k</div>
+                                <div class="mt-1 text-2xl font-bold text-white"><span id="hero-before" data-target="48200">$0</span></div>
                                 <div class="text-xs text-slate mt-1">USD / mes</div>
                             </div>
                             <div class="p-4 rounded-lg bg-deep border border-border">
                                 <div class="font-mono text-[10px] uppercase tracking-widest text-neon">Con Sooniverse</div>
-                                <div class="mt-1 text-2xl font-bold text-neon">$29.1k</div>
+                                <div class="mt-1 text-2xl font-bold text-neon"><span id="hero-after" data-target="29100">$0</span></div>
                                 <div class="text-xs text-slate mt-1">USD / mes</div>
                             </div>
                         </div>
                         <div class="h-40 flex items-end gap-2">
-                            <div class="chart-bar flex-1 bg-border rounded-t-sm h-[85%]"></div>
-                            <div class="chart-bar flex-1 bg-border rounded-t-sm h-[78%]"></div>
-                            <div class="chart-bar flex-1 bg-border rounded-t-sm h-[92%]"></div>
-                            <div class="chart-bar flex-1 bg-neon rounded-t-sm h-[55%] shadow-[0_0_20px_rgba(0,255,135,0.3)]"></div>
-                            <div class="chart-bar flex-1 bg-neon rounded-t-sm h-[55%] shadow-[0_0_20px_rgba(0,255,135,0.3)]"></div>
-                            <div class="chart-bar flex-1 bg-neon rounded-t-sm h-[55%] shadow-[0_0_20px_rgba(0,255,135,0.3)]"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-border rounded-t-sm" style="--bar-height:85%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-border rounded-t-sm" style="--bar-height:78%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-border rounded-t-sm" style="--bar-height:92%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-neon rounded-t-sm shadow-[0_0_20px_rgba(0,255,135,0.3)]" style="--bar-height:55%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-neon rounded-t-sm shadow-[0_0_20px_rgba(0,255,135,0.3)]" style="--bar-height:55%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-neon rounded-t-sm shadow-[0_0_20px_rgba(0,255,135,0.3)]" style="--bar-height:55%"></div>
                         </div>
                         <div class="mt-4 flex justify-between font-mono text-[10px] uppercase tracking-widest text-slate"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
                     </div>
@@ -409,7 +412,7 @@
             <div class="max-w-3xl mb-12">
                 <h2 class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3">Calculadora de costos</h2>
                 <p class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Estima tu ahorro mensual en tokens.</p>
-                <p class="mt-4 text-slate text-lg">Ajusta volumen de entrada, salida y ejecuciones. El motor proyecta tu costo base y el ahorro potencial con Sooniverse.</p>
+                <p class="mt-4 text-slate text-lg">Ajusta ejecuciones, tokens de entrada y tokens de salida. El motor proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.</p>
             </div>
 
             <div class="grid lg:grid-cols-5 gap-8">
@@ -417,45 +420,59 @@
                     <div class="space-y-8">
                         <div>
                             <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Tokens de entrada / mes</label>
-                                <span class="font-mono text-sm text-neon" id="input-tokens-display">1.000.000</span>
-                            </div>
-                            <input type="range" id="input-tokens" min="100000" max="100000000" step="100000" value="1000000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>100k</span><span>100M</span></div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Tokens de salida / mes</label>
-                                <span class="font-mono text-sm text-cyan" id="output-tokens-display">500.000</span>
-                            </div>
-                            <input type="range" id="output-tokens" min="50000" max="50000000" step="50000" value="500000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>50k</span><span>50M</span></div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Ejecuciones / mes</label>
+                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Ejecuciones al Mes</label>
                                 <span class="font-mono text-sm text-violet" id="executions-display">100.000</span>
                             </div>
-                            <input type="range" id="executions" min="10000" max="10000000" step="10000" value="100000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>10k</span><span>10M</span></div>
+                            <input type="range" id="executions" min="1000" max="5000000" step="1000" value="100000">
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>1k</span><span>5M</span></div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Tokens de Entrada por Ejecucion</label>
+                                <span class="font-mono text-sm text-neon" id="input-tokens-display">80.000</span>
+                            </div>
+                            <input type="range" id="input-tokens" min="1000" max="500000" step="1000" value="80000">
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>1k</span><span>500k</span></div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="font-mono text-xs uppercase tracking-widest text-slate">Tokens de Salida por Ejecucion</label>
+                                <span class="font-mono text-sm text-cyan" id="output-tokens-display">45.000</span>
+                            </div>
+                            <input type="range" id="output-tokens" min="500" max="250000" step="500" value="45000">
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>500</span><span>250k</span></div>
                         </div>
 
                         <div class="grid sm:grid-cols-2 gap-4 pt-4 border-t border-border">
                             <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo entrada / 1k tokens</label>
+                                <label class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo por 1M tokens de entrada</label>
                                 <div class="flex items-center gap-2 glass-panel px-3 py-2">
                                     <span class="text-slate">$</span>
-                                    <input type="number" id="input-rate" value="0.005" step="0.001" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
+                                    <input type="number" id="input-rate" value="0.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
                                 </div>
                             </div>
                             <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo salida / 1k tokens</label>
+                                <label class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo por 1M tokens de salida</label>
                                 <div class="flex items-center gap-2 glass-panel px-3 py-2">
                                     <span class="text-slate">$</span>
-                                    <input type="number" id="output-rate" value="0.015" step="0.001" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
+                                    <input type="number" id="output-rate" value="1.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-border">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="font-mono text-[10px] uppercase tracking-widest text-slate">Tokens Totales al Mes</label>
+                                <span class="font-mono text-sm text-white" id="total-tokens-display">12.500.000.000</span>
+                            </div>
+                            <div class="w-full h-2 bg-deep rounded-full overflow-hidden border border-border">
+                                <div id="capacity-bar" class="h-full bg-gradient-to-r from-neon to-cyan transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between mt-1 text-[10px] font-mono text-slate uppercase">
+                                <span id="capacity-used">0% de 1 maquina</span>
+                                <span id="machines-count">1 maquina</span>
                             </div>
                         </div>
                     </div>
@@ -466,16 +483,19 @@
                         <div class="font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo base estimado</div>
                         <div class="text-4xl font-bold text-white" id="base-cost">$0</div>
                         <div class="text-xs text-slate mt-1">USD / mes</div>
+                        <div class="text-xs text-slate/70 mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
                     </div>
                     <div class="glow-card glass-panel p-6 border-neon/30">
                         <div class="font-mono text-[10px] uppercase tracking-widest text-neon mb-2">Con Sooniverse</div>
                         <div class="text-4xl font-bold text-neon" id="optimized-cost">$0</div>
-                        <div class="text-xs text-slate mt-1">USD / mes (aprox.)</div>
+                        <div class="text-xs text-slate mt-1">USD / mes (infraestructura dedicada)</div>
+                        <div class="text-xs text-slate/70 mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
                     </div>
                     <div class="glass-panel p-6">
                         <div class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-2">Ahorro mensual</div>
                         <div class="text-4xl font-bold text-cyan" id="savings">$0</div>
                         <div class="text-xs text-slate mt-1">Reduccion estimada del <span id="savings-percent">0</span>%</div>
+                        <div class="text-xs text-slate/70 mt-1 font-mono" id="savings-cop">~ $0 COP</div>
                     </div>
                     <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar Diagnostico</a>
                 </div>
@@ -633,54 +653,127 @@
             const displayInput = document.getElementById('input-tokens-display');
             const displayOutput = document.getElementById('output-tokens-display');
             const displayExec = document.getElementById('executions-display');
+            const totalTokensDisplay = document.getElementById('total-tokens-display');
+            const capacityBar = document.getElementById('capacity-bar');
+            const capacityUsed = document.getElementById('capacity-used');
+            const machinesCount = document.getElementById('machines-count');
             const baseCostEl = document.getElementById('base-cost');
             const optimizedCostEl = document.getElementById('optimized-cost');
             const savingsEl = document.getElementById('savings');
             const savingsPercentEl = document.getElementById('savings-percent');
+            const baseCostCopEl = document.getElementById('base-cost-cop');
+            const optimizedCostCopEl = document.getElementById('optimized-cost-cop');
+            const savingsCopEl = document.getElementById('savings-cop');
+            const trmValueEl = document.getElementById('trm-value');
+
+            const SOONIVERSE_MACHINE_COST = 695;
+            const SOONIVERSE_MACHINE_CAPACITY = 20290_000_000;
+            const SOONIVERSE_BUFFER = 0.80;
+            const SOONIVERSE_THRESHOLD = SOONIVERSE_MACHINE_CAPACITY * SOONIVERSE_BUFFER;
+            const TRM = parseFloat(trmValueEl?.dataset.value || '4100');
 
             function formatNumber(num) { return new Intl.NumberFormat('es-ES').format(Math.round(num)); }
+            function formatCompact(num) {
+                if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2).replace('.', ',') + 'MM';
+                if (num >= 1_000_000) return (num / 1_000_000).toFixed(2).replace('.', ',') + 'M';
+                if (num >= 1_000) return (num / 1_000).toFixed(1).replace('.', ',') + 'k';
+                return num.toFixed(0);
+            }
             function formatCurrency(num) {
-                if (num >= 1000000) return '$' + (num / 1000000).toFixed(2) + 'M';
-                if (num >= 1000) return '$' + (num / 1000).toFixed(1) + 'k';
-                return '$' + num.toFixed(2);
+                const sign = num < 0 ? '-' : '';
+                const absNum = Math.abs(num);
+                if (absNum >= 1_000_000) return sign + '$' + (absNum / 1_000_000).toFixed(2).replace('.', ',') + 'M';
+                if (absNum >= 1_000) return sign + '$' + (absNum / 1_000).toFixed(1).replace('.', ',') + 'k';
+                return sign + '$' + absNum.toFixed(2).replace('.', ',');
+            }
+            function formatCop(num) {
+                return '$' + new Intl.NumberFormat('es-CO').format(Math.round(num));
+            }
+            function formatPercent(num) {
+                return num.toFixed(1).replace('.', ',');
+            }
+
+            function requiredMachines(totalTokens) {
+                if (totalTokens <= SOONIVERSE_THRESHOLD) return 1;
+                return Math.ceil(totalTokens / SOONIVERSE_THRESHOLD);
             }
 
             function calculate() {
-                const inTokens = parseInt(inputTokens.value, 10) || 0;
-                const outTokens = parseInt(outputTokens.value, 10) || 0;
                 const execs = parseInt(executions.value, 10) || 0;
+                const inTokensPerExec = parseInt(inputTokens.value, 10) || 0;
+                const outTokensPerExec = parseInt(outputTokens.value, 10) || 0;
                 const inRateVal = parseFloat(inputRate.value) || 0;
                 const outRateVal = parseFloat(outputRate.value) || 0;
 
-                displayInput.textContent = formatNumber(inTokens);
-                displayOutput.textContent = formatNumber(outTokens);
-                displayExec.textContent = formatNumber(execs);
+                const totalTokens = execs * (inTokensPerExec + outTokensPerExec);
+                const inputTokensTotal = execs * inTokensPerExec;
+                const outputTokensTotal = execs * outTokensPerExec;
 
-                const baseInputCost = (inTokens / 1000) * inRateVal;
-                const baseOutputCost = (outTokens / 1000) * outRateVal;
+                displayExec.textContent = formatNumber(execs);
+                displayInput.textContent = formatNumber(inTokensPerExec);
+                displayOutput.textContent = formatNumber(outTokensPerExec);
+                totalTokensDisplay.textContent = formatNumber(totalTokens);
+
+                const baseInputCost = (inputTokensTotal / 1_000_000) * inRateVal;
+                const baseOutputCost = (outputTokensTotal / 1_000_000) * outRateVal;
                 const baseTotal = baseInputCost + baseOutputCost;
-                const optimizationFactor = 0.68;
-                const optimizedTotal = baseTotal * optimizationFactor;
+
+                const machines = requiredMachines(totalTokens);
+                const optimizedTotal = machines * SOONIVERSE_MACHINE_COST;
                 const savings = baseTotal - optimizedTotal;
+                const savingsPercent = baseTotal > 0 ? ((savings / baseTotal) * 100) : 0;
+
+                const capacityRatio = Math.min((totalTokens / SOONIVERSE_MACHINE_CAPACITY) * 100, 100);
+                capacityBar.style.width = capacityRatio + '%';
+                capacityUsed.textContent = capacityRatio.toFixed(1).replace('.', ',') + '% de 1 maquina';
+                machinesCount.textContent = machines + (machines === 1 ? ' maquina' : ' maquinas');
 
                 baseCostEl.textContent = formatCurrency(baseTotal);
                 optimizedCostEl.textContent = formatCurrency(optimizedTotal);
                 savingsEl.textContent = formatCurrency(savings);
-                savingsPercentEl.textContent = '32';
+                savingsPercentEl.textContent = formatPercent(savingsPercent);
+
+                if (baseCostCopEl) baseCostCopEl.textContent = '~ ' + formatCop(baseTotal * TRM) + ' COP';
+                if (optimizedCostCopEl) optimizedCostCopEl.textContent = '~ ' + formatCop(optimizedTotal * TRM) + ' COP';
+                if (savingsCopEl) savingsCopEl.textContent = '~ ' + formatCop(savings * TRM) + ' COP';
             }
 
-            [inputTokens, outputTokens, executions, inputRate, outputRate].forEach(el => el.addEventListener('input', calculate));
+            [executions, inputTokens, outputTokens, inputRate, outputRate].forEach(el => el.addEventListener('input', calculate));
             calculate();
 
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        e.preventDefault();
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Hero progressive load animation
+            function animateCountUp(element, target, duration) {
+                const startTime = performance.now();
+                function easeOutQuint(t) { return 1 - Math.pow(1 - t, 5); }
+                function step(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = easeOutQuint(progress);
+                    const current = target * eased;
+                    if (current >= 1000) {
+                        element.textContent = '$' + formatCompact(current);
+                    } else {
+                        element.textContent = '$' + current.toFixed(0);
                     }
+                    if (progress < 1) requestAnimationFrame(step);
+                    else {
+                        if (target >= 1000) element.textContent = '$' + formatCompact(target);
+                        else element.textContent = '$' + target.toFixed(0);
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                const heroBefore = document.getElementById('hero-before');
+                const heroAfter = document.getElementById('hero-after');
+                const heroBars = document.querySelectorAll('.hero-bar');
+
+                if (heroBefore) animateCountUp(heroBefore, parseFloat(heroBefore.dataset.target) || 0, 1500);
+                if (heroAfter) animateCountUp(heroAfter, parseFloat(heroAfter.dataset.target) || 0, 1500);
+
+                heroBars.forEach((bar, index) => {
+                    setTimeout(() => bar.classList.add('loaded'), index * 120);
                 });
             });
         })();
