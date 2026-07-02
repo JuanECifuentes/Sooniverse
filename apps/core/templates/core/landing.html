@@ -416,14 +416,38 @@
             </div>
 
             <div class="grid lg:grid-cols-5 gap-8">
-                <div class="lg:col-span-3 glass-panel p-6 sm:p-8 ">
+                <div class="lg:col-span-2 order-first lg:order-last space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                        <div class="glass-panel p-4 sm:p-6">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo base estimado</div>
+                            <div class="text-3xl sm:text-4xl font-bold text-white" id="base-cost">$0</div>
+                            <div class="text-xs text-slate mt-1">USD / mes</div>
+                            <div class="text-xs text-slate/70 mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
+                        </div>
+                        <div class="glow-card glass-panel p-4 sm:p-6 border-neon/30">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-neon mb-2">Con Sooniverse</div>
+                            <div class="text-3xl sm:text-4xl font-bold text-neon" id="optimized-cost">$0</div>
+                            <div class="text-xs text-slate mt-1">USD / mes</div>
+                            <div class="text-xs text-slate/70 mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
+                        </div>
+                        <div class="glass-panel p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-2">Ahorro mensual</div>
+                            <div class="text-3xl sm:text-4xl font-bold text-cyan" id="savings">$0</div>
+                            <div class="text-xs text-slate mt-1">Reduccion estimada del <span id="savings-percent">0</span>%</div>
+                            <div class="text-xs text-slate/70 mt-1 font-mono" id="savings-cop">~ $0 COP</div>
+                        </div>
+                    </div>
+                    <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar Diagnostico</a>
+                </div>
+
+                <div class="lg:col-span-3 glass-panel p-6 sm:p-8">
                     <div class="space-y-8">
                         <div>
                             <div class="flex justify-between items-center mb-3">
                                 <label class="font-mono text-xs uppercase tracking-widest text-slate">Ejecuciones al Mes</label>
-                                <span class="font-mono text-sm text-violet" id="executions-display">100.000</span>
+                                <span class="font-mono text-sm text-violet" id="executions-display">84.000</span>
                             </div>
-                            <input type="range" id="executions" min="1000" max="5000000" step="1000" value="100000">
+                            <input type="range" id="executions" min="1000" max="5000000" step="1000" value="84000">
                             <div class="flex justify-between mt-2 text-[10px] font-mono text-slate uppercase"><span>1k</span><span>5M</span></div>
                         </div>
 
@@ -465,39 +489,17 @@
                         <div class="pt-4 border-t border-border">
                             <div class="flex justify-between items-center mb-2">
                                 <label class="font-mono text-[10px] uppercase tracking-widest text-slate">Tokens Totales al Mes</label>
-                                <span class="font-mono text-sm text-white" id="total-tokens-display">12.500.000.000</span>
+                                <span class="font-mono text-sm text-white" id="total-tokens-display">10.500.000.000</span>
                             </div>
                             <div class="w-full h-2 bg-deep rounded-full overflow-hidden border border-border">
                                 <div id="capacity-bar" class="h-full bg-gradient-to-r from-neon to-cyan transition-all duration-500" style="width: 0%"></div>
                             </div>
                             <div class="flex justify-between mt-1 text-[10px] font-mono text-slate uppercase">
                                 <span id="capacity-used">0% de 1 maquina</span>
-                                <span id="machines-count">1 maquina</span>
+                                <span id="machines-count">1 maquina (15.000M tokens/mes)</span>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="glass-panel p-6">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-slate mb-2">Costo base estimado</div>
-                        <div class="text-4xl font-bold text-white" id="base-cost">$0</div>
-                        <div class="text-xs text-slate mt-1">USD / mes</div>
-                        <div class="text-xs text-slate/70 mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
-                    </div>
-                    <div class="glow-card glass-panel p-6 border-neon/30">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-neon mb-2">Con Sooniverse</div>
-                        <div class="text-4xl font-bold text-neon" id="optimized-cost">$0</div>
-                        <div class="text-xs text-slate mt-1">USD / mes (infraestructura dedicada)</div>
-                        <div class="text-xs text-slate/70 mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
-                    </div>
-                    <div class="glass-panel p-6">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-2">Ahorro mensual</div>
-                        <div class="text-4xl font-bold text-cyan" id="savings">$0</div>
-                        <div class="text-xs text-slate mt-1">Reduccion estimada del <span id="savings-percent">0</span>%</div>
-                        <div class="text-xs text-slate/70 mt-1 font-mono" id="savings-cop">~ $0 COP</div>
-                    </div>
-                    <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar Diagnostico</a>
                 </div>
             </div>
         </div>
@@ -667,7 +669,7 @@
             const trmValueEl = document.getElementById('trm-value');
 
             const SOONIVERSE_MACHINE_COST = 695;
-            const SOONIVERSE_MACHINE_CAPACITY = 20290_000_000;
+            const SOONIVERSE_MACHINE_CAPACITY = 15000_000_000;
             const SOONIVERSE_BUFFER = 0.80;
             const SOONIVERSE_THRESHOLD = SOONIVERSE_MACHINE_CAPACITY * SOONIVERSE_BUFFER;
             const TRM = parseFloat(trmValueEl?.dataset.value || '4100');
@@ -723,10 +725,11 @@
                 const savings = baseTotal - optimizedTotal;
                 const savingsPercent = baseTotal > 0 ? ((savings / baseTotal) * 100) : 0;
 
-                const capacityRatio = Math.min((totalTokens / SOONIVERSE_MACHINE_CAPACITY) * 100, 100);
+                const totalCapacity = machines * SOONIVERSE_MACHINE_CAPACITY;
+                const capacityRatio = Math.min((totalTokens / totalCapacity) * 100, 100);
                 capacityBar.style.width = capacityRatio + '%';
-                capacityUsed.textContent = capacityRatio.toFixed(1).replace('.', ',') + '% de 1 maquina';
-                machinesCount.textContent = machines + (machines === 1 ? ' maquina' : ' maquinas');
+                capacityUsed.textContent = capacityRatio.toFixed(1).replace('.', ',') + '% de ' + machines + (machines === 1 ? ' maquina' : ' maquinas');
+                machinesCount.textContent = machines + (machines === 1 ? ' maquina' : ' maquinas') + ' (' + formatCompact(totalCapacity) + ' tokens/mes)';
 
                 baseCostEl.textContent = formatCurrency(baseTotal);
                 optimizedCostEl.textContent = formatCurrency(optimizedTotal);
