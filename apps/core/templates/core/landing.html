@@ -312,15 +312,13 @@
             <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-slate">
                 <a href="#evidencia" class="nav-link">Evidencia</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
-                <a href="#caso-estudio" class="nav-link">Caso de Estudio</a>
-                <a href="#privacidad" class="nav-link">Privacidad</a>
                 <a href="#calculadora" class="nav-link">Calculadora</a>
                 <a href="#glosario-faq" class="nav-link">FAQ & Glosario</a>
             </div>
 
             <div class="flex items-center justify-end gap-4 md:justify-self-end">
                 <a href="#contacto" class="hidden md:inline nav-link text-sm font-medium text-slate">Login</a>
-                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
+                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnostico</a>
                 <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
@@ -331,11 +329,9 @@
             <div class="flex flex-col gap-3 text-sm font-medium text-slate">
                 <a href="#evidencia" class="hover:text-white transition">Evidencia</a>
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
-                <a href="#caso-estudio" class="hover:text-white transition">Caso de Estudio</a>
-                <a href="#privacidad" class="hover:text-white transition">Privacidad</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
-                <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
+                <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnostico</a>
             </div>
         </div>
     </header>
@@ -422,6 +418,24 @@
                         <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Toda la información es procesada y resguardada dentro de tu entorno privado, <span class="font-bold text-white">donde solo tú tienes acceso.</span></li>
                         <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Aprovechamiento intensivo de la capacidad del servidor para incorporar múltiples procesos <span class="font-bold text-white">sin pagar un peso extra.</span></li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="py-24 border-b border-border">
+        <div class="max-w-4xl mx-auto px-6 lg:px-8">
+            <div class="relative rounded-3xl border border-border bg-gradient-to-br from-surface to-deep p-10 sm:p-16 text-center overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan opacity-10 blur-[80px] rounded-full"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon opacity-10 blur-[80px] rounded-full"></div>
+                <div class="relative">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Entra al universo de la eficiencia tecnologica.</h2>
+                    <p class="mt-4 text-slate max-w-xl mx-auto">Cuentanos sobre tu infraestructura de IA y te entregamos un diagnostico de optimizacion en menos de 48h.</p>
+                    <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto" onsubmit="event.preventDefault(); alert('Gracias. Te contactaremos pronto.');">
+                        <input type="email" required placeholder="tu@empresa.com" class="flex-1 rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
+                        <button type="submit" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnostico</button>
+                    </form>
+                    <p class="mt-4 text-xs text-slate">Sin compromiso. Cumplimiento RGPD y politicas de privacidad empresariales.</p>
                 </div>
             </div>
         </div>
@@ -911,24 +925,6 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </section>
-
-    <section id="contacto" class="py-24">
-        <div class="max-w-4xl mx-auto px-6 lg:px-8">
-            <div class="relative rounded-3xl border border-border bg-gradient-to-br from-surface to-deep p-10 sm:p-16 text-center overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan opacity-10 blur-[80px] rounded-full"></div>
-                <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon opacity-10 blur-[80px] rounded-full"></div>
-                <div class="relative">
-                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Entra al universo de la eficiencia tecnologica.</h2>
-                    <p class="mt-4 text-slate max-w-xl mx-auto">Cuentanos sobre tu infraestructura de IA y te entregamos un diagnostico de optimizacion en menos de 48h.</p>
-                    <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto" onsubmit="event.preventDefault(); alert('Gracias. Te contactaremos pronto.');">
-                        <input type="email" required placeholder="tu@empresa.com" class="flex-1 rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
-                        <button type="submit" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnostico</button>
-                    </form>
-                    <p class="mt-4 text-xs text-slate">Sin compromiso. Cumplimiento RGPD y politicas de privacidad empresariales.</p>
-                </div>
             </div>
         </div>
     </section>
