@@ -1,16 +1,16 @@
-# Sooniverse - Plataforma Privada de Inteligencia Artificial
+# Sooniverse - Servicios de Montaje de Plataformas Privadas de IA
 
-Sooniverse es una plataforma privada de IA para empresas que permite reducir costos en tokens de API y blindar la privacidad de datos confidenciales mediante el despliegue de modelos de código abierto en infraestructura GPU dedicada.
+Sooniverse es una empresa de servicios tecnológicos que diseña, despliega y administra plataformas privadas de inteligencia artificial propias y dedicadas para cada cliente. Permitimos a las empresas ejecutar sus automatizaciones con total privacidad de datos y reducir costos de inferencia migrando del pago por token a infraestructura GPU dedicada (como NVIDIA L4).
 
 ## Ejes de Valor Centrales
 - **Ahorro Económico:** Transición de costos variables por token a una capacidad de procesamiento fija y reutilizable. En un escenario de 200,000 ejecuciones mensuales, esto representa un ahorro del 74.2% frente a proveedores premium por token y del 39.3% frente a proveedores económicos.
-- **Privacidad y Control:** Procesamiento de datos sensibles (contratos, datos financieros, reportes) en infraestructura dedicada propia, garantizando gobierno de datos, trazabilidad y control absoluto.
+- **Privacidad y Control:** Procesamiento de datos sensibles (contratos, datos financieros, reportes) en infraestructura dedicada propia del cliente, garantizando gobierno de datos, trazabilidad y control absoluto.
 
-## Modelo de Servicio Propuesto
+## Modelo de Servicio Comercial
 - **Diagnóstico inicial:** Auditoría de consumos y viabilidad de infraestructura.
-- **Selección de modelos:** Modelos open source adaptados a los requerimientos de calidad, costo y latencia del cliente.
+- **Selección de modelos:** Modelos open source (código abierto) adaptados a los requerimientos de calidad, costo y latencia del cliente.
 - **Despliegue dedicado:** Configuración y administración de servidores dedicados (ej. GPU NVIDIA L4) operando 24/7.
-- **Exposición de APIs:** Integración con flujos de trabajo internos del cliente.
+- **Exposición de APIs:** Integración de la plataforma de IA con los flujos de trabajo internos de la empresa.
 - **Monitoreo y observabilidad:** Seguimiento en tiempo real del rendimiento y consumo del sistema.
 - **Optimización continua:** Incorporación de nuevos flujos de trabajo sin costo de token incremental.
 
