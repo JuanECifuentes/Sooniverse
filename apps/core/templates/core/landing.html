@@ -4,8 +4,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sooniverse · Advanced Tech Universe</title>
-    <meta name="description" content="Sooniverse optimiza infraestructura de IA, reduce costos por tokens y acelera la adopcion empresarial de tecnologia avanzada.">
+    
+    <!-- SEO Meta Tags -->
+    <title>Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens</title>
+    <meta name="description" content="Reduce hasta 74% de costos en tokens de API de OpenAI. Implementa tu plataforma privada de inteligencia artificial y despliega modelos open source con total privacidad de datos en Latinoamérica.">
+    <meta name="keywords" content="plataforma privada de IA, cómo reducir costos de API de OpenAI, alternativas a pagar por token en IA, IA privada para empresas, seguridad de datos en inteligencia artificial, modelos open source, GPU dedicada IA, RAG empresarial">
+    <meta name="robots" content="index, follow">
+    <meta name="last-modified" content="2026-07-02">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}/">
+    <meta property="og:title" content="Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens">
+    <meta property="og:description" content="Reduce hasta 74% de costos en tokens de API. Implementa tu plataforma privada de IA con modelos open source y privacidad absoluta de datos en Latinoamérica.">
+    <meta property="og:image" content="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.scheme }}://{{ request.get_host }}/">
+    <meta property="twitter:title" content="Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens">
+    <meta property="twitter:description" content="Reduce hasta 74% de costos en tokens de API. Implementa tu plataforma privada de IA con modelos open source y privacidad absoluta de datos en Latinoamérica.">
+    <meta property="twitter:image" content="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}">
+
+    <!-- Structured Data: JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+          "name": "Sooniverse",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#logo",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}",
+            "caption": "Sooniverse Logo"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+57-3107709737",
+            "contactType": "sales",
+            "email": "juancifuentes124@gmail.com",
+            "areaServed": "Latinoamérica",
+            "availableLanguage": ["Spanish"]
+          },
+          "sameAs": [
+            "https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "name": "Sooniverse",
+          "description": "Plataforma privada de inteligencia artificial: despliegue de modelos open source sobre infraestructura dedicada GPU para empresas en Latinoamérica.",
+          "publisher": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#service",
+          "name": "Plataforma Privada de Inteligencia Artificial",
+          "provider": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          },
+          "description": "Despliegue de modelos de inteligencia artificial open source sobre infraestructura dedicada de GPU NVIDIA L4 para automatizaciones empresariales, asistentes internos y flujos documentales sin pago por token.",
+          "areaServed": {
+            "@type": "AdministrativeArea",
+            "name": "Latinoamérica"
+          },
+          "category": "Artificial Intelligence Platform"
+        },
+        {
+          "@type": "Person",
+          "@id": "https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/#person",
+          "name": "Juan Esteban Cifuentes Ospina",
+          "jobTitle": "Fundador",
+          "worksFor": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          },
+          "sameAs": [
+            "https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Cómo puede una empresa reducir el gasto en tokens de IA?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Una empresa puede reducir el gasto en tokens migrando sus automatizaciones a una plataforma privada de IA con capacidad de procesamiento fija. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por ejecución, esta alternativa redujo el costo un 74.2% frente a un proveedor premium de pago por token."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Es más barato tener infraestructura propia de IA que pagar por API?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, para cargas recurrentes y de alto volumen, la infraestructura dedicada resulta significativamente más barata. En nuestra comparación basada en 200,000 ejecuciones de 10,000 tokens al mes, una GPU dedicada NVIDIA L4 cuesta US$579.46/mes, representando un ahorro del 74.2% frente a APIs premium y del 39.3% frente a proveedores económicos."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Para proteger datos confidenciales, la mejor estrategia es procesar la información en un entorno de inferencia privado y dedicado de la propia empresa. Al desplegar modelos de IA locales u open source en una GPU privada, los datos no se envían a servidores de terceros, garantizando trazabilidad y gobierno de datos."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuánto cuesta desplegar un modelo open source en una GPU dedicada?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Desplegar un modelo open source en una GPU dedicada de alto rendimiento (como la NVIDIA L4) en modalidad 24/7 tiene un costo de referencia aproximado de US$579.46 mensuales. Esta capacidad instalada permite reutilizar la máquina para múltiples flujos de trabajo e incorporar automatizaciones adicionales a coste marginal cero."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué es más seguro, usar la API de OpenAI o un modelo propio?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Un modelo propio desplegado en infraestructura privada es considerablemente más seguro. A diferencia de las APIs comerciales que transmiten datos confidenciales (contratos, tickets, reportes financieros) a servidores externos, un modelo privado mantiene el 100% de la información dentro del entorno de red controlado por la organización."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -174,8 +309,10 @@
             <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-slate">
                 <a href="#evidencia" class="nav-link">Evidencia</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
+                <a href="#caso-estudio" class="nav-link">Caso de Estudio</a>
+                <a href="#privacidad" class="nav-link">Privacidad</a>
                 <a href="#calculadora" class="nav-link">Calculadora</a>
-                <a href="#contacto" class="nav-link">Contacto</a>
+                <a href="#glosario-faq" class="nav-link">FAQ & Glosario</a>
             </div>
 
             <div class="flex items-center justify-end gap-4 md:justify-self-end">
@@ -191,8 +328,10 @@
             <div class="flex flex-col gap-3 text-sm font-medium text-slate">
                 <a href="#evidencia" class="hover:text-white transition">Evidencia</a>
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
+                <a href="#caso-estudio" class="hover:text-white transition">Caso de Estudio</a>
+                <a href="#privacidad" class="hover:text-white transition">Privacidad</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
-                <a href="#contacto" class="hover:text-white transition">Contacto</a>
+                <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
                 <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Empezar ahora</a>
             </div>
         </div>
@@ -291,11 +430,78 @@
         </div>
     </section>
 
+    <section id="caso-estudio" class="py-24 border-b border-border bg-deep/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-3xl mb-12">
+                <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3 block">Caso de Estudio</span>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">¿Es más barato tener infraestructura propia de IA que pagar por API?</h2>
+                <p class="mt-4 text-neon font-semibold text-lg leading-relaxed max-w-2xl border-l-2 border-l-neon pl-4 bg-neon/5 py-3 rounded-r-lg">
+                    Sí, para cargas de alto volumen la infraestructura dedicada resulta significativamente más económica. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por procesamiento, el despliegue de una GPU dedicada NVIDIA L4 representó un costo mensual de <strong>US$579.46</strong>, logrando un ahorro del <strong>74.2%</strong> frente a un proveedor premium de pago por token y del <strong>39.3%</strong> frente a proveedores económicos.
+                </p>
+                <p class="mt-6 text-slate leading-relaxed text-sm">
+                    Al comparar la viabilidad financiera de una <strong>plataforma privada de IA vs API de OpenAI</strong>, el factor crucial es la forma de cobro. El <strong>costo por token vs GPU dedicada IA</strong> demuestra que el cobro variable por token de APIs comerciales penaliza a las empresas con alto tráfico, mientras que un servidor dedicado proporciona capacidad constante a un costo mensual fijo predecible. Esto abre excelentes <strong>alternativas a pagar por token en IA</strong>.
+                </p>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-border bg-surface/40 backdrop-blur-md">
+                <table class="w-full text-left text-sm text-slate min-w-[700px]">
+                    <thead class="bg-deep border-b border-border font-mono text-[11px] uppercase tracking-widest text-white">
+                        <tr>
+                            <th class="p-4">Alternativa</th>
+                            <th class="p-4">Modelo de Cobro</th>
+                            <th class="p-4">Costo Mensual (USD)</th>
+                            <th class="p-4">Costo Mensual (COP)</th>
+                            <th class="p-4">Ahorro vs Premium</th>
+                            <th class="p-4">Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        <tr class="hover:bg-surface/20 transition">
+                            <td class="p-4 font-semibold text-white">OpenAI / Modelo Premium</td>
+                            <td class="p-4 font-mono">Pago por token</td>
+                            <td class="p-4 text-white font-mono">US$ 2.250,00</td>
+                            <td class="p-4 font-mono">$9.225.000 COP</td>
+                            <td class="p-4 text-red-400 font-mono">0% (Base)</td>
+                            <td class="p-4 text-xs">Escenario con mayor costo variable en uso intensivo.</td>
+                        </tr>
+                        <tr class="hover:bg-surface/20 transition">
+                            <td class="p-4 font-semibold text-white">Proveedor Económico (DeepSeek o similar)</td>
+                            <td class="p-4 font-mono">Pago por token</td>
+                            <td class="p-4 text-white font-mono">US$ 957,00</td>
+                            <td class="p-4 font-mono">$3.923.700 COP</td>
+                            <td class="p-4 text-cyan font-mono">57.4%</td>
+                            <td class="p-4 text-xs">Reduce el gasto inmediato, pero el costo sigue escalando linealmente.</td>
+                        </tr>
+                        <tr class="hover:bg-surface/30 bg-neon/5 transition border-l-2 border-l-neon">
+                            <td class="p-4 font-bold text-neon flex items-center gap-1.5">
+                                Sooniverse (Plataforma Privada GPU)
+                                <span class="text-[9px] bg-neon/20 text-neon px-2 py-0.5 rounded-full font-mono font-normal">Recomendado</span>
+                            </td>
+                            <td class="p-4 font-mono text-neon font-semibold">Capacidad de Procesamiento Fija</td>
+                            <td class="p-4 text-neon font-mono font-bold">US$ 579,46</td>
+                            <td class="p-4 font-mono text-neon font-bold">$2.380.000 COP</td>
+                            <td class="p-4 text-neon font-mono font-bold">74.2%</td>
+                            <td class="p-4 text-xs font-semibold text-white">Infraestructura propia reutilizable para múltiples automatizaciones y nuevos casos de uso.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-between p-6 rounded-xl border border-border bg-surface/20">
+                <p class="text-xs text-slate max-w-2xl leading-relaxed">
+                    <strong>Nota sobre estimaciones:</strong> El análisis comparativo de <strong>OpenAI vs DeepSeek vs infraestructura propia costos</strong> toma como referencia un volumen mensual de 200,000 ejecuciones con 10,000 tokens totales cada una. El escenario de Sooniverse contempla una infraestructura basada en una GPU NVIDIA L4 encendida 24/7.
+                </p>
+                <a href="#calculadora" class="btn-secondary px-5 py-2.5 rounded-lg text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Proyectar con mi consumo</a>
+            </div>
+        </div>
+    </section>
+
     <section id="servicios" class="py-24">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-14">
-                <h2 class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3">Servicios</h2>
-                <p class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">La base tecnológica privada que tu organización necesita para crecer sin límites de facturación.</p>
+                <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3 block">Servicios de IA</span>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">IA privada para empresas y soluciones on-premise empresariales.</h2>
+                <p class="mt-4 text-slate text-lg">Te ayudamos a entender qué es una plataforma privada de IA y ejecutamos la implementación de infraestructura privada de IA para empresas.</p>
             </div>
 
             <div class="mb-16 p-[1px] rounded-2xl bg-gradient-to-br from-neon/20 via-cyan/20 to-violet/20">
@@ -318,16 +524,16 @@
                             <div class="w-11 h-11 rounded-lg bg-deep border border-border flex items-center justify-center text-neon mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                             </div>
-                            <h4 class="text-lg font-semibold text-white mb-2">Despliegue de Infraestructura Dedicada</h4>
-                            <p class="text-sm text-slate leading-relaxed">Montaje de servidores dedicados y privados para que tu IA opere en un entorno completamente bajo tu control.</p>
+                            <h4 class="text-lg font-semibold text-white mb-2">Despliegue de Modelos Open Source en Servidor Dedicado</h4>
+                            <p class="text-sm text-slate leading-relaxed">Configuramos el despliegue de modelos open source en servidor dedicado (GPU dedicada IA) para garantizar velocidad y procesamiento constante.</p>
                         </div>
 
                         <div class="glow-card p-6">
                             <div class="w-11 h-11 rounded-lg bg-deep border border-border flex items-center justify-center text-neon mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
-                            <h4 class="text-lg font-semibold text-white mb-2">Blindaje y Gobierno de Datos</h4>
-                            <p class="text-sm text-slate leading-relaxed">Seguridad, confidencialidad y control total sobre quien accede a la informacion y como la IA la procesa.</p>
+                            <h4 class="text-lg font-semibold text-white mb-2">Asistente Interno de IA con Datos Confidenciales</h4>
+                            <p class="text-sm text-slate leading-relaxed">Desarrollamos sistemas de RAG empresarial con datos privados y asistentes corporativos que operan con total blindaje de la información.</p>
                         </div>
 
                         <div class="glow-card p-6">
@@ -401,6 +607,63 @@
                         <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Toda la información es procesada y resguardada dentro de tu entorno privado, <span class="font-bold text-white">donde solo tú tienes acceso.</span></li>
                         <li class="flex gap-3 text-slate"><span class="w-1.5 h-1.5 rounded-full bg-neon mt-2 shrink-0 glow-dot"></span><span>Aprovechamiento intensivo de la capacidad del servidor para incorporar múltiples procesos <span class="font-bold text-white">sin pagar un peso extra.</span></li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="privacidad" class="py-24 border-b border-border relative overflow-hidden">
+        <div class="absolute -right-40 top-1/4 w-[300px] h-[300px] bg-cyan opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7">
+                    <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3 block">Seguridad y Gobierno de Datos</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h2>
+                    
+                    <p class="mt-4 text-cyan font-semibold text-lg leading-relaxed border-l-2 border-l-cyan pl-4 bg-cyan/5 py-3 rounded-r-lg">
+                        Para proteger la información sensible, las organizaciones deben desplegar modelos open source en servidores dedicados bajo su propio control. Al implementar una infraestructura de inferencia privada, se elimina la dependencia de terceros, garantizando trazabilidad total, gobierno de datos, y un estricto control de accesos segmentado por área.
+                    </p>
+
+                    <p class="mt-6 text-slate leading-relaxed text-sm">
+                        En el contexto de la <strong>seguridad de datos en proyectos de inteligencia artificial</strong>, confiar en APIs comerciales externas que procesan datos críticos (como contratos legales, informes financieros, tickets de soporte y correos corporativos) representa un riesgo regulatorio y operativo. Al elegir <strong>modelos open source vs modelos comerciales para empresas</strong>, la infraestructura privada se convierte en el único camino viable para garantizar el cumplimiento normativo (como RGPD) y el blindaje absoluto en Latinoamérica.
+                    </p>
+
+                    <div class="mt-8 space-y-4">
+                        <div class="flex gap-4">
+                            <span class="w-6 h-6 rounded-full bg-cyan/20 border border-cyan/40 flex items-center justify-center text-cyan shrink-0 mt-0.5">✓</span>
+                            <div>
+                                <h4 class="text-white font-semibold text-sm">Procesamiento Local en Servidor Dedicado</h4>
+                                <p class="text-slate text-xs mt-1">Los datos confidenciales de la empresa se procesan localmente en tu propio servidor privado dedicado, sin enviarse a terceros.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-6 h-6 rounded-full bg-cyan/20 border border-cyan/40 flex items-center justify-center text-cyan shrink-0 mt-0.5">✓</span>
+                            <div>
+                                <h4 class="text-white font-semibold text-sm">Trazabilidad y Gobierno de Datos Completo</h4>
+                                <p class="text-slate text-xs mt-1">Auditoría completa sobre qué sistemas internos acceden al modelo, qué información se procesa y qué flujos están activos.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-6 h-6 rounded-full bg-cyan/20 border border-cyan/40 flex items-center justify-center text-cyan shrink-0 mt-0.5">✓</span>
+                            <div>
+                                <h4 class="text-white font-semibold text-sm">Segmentación por Área o Proyecto</h4>
+                                <p class="text-slate text-xs mt-1">Habilita accesos restringidos para el departamento legal, financiero, operaciones o recursos humanos, aislando la información confidencial.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="glow-card glass-panel p-6 sm:p-8 border-cyan/30">
+                        <h2 class="text-lg font-bold text-white mb-4">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h2>
+                        <p class="text-slate text-sm leading-relaxed mb-6">
+                            Un modelo propio desplegado en infraestructura privada ofrece un estándar de seguridad muy superior. A diferencia del envío de datos sensibles a APIs comerciales externas, una plataforma privada mantiene el 100% del procesamiento (contratos, tickets y reportes financieros) bajo la gobernanza y red interna de la propia empresa, impidiendo fugas de información.
+                        </p>
+                        <div class="p-4 rounded-lg bg-deep/80 border border-border flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-cyan glow-dot shrink-0"></span>
+                            <span class="text-xs text-slate">Ideal para implementar un <strong>asistente interno de IA con datos confidenciales</strong>.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -505,6 +768,102 @@
         </div>
     </section>
 
+    <section id="glosario-faq" class="py-24 border-t border-border bg-surface/10 relative">
+        <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-violet opacity-5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-start">
+                
+                <!-- FAQ Section (7 cols) -->
+                <div class="lg:col-span-7 space-y-8" id="faq">
+                    <div>
+                        <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3 block">Preguntas Frecuentes</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Preguntas Frecuentes sobre IA Privada</h2>
+                        <p class="mt-4 text-slate text-sm">Respuestas directas estructuradas para resolver tus inquietudes sobre costos, rendimiento y seguridad de datos.</p>
+                    </div>
+
+                    <div class="space-y-6 mt-8">
+                        <div class="glass-panel p-6 border-border hover:border-neon/30 transition">
+                            <h2 class="text-base font-bold text-white mb-2">¿Cómo puede una empresa reducir el gasto en tokens de IA?</h2>
+                            <p class="text-slate text-sm leading-relaxed">
+                                Una empresa puede reducir el gasto en tokens migrando sus automatizaciones a una plataforma privada de IA con capacidad de procesamiento fija. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por procesamiento, esta alternativa redujo el costo un <strong>74.2%</strong> frente a un proveedor premium de pago por token.
+                            </p>
+                        </div>
+
+                        <div class="glass-panel p-6 border-border hover:border-cyan/30 transition">
+                            <h2 class="text-base font-bold text-white mb-2">¿Es más barato tener infraestructura propia de IA que pagar por API?</h2>
+                            <p class="text-slate text-sm leading-relaxed">
+                                Sí, para cargas de alto volumen la infraestructura dedicada resulta significativamente más económica. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por procesamiento, el despliegue de una GPU dedicada NVIDIA L4 representó un costo mensual de <strong>US$579.46</strong>, logrando un ahorro del <strong>74.2%</strong> frente a un proveedor premium de pago por token y del <strong>39.3%</strong> frente a proveedores económicos.
+                            </p>
+                        </div>
+
+                        <div class="glass-panel p-6 border-border hover:border-violet/30 transition">
+                            <h2 class="text-base font-bold text-white mb-2">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h2>
+                            <p class="text-slate text-sm leading-relaxed">
+                                Para proteger la información sensible, las organizaciones deben desplegar modelos open source en servidores dedicados bajo su propio control. Al implementar una infraestructura de inferencia privada, se elimina la dependencia de terceros, garantizando trazabilidad total, gobierno de datos, y un estricto control de accesos segmentado por área.
+                            </p>
+                        </div>
+
+                        <div class="glass-panel p-6 border-border hover:border-neon/30 transition">
+                            <h2 class="text-base font-bold text-white mb-2">¿Cuánto cuesta desplegar un modelo open source en una GPU dedicada?</h2>
+                            <p class="text-slate text-sm leading-relaxed">
+                                Desplegar un modelo open source en una GPU dedicada (como la NVIDIA L4) en modalidad 24/7 tiene un costo de referencia aproximado de <strong>US$579.46</strong> mensuales. Esta capacidad instalada permite reutilizar la máquina para múltiples flujos de trabajo e incorporar automatizaciones adicionales a coste marginal cero.
+                            </p>
+                        </div>
+
+                        <div class="glass-panel p-6 border-border hover:border-cyan/30 transition">
+                            <h2 class="text-base font-bold text-white mb-2">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h2>
+                            <p class="text-slate text-sm leading-relaxed">
+                                Un modelo propio desplegado en infraestructura privada ofrece un estándar de seguridad muy superior. A diferencia del envío de datos sensibles a APIs comerciales externas, una plataforma privada mantiene el 100% del procesamiento (contratos, tickets y reportes financieros) bajo la gobernanza y red interna de la propia empresa, impidiendo fugas de información.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glossary Section (5 cols) -->
+                <div class="lg:col-span-5 space-y-8" id="glosario">
+                    <div>
+                        <span class="font-mono text-xs font-bold uppercase tracking-brand text-cyan mb-3 block">Glosario Técnico</span>
+                        <h2 class="text-2xl font-bold tracking-[-1px] text-white">Conceptos Clave de IA</h2>
+                        <p class="mt-4 text-slate text-sm">Definiciones de los términos esenciales en infraestructura y desarrollo de inteligencia artificial.</p>
+                    </div>
+
+                    <div class="space-y-4 mt-8">
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">RAG (Generación Aumentada por Recuperación)</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">Técnica que conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas precisas y actuales sin entrenar el modelo desde cero.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Inferencia</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">El proceso por el cual un modelo de inteligencia artificial entrenado procesa datos de entrada y genera una predicción o respuesta (por ejemplo, resúmenes o clasificaciones).</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">GPU Dedicada</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">Unidad de procesamiento gráfico asignada exclusivamente a una empresa para ejecutar tareas de IA en tiempo real 24/7 sin compartir recursos ni latencia con terceros.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Tokens</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">La unidad básica de procesamiento en los modelos de lenguaje (aproximadamente 4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Modelo Open Source</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">Modelo de IA de código abierto (como Llama o Mistral) cuya arquitectura es libre y se puede desplegar sin costos de licencia en un servidor propio.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
+                            <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Latencia</h4>
+                            <p class="text-slate text-xs mt-1.5 leading-relaxed">El tiempo de respuesta transcurrido desde que se envía una petición al modelo de IA hasta que este genera el primer token de respuesta.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <section id="contacto" class="py-24">
         <div class="max-w-4xl mx-auto px-6 lg:px-8">
             <div class="relative rounded-3xl border border-border bg-gradient-to-br from-surface to-deep p-10 sm:p-16 text-center overflow-hidden">
@@ -527,9 +886,26 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <a href="#" class="flex flex-col gap-0.5">
-                    <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto">
+                    <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto" loading="lazy">
                     <!-- <span class="font-mono text-[9px] font-bold uppercase tracking-brand text-neon">ADVANCED TECH UNIVERSE</span> -->
                 </a>
+                
+                <!-- Redes Sociales -->
+                <div class="flex items-center gap-3">
+                    <a href="https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/" target="_blank" rel="noopener noreferrer" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-neon/40" aria-label="LinkedIn">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                    <a href="#" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-cyan/40" aria-label="Instagram">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                    <a href="#" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-violet/40" aria-label="Facebook">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                    </a>
+                    <a href="#" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-neon/40" aria-label="Twitter">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                </div>
+                
                 <div class="flex items-center gap-6 text-sm text-slate">
                     <a href="#" class="hover:text-white transition">Privacidad</a>
                     <a href="#" class="hover:text-white transition">Terminos</a>
