@@ -1056,21 +1056,104 @@
                     dotsContainer.appendChild(dot);
                     dots.push(dot);
                 }
+
+                let active = 0;
                 function updateDots() {
                     const gap = 16;
                     const itemWidth = items[0].offsetWidth + gap;
-                    let active = Math.round(carousel.scrollLeft / itemWidth);
+                    active = Math.round(carousel.scrollLeft / itemWidth);
                     active = Math.max(0, Math.min(active, dots.length - 1));
                     dots.forEach((d, i) => d.classList.toggle('active', i === active));
                 }
                 carousel.addEventListener('scroll', updateDots, { passive: true });
+
+                // Custom horizontal smooth scroll animation to prevent layout snapping fight
+                function smoothScrollHorizontal(targetX, duration) {
+                    const startX = carousel.scrollLeft;
+                    const distance = targetX - startX;
+                    let startTime = null;
+
+                    // Disable scroll snap type to avoid jerky browser snap correction during JS scroll loop
+                    carousel.style.scrollSnapType = 'none';
+
+                    function easeInOutCubic(t) {
+                        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    }
+
+                    function animate(currentTime) {
+                        if (startTime === null) startTime = currentTime;
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const easedProgress = easeInOutCubic(progress);
+
+                        carousel.scrollLeft = startX + distance * easedProgress;
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            carousel.scrollLeft = targetX;
+                            // Restore scroll snap style
+                            carousel.style.scrollSnapType = '';
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                }
+
                 dots.forEach((dot, i) => {
                     dot.addEventListener('click', () => {
                         const gap = 16;
                         const itemWidth = items[0].offsetWidth + gap;
-                        carousel.scrollTo({ left: i * itemWidth, behavior: 'smooth' });
+                        smoothScrollHorizontal(i * itemWidth, 800);
+                        active = i;
                     });
                 });
+
+                // Autoplay logic for mobile viewports (< 768px)
+                let autoplayInterval = null;
+                let isUserInteracting = false;
+                let resumeTimeout = null;
+
+                function startAutoplay() {
+                    if (autoplayInterval) clearInterval(autoplayInterval);
+                    autoplayInterval = setInterval(() => {
+                        if (window.innerWidth >= 768 || isUserInteracting) return;
+                        const gap = 16;
+                        const itemWidth = items[0].offsetWidth + gap;
+                        const nextIndex = (active + 1) % items.length;
+                        smoothScrollHorizontal(nextIndex * itemWidth, 900);
+                    }, 4000);
+                }
+
+                function stopAutoplay() {
+                    if (autoplayInterval) {
+                        clearInterval(autoplayInterval);
+                        autoplayInterval = null;
+                    }
+                }
+
+                function pauseAutoplayOnInteraction() {
+                    isUserInteracting = true;
+                    if (resumeTimeout) clearTimeout(resumeTimeout);
+                    resumeTimeout = setTimeout(() => {
+                        isUserInteracting = false;
+                    }, 6000); // Resume autoplay after 6 seconds of no user touch/scroll activity
+                }
+
+                // Handle touch and mouse scroll drag gestures
+                carousel.addEventListener('touchstart', pauseAutoplayOnInteraction, { passive: true });
+                carousel.addEventListener('touchmove', pauseAutoplayOnInteraction, { passive: true });
+                carousel.addEventListener('mousedown', pauseAutoplayOnInteraction, { passive: true });
+
+                function handleResize() {
+                    if (window.innerWidth < 768) {
+                        startAutoplay();
+                    } else {
+                        stopAutoplay();
+                    }
+                }
+
+                window.addEventListener('resize', handleResize);
+                handleResize(); // Initial check
             }
             initCarousel('evidence-carousel', 'evidence-dots');
 
