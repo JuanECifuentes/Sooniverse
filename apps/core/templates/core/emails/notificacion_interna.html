@@ -1,0 +1,71 @@
+{% extends "core/emails/base_email.html" %}
+
+{% block title %}Nuevo Lead Registrado - Sooniverse{% endblock %}
+
+{% block content %}
+<h2 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+    Nuevo Registro de Lead Detectado
+</h2>
+
+<p style="font-size: 15px; line-height: 1.6; color: #94A3B8; margin-bottom: 25px;">
+    Se ha recibido una nueva solicitud de diagnóstico tecnológico a través del formulario de contacto de la landing page. A continuación se presentan los detalles del registro:
+</p>
+
+<!-- Lead Details Table Card -->
+<div style="background-color: #070A12; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #1E293B; width: 140px; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase;">
+                Nombre
+            </td>
+            <td style="padding: 8px 0 8px 10px; border-bottom: 1px solid #1E293B; color: #FFFFFF; font-size: 14px;">
+                {{ nombre }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #1E293B; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase;">
+                Correo
+            </td>
+            <td style="padding: 8px 0 8px 10px; border-bottom: 1px solid #1E293B; color: #FFFFFF; font-size: 14px;">
+                <a href="mailto:{{ correo }}" style="color: #00FF87; text-decoration: none; font-weight: bold;">{{ correo }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #1E293B; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase;">
+                Empresa
+            </td>
+            <td style="padding: 8px 0 8px 10px; border-bottom: 1px solid #1E293B; color: #FFFFFF; font-size: 14px;">
+                {{ empresa }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #1E293B; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase;">
+                Fecha (UTC)
+            </td>
+            <td style="padding: 8px 0 8px 10px; border-bottom: 1px solid #1E293B; color: #FFFFFF; font-size: 14px; font-family: 'JetBrains Mono', monospace;">
+                {{ creado_en|date:"Y-m-d H:i:s" }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #1E293B; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase;">
+                IP Origen
+            </td>
+            <td style="padding: 8px 0 8px 10px; border-bottom: 1px solid #1E293B; color: #FFFFFF; font-size: 14px; font-family: 'JetBrains Mono', monospace;">
+                {{ ip_origen|default:"No registrada" }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; font-weight: 600; color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; vertical-align: top;">
+                Mensaje
+            </td>
+            <td style="padding: 8px 0 8px 10px; color: #FFFFFF; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">{{ mensaje }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="http://localhost:8000/admin/core/lead/{{ lead.id }}/change/" style="display: inline-block; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; padding: 12px 24px; text-decoration: none; border-radius: 6px; letter-spacing: 1px;">
+        Ver Lead en Admin
+    </a>
+</div>
+{% endblock %}

@@ -431,10 +431,112 @@
                 <div class="relative">
                     <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Entra al universo de la eficiencia tecnologica.</h2>
                     <p class="mt-4 text-slate max-w-xl mx-auto">Cuentanos sobre tu infraestructura de IA y te entregamos un diagnostico de optimizacion en menos de 48h.</p>
-                    <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto" onsubmit="event.preventDefault(); alert('Gracias. Te contactaremos pronto.');">
-                        <input type="email" required placeholder="tu@empresa.com" class="flex-1 rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
-                        <button type="submit" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnostico</button>
+                    <form id="contact-form" action="{% url 'core:contacto' %}" method="POST" class="mt-8 space-y-4 max-w-xl mx-auto text-left">
+                        {% csrf_token %}
+                        
+                        <div id="form-message" class="hidden rounded-lg p-4 mb-4 text-sm font-semibold border"></div>
+                        
+                        {% if messages %}
+                            <div class="space-y-2 mb-4">
+                                {% for message in messages %}
+                                    <div class="rounded-lg p-4 text-sm font-semibold border {% if message.tags == 'success' %}bg-surface text-neon border-neon{% else %}bg-surface text-red-500 border-red-500{% endif %}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            <label for="id_nombre" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Nombre Completo</label>
+                            <input type="text" name="nombre" id="id_nombre" required placeholder="Ingresa tu nombre completo" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="id_correo" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Correo Corporativo</label>
+                                <input type="email" name="correo" id="id_correo" required placeholder="tu@empresa.com" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
+                            </div>
+                            <div>
+                                <label for="id_empresa" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Empresa</label>
+                                <input type="text" name="empresa" id="id_empresa" required placeholder="Nombre de tu empresa" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="id_mensaje" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Infraestructura de IA (Opcional)</label>
+                            <textarea name="mensaje" id="id_mensaje" placeholder="Cuéntanos sobre tus necesidades actuales de procesamiento o infraestructura de IA" rows="3" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition resize-none"></textarea>
+                        </div>
+
+                        <!-- Honeypot -->
+                        <div style="display:none !important;">
+                            <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="text-center pt-2">
+                            <button type="submit" class="btn-primary w-full px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
+                                Solicitar diagnóstico
+                            </button>
+                        </div>
                     </form>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('contact-form');
+                            const formMessage = document.getElementById('form-message');
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalBtnText = submitBtn.innerHTML;
+
+                            form.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                
+                                // Clear message
+                                formMessage.classList.add('hidden');
+                                formMessage.className = 'rounded-lg p-4 mb-4 text-sm font-semibold border';
+                                
+                                // Set loading state
+                                submitBtn.disabled = true;
+                                submitBtn.innerHTML = 'PROCESANDO REGISTRO...';
+                                submitBtn.style.opacity = '0.7';
+
+                                const formData = new FormData(form);
+                                formData.append('ajax', 'true');
+
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                                    }
+                                })
+                                .then(response => {
+                                    return response.json().then(data => {
+                                        if (!response.ok) {
+                                            throw new Error(data.message || 'Error procesando solicitud.');
+                                        }
+                                        return data;
+                                    });
+                                })
+                                .then(data => {
+                                    formMessage.classList.remove('hidden');
+                                    formMessage.classList.add('bg-surface', 'text-neon', 'border-neon');
+                                    formMessage.innerHTML = data.message;
+                                    form.reset();
+                                })
+                                .catch(error => {
+                                    formMessage.classList.remove('hidden');
+                                    formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
+                                    formMessage.innerHTML = error.message;
+                                })
+                                .finally(() => {
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = originalBtnText;
+                                    submitBtn.style.opacity = '1';
+                                });
+                            });
+                        });
+                    </script>
+
                     <p class="mt-4 text-xs text-slate">Sin compromiso. Cumplimiento RGPD y politicas de privacidad empresariales.</p>
                 </div>
             </div>

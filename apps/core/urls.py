@@ -9,7 +9,9 @@ app_name = "core"
 
 urlpatterns = [
     path("", views.landing, name="landing"),
+    path("contacto/", views.contacto_lead, name="contacto"),
     path(
+
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_txt",
