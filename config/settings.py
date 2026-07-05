@@ -16,10 +16,6 @@ import environ
 # ──────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ──────────────────────────────────────────────
-# Environment selection
-# ──────────────────────────────────────────────
-DJANGO_ENV = os.getenv("DJANGO_ENV", "local").lower()
 
 # ──────────────────────────────────────────────
 # Environment variables
@@ -35,16 +31,18 @@ if env_file.exists():
     environ.Env.read_env(str(env_file))
 
 # ──────────────────────────────────────────────
+# Environment selection
+# ──────────────────────────────────────────────
+DJANGO_ENV = env("DJANGO_ENV", default="local")
+
+# ──────────────────────────────────────────────
 # Core
 # ──────────────────────────────────────────────
 SECRET_KEY = env("SECRET_KEY", default="insecure-dev-key-change-me")
-print("SECRET_KEY", SECRET_KEY)
 # DEBUG and LOCAL are derived from DJANGO_ENV (not the .env file) so that
 # promoting an environment to production is a one-line change.
 DEBUG = DJANGO_ENV != "production"
 LOCAL = DJANGO_ENV != "production"
-
-print("DJANGO_ENV", DJANGO_ENV)
 
 ALLOWED_HOSTS = env.get_value("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
