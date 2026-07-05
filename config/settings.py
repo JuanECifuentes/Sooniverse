@@ -38,10 +38,14 @@ if env_file.exists():
 # Core
 # ──────────────────────────────────────────────
 SECRET_KEY = env("SECRET_KEY", default="insecure-dev-key-change-me")
+print("SECRET_KEY", SECRET_KEY)
 # DEBUG and LOCAL are derived from DJANGO_ENV (not the .env file) so that
 # promoting an environment to production is a one-line change.
 DEBUG = DJANGO_ENV != "production"
 LOCAL = DJANGO_ENV != "production"
+
+print("DJANGO_ENV", DJANGO_ENV)
+
 ALLOWED_HOSTS = env.get_value("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
 ROOT_URLCONF = "config.urls"
