@@ -189,6 +189,8 @@ if DEBUG:
 else:
     EMAIL_BACKEND = "django_ses.SESBackend"
 
+EMAIL_BACKEND = "django_ses.SESBackend"
+
 AWS_SES_REGION_NAME = env("AWS_SES_REGION_NAME", default="us-east-1")
 AWS_SES_REGION_ENDPOINT = env(
     "AWS_SES_REGION_ENDPOINT", default="email.us-east-1.amazonaws.com"
@@ -213,6 +215,14 @@ if not DEBUG:
 # Commercial settings
 # ──────────────────────────────────────────────
 TRM_CONTRACTUAL = env("TRM_CONTRACTUAL")
+
+# ──────────────────────────────────────────────
+# Notification & Rate Limiting Settings
+# ──────────────────────────────────────────────
+NOTIFICACION_INTERNA_EMAIL = env("NOTIFICACION_INTERNA_EMAIL", default="admin@sooniverse.com")
+RATE_LIMIT_LIMIT = env.int("RATE_LIMIT_LIMIT", default=3)
+RATE_LIMIT_WINDOW = env.int("RATE_LIMIT_WINDOW", default=600)  # default 10 minutes
+
 
 # ──────────────────────────────────────────────
 # Active environment banner

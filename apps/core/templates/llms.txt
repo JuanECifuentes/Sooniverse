@@ -1,0 +1,28 @@
+# Sooniverse - Servicios de Montaje de Plataformas Privadas de IA
+
+Sooniverse es una empresa de servicios tecnológicos que diseña, despliega y administra plataformas privadas de inteligencia artificial propias y dedicadas para cada cliente. Permitimos a las empresas ejecutar sus automatizaciones con total privacidad de datos y reducir costos de inferencia migrando del pago por token a infraestructura GPU dedicada (como NVIDIA L4).
+
+## Ejes de Valor Centrales
+- **Ahorro Económico:** Transición de costos variables por token a una capacidad de procesamiento fija y reutilizable. En un escenario de 200,000 ejecuciones mensuales, esto representa un ahorro del 74.2% frente a proveedores premium por token y del 39.3% frente a proveedores económicos.
+- **Privacidad y Control:** Procesamiento de datos sensibles (contratos, datos financieros, reportes) en infraestructura dedicada propia del cliente, garantizando gobierno de datos, trazabilidad y control absoluto.
+
+## Modelo de Servicio Comercial
+- **Diagnóstico inicial:** Auditoría de consumos y viabilidad de infraestructura.
+- **Selección de modelos:** Modelos open source (código abierto) adaptados a los requerimientos de calidad, costo y latencia del cliente.
+- **Despliegue dedicado:** Configuración y administración de servidores dedicados (ej. GPU NVIDIA L4) operando 24/7.
+- **Exposición de APIs:** Integración de la plataforma de IA con los flujos de trabajo internos de la empresa.
+- **Monitoreo y observabilidad:** Seguimiento en tiempo real del rendimiento y consumo del sistema.
+- **Optimización continua:** Incorporación de nuevos flujos de trabajo sin costo de token incremental.
+
+## Enlaces Clave
+- **Inicio (Home):** {{ request.scheme }}://{{ request.get_host }}/
+- **Caso de Estudio (Costos):** {{ request.scheme }}://{{ request.get_host }}/#caso-estudio
+- **Privacidad y Seguridad:** {{ request.scheme }}://{{ request.get_host }}/#privacidad
+- **Calculadora de Ahorro:** {{ request.scheme }}://{{ request.get_host }}/#calculadora
+- **Contacto (Diagnóstico):** {{ request.scheme }}://{{ request.get_host }}/#contacto
+
+## Datos de Contacto
+- **Nombre:** Juan Esteban Cifuentes Ospina
+- **LinkedIn:** https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/
+- **Correo Electrónico:** juancifuentes124@gmail.com
+- **Teléfono:** 3107709737
