@@ -35,6 +35,82 @@ class LeadFormTestCase(TestCase):
             "El correo electrónico ingresado no posee un formato válido para iniciar comunicación."
         )
 
+    def test_invalid_single_label_domain_email(self):
+        data = {
+            "nombre": "Juan Cifuentes",
+            "correo": "juancifuentes124@com",
+            "empresa": "Sooniverse Inc",
+            "mensaje": "Quiero probar el diagnóstico.",
+            "website_verification": ""
+        }
+        form = LeadForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("correo", form.errors)
+        self.assertEqual(
+            form.errors["correo"][0],
+            "El correo electrónico ingresado no posee un formato válido para iniciar comunicación."
+        )
+
+    def test_valid_multi_label_domain_email(self):
+        data = {
+            "nombre": "Juan Cifuentes",
+            "correo": "juancifuentes124@sooniverse.com.co",
+            "empresa": "Sooniverse Inc",
+            "mensaje": "Quiero probar el diagnóstico.",
+            "website_verification": ""
+        }
+        form = LeadForm(data=data)
+        self.assertTrue(form.is_valid())
+
+    def test_duplicate_email_within_24_hours(self):
+        from django.utils import timezone
+        # Create an existing lead
+        Lead.objects.create(
+            nombre="Duplicate Tester",
+            correo="duplicate@example.com",
+            empresa="Sooniverse"
+        )
+        
+        # Try to submit form with the same email
+        data = {
+            "nombre": "Duplicate Tester 2",
+            "correo": "duplicate@example.com",
+            "empresa": "Sooniverse 2",
+            "mensaje": "Duplicate test message.",
+            "website_verification": ""
+        }
+        form = LeadForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("correo", form.errors)
+        self.assertEqual(
+            form.errors["correo"][0],
+            "Ya ha sido registrada una solicitud para este cliente."
+        )
+
+    def test_duplicate_email_after_24_hours(self):
+        from django.utils import timezone
+        from datetime import timedelta
+        # Create an old lead
+        lead = Lead.objects.create(
+            nombre="Old Tester",
+            correo="old@example.com",
+            empresa="Sooniverse",
+        )
+        # Manually update creado_en since auto_now_add overrides creation input
+        old_time = timezone.now() - timedelta(hours=25)
+        Lead.objects.filter(pk=lead.pk).update(creado_en=old_time)
+        
+        # Try to submit form with the same email
+        data = {
+            "nombre": "Old Tester 2",
+            "correo": "old@example.com",
+            "empresa": "Sooniverse 2",
+            "mensaje": "Duplicate test message.",
+            "website_verification": ""
+        }
+        form = LeadForm(data=data)
+        self.assertTrue(form.is_valid())
+
 
     def test_honeypot_bot_detected(self):
         data = {

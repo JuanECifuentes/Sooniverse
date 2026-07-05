@@ -53,10 +53,21 @@ class LeadForm(forms.ModelForm):
     def clean_correo(self):
         correo = self.cleaned_data.get('correo')
         if correo:
+            import re
+            email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            if not re.match(email_regex, correo):
+                raise ValidationError('El correo electrónico ingresado no posee un formato válido para iniciar comunicación.')
             try:
                 validate_email(correo)
             except ValidationError:
-                raise ValidationError('La dirección de correo electrónico ingresada no posee un formato válido para iniciar comunicación.')
+                raise ValidationError('El correo electrónico ingresado no posee un formato válido para iniciar comunicación.')
+            
+            # Check duplicate submissions within last 24 hours
+            from django.utils import timezone
+            from datetime import timedelta
+            time_threshold = timezone.now() - timedelta(hours=24)
+            if Lead.objects.filter(correo__iexact=correo, creado_en__gte=time_threshold).exists():
+                raise ValidationError('Ya ha sido registrada una solicitud para este cliente.')
         return correo
 
     def clean_website_verification(self):

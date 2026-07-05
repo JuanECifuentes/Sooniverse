@@ -436,15 +436,6 @@
                         
                         <div id="form-message" class="hidden rounded-lg p-4 mb-4 text-sm font-semibold border"></div>
                         
-                        {% if messages %}
-                            <div class="space-y-2 mb-4">
-                                {% for message in messages %}
-                                    <div class="rounded-lg p-4 text-sm font-semibold border {% if message.tags == 'success' %}bg-surface text-neon border-neon{% else %}bg-surface text-red-500 border-red-500{% endif %}">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
 
                         <div>
                             <label for="id_nombre" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Nombre Completo</label>
@@ -453,7 +444,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="id_correo" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Correo Corporativo</label>
+                                <label for="id_correo" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Correo</label>
                                 <input type="email" name="correo" id="id_correo" required placeholder="tu@empresa.com" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
                             </div>
                             <div>
@@ -463,8 +454,8 @@
                         </div>
 
                         <div>
-                            <label for="id_mensaje" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Infraestructura de IA (Opcional)</label>
-                            <textarea name="mensaje" id="id_mensaje" placeholder="Cuéntanos sobre tus necesidades actuales de procesamiento o infraestructura de IA" rows="3" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition resize-none"></textarea>
+                            <label for="id_mensaje" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Mensaje (Opcional)</label>
+                            <textarea name="mensaje" id="id_mensaje" placeholder="Cuéntanos sobre tus necesidades actuales" rows="3" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition resize-none"></textarea>
                         </div>
 
                         <!-- Honeypot -->
@@ -493,6 +484,18 @@
                                 formMessage.classList.add('hidden');
                                 formMessage.className = 'rounded-lg p-4 mb-4 text-sm font-semibold border';
                                 
+                                // Validate email first
+                                const emailInput = document.getElementById('id_correo');
+                                const emailValue = emailInput.value.trim();
+                                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                                if (!emailRegex.test(emailValue)) {
+                                    formMessage.classList.remove('hidden');
+                                    formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
+                                    formMessage.innerHTML = 'La dirección de correo electrónico ingresada no posee un formato válido para iniciar comunicación.';
+                                    emailInput.focus();
+                                    return;
+                                }
+
                                 // Set loading state
                                 submitBtn.disabled = true;
                                 submitBtn.innerHTML = 'PROCESANDO REGISTRO...';
@@ -510,12 +513,16 @@
                                     }
                                 })
                                 .then(response => {
-                                    return response.json().then(data => {
-                                        if (!response.ok) {
-                                            throw new Error(data.message || 'Error procesando solicitud.');
-                                        }
-                                        return data;
-                                    });
+                                    return response.json()
+                                        .catch(() => {
+                                            throw new Error('Hubo un error interno. Por favor, intente más tarde.');
+                                        })
+                                        .then(data => {
+                                            if (!response.ok) {
+                                                throw new Error(data.message || 'Hubo un error interno. Por favor, intente más tarde.');
+                                            }
+                                            return data;
+                                        });
                                 })
                                 .then(data => {
                                     formMessage.classList.remove('hidden');
@@ -526,7 +533,12 @@
                                 .catch(error => {
                                     formMessage.classList.remove('hidden');
                                     formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
-                                    formMessage.innerHTML = error.message;
+                                    
+                                    let msg = error.message;
+                                    if (!msg || msg.includes('fetch') || msg.includes('NetworkError') || msg.includes('JSON') || msg.includes('Unexpected token')) {
+                                        msg = 'Hubo un error interno. Por favor, intente más tarde.';
+                                    }
+                                    formMessage.innerHTML = msg;
                                 })
                                 .finally(() => {
                                     submitBtn.disabled = false;

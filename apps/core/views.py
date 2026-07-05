@@ -57,7 +57,6 @@ def contacto_lead(request):
         logger.warning(f"Rate limit exceeded for IP: {ip}")
         if is_ajax:
             return JsonResponse({"success": False, "message": msg}, status=429)
-        messages.error(request, msg)
         return redirect("/#contacto")
 
     # 2. Form Validation
@@ -74,10 +73,9 @@ def contacto_lead(request):
         logger.info(f"Enqueuing async notification task for lead ID: {lead.id}")
         async_task("apps.core.tasks.procesar_nuevo_lead", lead.id)
 
-        msg = "Su solicitud de diagnóstico ha sido registrada con éxito. Un arquitecto se comunicará en menos de 48 horas."
+        msg = "Su solicitud de diagnóstico ha sido registrada con éxito. Nos comunicaremos en menos de 24 horas."
         if is_ajax:
             return JsonResponse({"success": True, "message": msg})
-        messages.success(request, msg)
         return redirect("/#contacto")
     else:
         # Collect errors
@@ -93,5 +91,4 @@ def contacto_lead(request):
             return JsonResponse({"success": False, "message": msg_str}, status=400)
         
         # Standard POST redirect handling
-        messages.error(request, msg_str)
         return redirect("/#contacto")
