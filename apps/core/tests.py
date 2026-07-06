@@ -234,5 +234,5 @@ class ManifestTestCase(TestCase):
         self.assertEqual(data["short_name"], "Sooniverse")
         self.assertTrue(len(data["icons"]) > 0)
         for icon in data["icons"]:
-            self.assertEqual(icon["src"], "")
+            self.assertTrue(icon["src"].startswith("/static/"))
 

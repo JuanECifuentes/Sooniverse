@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.core.cache import cache
 from django.views.decorators.http import require_GET
+from django.templatetags.static import static
 from django_q.tasks import async_task
 
 from .forms import LeadForm
@@ -108,13 +109,13 @@ def manifest(request):
         "theme_color": "#00FF87",
         "orientation": "portrait",
         "icons": [
-            {"src": "static/icons/icon-144x144.png", "sizes": "144x144", "type": "image/png"},
-            {"src": "static/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-            {"src": "static/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+            {"src": static("icons/icon-144x144.png"), "sizes": "144x144", "type": "image/png"},
+            {"src": static("icons/icon-192x192.png"), "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": static("icons/icon-512x512.png"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
         ],
         "screenshots": [
-            {"src": "static/images/Captura_desktop.png", "sizes": "1896x948", "type": "image/png", "form_factor": "wide", "label": "Vista escritorio"},
-            {"src": "static/images/Captura_mobile.png", "sizes": "786x1580", "type": "image/png", "form_factor": "narrow", "label": "Vista móvil"}
+            {"src": static("images/Captura_desktop.png"), "sizes": "1896x948", "type": "image/png", "form_factor": "wide", "label": "Vista escritorio"},
+            {"src": static("images/Captura_mobile.png"), "sizes": "786x1580", "type": "image/png", "form_factor": "narrow", "label": "Vista móvil"}
         ],
     }
     return JsonResponse(data)

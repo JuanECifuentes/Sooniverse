@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags -->
-    <title>Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens</title>
-    <link rel="icon" type="image/png" href="{% static 'logos_v1/favicon_sinfondo.png' %}">
+    <!-- SEO Meta Tags & Site Icons -->
+    <title>Sooniverse | Implementa tu Plataforma Privada de IA - Ahorro en Tokens</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'icons/icon-192x192.png' %}">
     <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
     <link rel="manifest" href="{% url 'core:manifest' %}">
-    <meta name="description" content="Reduce hasta 74% de costos en tokens de API de OpenAI. Implementa tu plataforma privada de inteligencia artificial y despliega modelos open source con total privacidad de datos en Latinoamérica.">
-    <meta name="keywords" content="plataforma privada de IA, cómo reducir costos de API de OpenAI, alternativas a pagar por token en IA, IA privada para empresas, seguridad de datos en inteligencia artificial, modelos open source, GPU dedicada IA, RAG empresarial">
+    <meta name="description" content="Reduce hasta 74% de costos en tokens de API de IA. Implementa tu plataforma privada de inteligencia artificial y despliega modelos open source con total privacidad de datos en Latinoamérica.">
+    <meta name="keywords" content="plataforma privada de IA, cómo reducir costos de API de IA, alternativas a pagar por token en IA, IA privada para empresas, seguridad de datos en inteligencia artificial, modelos open source, GPU dedicada IA, RAG empresarial">
     <meta name="robots" content="index, follow">
     <meta name="last-modified" content="2026-07-02">
     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}/">
@@ -19,7 +19,7 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}/">
-    <meta property="og:title" content="Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens">
+    <meta property="og:title" content="Sooniverse | Implementa tu Plataforma Privada de IA - Ahorro en Tokens">
     <meta property="og:description" content="Reduce hasta 74% de costos en tokens de API. Implementa tu plataforma privada de IA con modelos open source y privacidad absoluta de datos en Latinoamérica.">
     {% if DJANGO_ENV == "production" %}
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'logos_v1/sooniverse_og_cover.png' %}">
@@ -30,7 +30,7 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.scheme }}://{{ request.get_host }}/">
-    <meta property="twitter:title" content="Sooniverse | Plataforma Privada de IA para Empresas - Ahorro en Tokens">
+    <meta property="twitter:title" content="Sooniverse | Implementa tu Plataforma Privada de IA - Ahorro en Tokens">
     <meta property="twitter:description" content="Reduce hasta 74% de costos en tokens de API. Implementa tu plataforma privada de IA con modelos open source y privacidad absoluta de datos en Latinoamérica.">
     {% if DJANGO_ENV == "production" %}
     <meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'logos_v1/sooniverse_og_cover.png' %}">
@@ -51,7 +51,7 @@
           "logo": {
             "@type": "ImageObject",
             "@id": "{{ request.scheme }}://{{ request.get_host }}/#logo",
-            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'logos_v1/favicon_sinfondo.png' %}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'icons/icon-192x192.png' %}",
             "caption": "Sooniverse Logo"
           },
           "contactPoint": {
@@ -1032,10 +1032,11 @@
     <footer class="border-t border-border py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                <a href="#" class="flex flex-col gap-0.5">
-                    <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto" loading="lazy">
-                    <!-- <span class="font-mono text-[9px] font-bold uppercase tracking-brand text-neon">ADVANCED TECH UNIVERSE</span> -->
-                </a>
+                <div class="flex flex-col items-center md:items-start gap-2">
+                    <a href="#" class="flex flex-col gap-0.5">
+                        <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto" loading="lazy">
+                    </a>
+                </div>
                 
                 <!-- Redes Sociales -->
                 <div class="flex items-center gap-3">
@@ -1054,6 +1055,12 @@
                 </div>
                 
                 <div class="flex items-center gap-6 text-sm text-slate">
+                    <a href="mailto:contacto@sooniverse.co" class="text-xs font-mono text-slate hover:text-cyan transition-colors duration-300 flex items-center gap-1.5 mt-1">
+                        <svg class="w-3.5 h-3.5 text-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span>contacto@sooniverse.co</span>
+                    </a>
                     <!-- <a href="#" class="hover:text-white transition">Privacidad</a>
                     <a href="#" class="hover:text-white transition">Terminos</a>
                     <a href="#" class="hover:text-white transition">Status</a> -->
