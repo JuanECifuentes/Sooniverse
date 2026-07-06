@@ -103,7 +103,7 @@ def manifest(request):
         "short_name": "Sooniverse",
         "description": "Servicios de Montaje de Plataformas Privadas de IA",
         "start_url": "/",
-        "display": "standalone",
+        "display": "browser",
         "background_color": "#070A12",
         "theme_color": "#00FF87",
         "orientation": "portrait",
