@@ -1,0 +1,13 @@
+{
+  "name": "sooniverse",
+  "version": "1.0.0",
+  "description": "Sooniverse Platform",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i ./static/css/src/tailwind.css -o ./static/css/dist/tailwind.css --minify",
+    "watch": "npx tailwindcss -i ./static/css/src/tailwind.css -o ./static/css/dist/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
