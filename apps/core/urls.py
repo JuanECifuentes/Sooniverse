@@ -26,5 +26,10 @@ urlpatterns = [
         TemplateView.as_view(template_name="sitemap.xml", content_type="application/xml"),
         name="sitemap_xml",
     ),
+    path(
+        "manifest.json",
+        views.manifest,
+        name="manifest",
+    ),
 ]
 

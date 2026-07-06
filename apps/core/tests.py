@@ -172,11 +172,15 @@ class ContactViewTestCase(TestCase):
         
         # Submit 3 times (limit is 3)
         for i in range(3):
-            response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+            test_data = data.copy()
+            test_data["correo"] = f"jane{i}@company.com"
+            response = self.client.post(url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
             self.assertEqual(response.status_code, 200)
             
         # 4th submission must be blocked with 429
-        response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        test_data = data.copy()
+        test_data["correo"] = "jane4@company.com"
+        response = self.client.post(url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(response.status_code, 429)
         self.assertFalse(response.json()["success"])
         self.assertIn("Límite de solicitudes excedido", response.json()["message"])
@@ -217,3 +221,18 @@ class NotificationsTaskTestCase(TestCase):
         second_call = call_args_list[1]
         self.assertEqual(second_call[1]["to"], ["alice@wonderland.com"])
         self.assertIn("Diagnóstico Tecnológico", second_call[1]["subject"])
+
+
+class ManifestTestCase(TestCase):
+    def test_manifest_success(self):
+        url = reverse("core:manifest")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        data = response.json()
+        self.assertEqual(data["name"], "Sooniverse")
+        self.assertEqual(data["short_name"], "Sooniverse")
+        self.assertTrue(len(data["icons"]) > 0)
+        for icon in data["icons"]:
+            self.assertEqual(icon["src"], "")
+
