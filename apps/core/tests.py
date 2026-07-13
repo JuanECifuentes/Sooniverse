@@ -283,9 +283,9 @@ class QuestionnaireFlowTestCase(TestCase):
 
         prefix = "processes"
         post_data = {
-            "current_providers": ["openai", "anthropic"],
+            "current_providers": ["OPENAI", "ANTHROPIC"],
             "monthly_spend": "12500.00",
-            "traffic_pattern": Questionnaire.TrafficPattern.BATCH_SCHEDULED,
+            "traffic_pattern": Questionnaire.TrafficPattern.ALL_BATCH,
             f"{prefix}-TOTAL_FORMS": "1",
             f"{prefix}-INITIAL_FORMS": "0",
             f"{prefix}-MIN_NUM_FORMS": "0",
@@ -302,7 +302,7 @@ class QuestionnaireFlowTestCase(TestCase):
         q.refresh_from_db()
         self.assertEqual(q.status, Questionnaire.Status.COMPLETED)
         self.assertIsNotNone(q.submitted_at)
-        self.assertEqual(q.current_providers, ["openai", "anthropic"])
+        self.assertEqual(q.current_providers, ["OPENAI", "ANTHROPIC"])
         self.assertEqual(float(q.monthly_spend), 12500.00)
         self.assertEqual(q.processes.count(), 1)
         proc = q.processes.first()

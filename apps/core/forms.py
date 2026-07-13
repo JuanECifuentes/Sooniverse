@@ -8,16 +8,20 @@ from .models import Lead, Questionnaire, ProcessInventory
 
 # Proveedores soportados por el diagnóstico. Mantener sincronizado con la UI.
 PROVIDER_CHOICES = (
-    ("openai", "OpenAI"),
-    ("anthropic", "Anthropic"),
-    ("google", "Google Vertex AI"),
-    ("aws", "AWS Bedrock"),
-    ("azure", "Azure OpenAI"),
-    ("mistral", "Mistral AI"),
-    ("cohere", "Cohere"),
-    ("meta", "Meta Llama"),
-    ("huggingface", "Hugging Face"),
-    ("other", "Otro / On-premise"),
+    ("OPENAI", "OpenAI"),
+    ("ANTHROPIC", "Anthropic"),
+    ("GOOGLE_VERTEX", "Google Vertex AI"),
+    ("AZURE_OPENAI", "Azure OpenAI"),
+    ("DEEPSEEK", "DeepSeek"),
+    ("OTHER", "Otro"),
+)
+
+AI_TASK_CHOICES = (
+    ("EXTRACTION", "Extracción de datos"),
+    ("ATTENTION_RAG", "Atención al cliente / RAG"),
+    ("CODE", "Generación de código"),
+    ("CLASSIFICATION", "Clasificación"),
+    ("EMBEDDINGS", "Embeddings"),
 )
 
 
@@ -163,7 +167,18 @@ class QuestionnaireFinanceForm(forms.ModelForm):
         choices=PROVIDER_CHOICES,
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Proveedores actuales",
+        label="Proveedores actuales de API de IA",
+    )
+    other_provider_name = forms.CharField(
+        required=False,
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Especifica el nombre del proveedor",
+                "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition",
+            }
+        ),
+        label="Nombre del proveedor alternativo",
     )
     monthly_spend = forms.DecimalField(
         required=False,
@@ -183,20 +198,32 @@ class QuestionnaireFinanceForm(forms.ModelForm):
     traffic_pattern = forms.ChoiceField(
         choices=Questionnaire.TrafficPattern.choices,
         required=False,
-        widget=forms.Select(
-            attrs={
-                "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
-            }
-        ),
+        widget=forms.RadioSelect,
         label="Patrón de tráfico predominante",
+    )
+    ai_tasks = forms.MultipleChoiceField(
+        choices=AI_TASK_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Tareas y capacidades de IA que utilizas",
     )
 
     class Meta:
         model = Questionnaire
-        fields = ["current_providers", "monthly_spend", "traffic_pattern"]
+        fields = [
+            "current_providers",
+            "other_provider_name",
+            "monthly_spend",
+            "traffic_pattern",
+            "ai_tasks",
+        ]
 
     def clean_current_providers(self):
         value = self.cleaned_data.get("current_providers", [])
+        return list(value)
+
+    def clean_ai_tasks(self):
+        value = self.cleaned_data.get("ai_tasks", [])
         return list(value)
 
 

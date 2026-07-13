@@ -40,10 +40,17 @@ class Questionnaire(models.Model):
         COMPLETED = "COMPLETED", "Completado"
 
     class TrafficPattern(models.TextChoices):
-        REAL_TIME_CONTINUOUS = "REAL_TIME_CONTINUOUS", "Tiempo real — Cargas continuas"
-        REAL_TIME_BURSTY = "REAL_TIME_BURSTY", "Tiempo real — Tráfico en ráfagas"
-        BATCH_SCHEDULED = "BATCH_SCHEDULED", "Lotes — Ejecuciones programadas"
-        BATCH_ONDEMAND = "BATCH_ONDEMAND", "Lotes — Bajo demanda"
+        ALL_REAL_TIME = "ALL_REAL_TIME", "Todo en Tiempo Real"
+        MOST_REAL_TIME = "MOST_REAL_TIME", "Mayormente en Tiempo Real"
+        MOST_BATCH = "MOST_BATCH", "Mayormente por Lotes"
+        ALL_BATCH = "ALL_BATCH", "Todo por Lotes"
+
+    class AITask(models.TextChoices):
+        EXTRACTION = "EXTRACTION", "Extracción de datos"
+        ATTENTION_RAG = "ATTENTION_RAG", "Atención al cliente / RAG"
+        CODE = "CODE", "Generación de código"
+        CLASSIFICATION = "CLASSIFICATION", "Clasificación"
+        EMBEDDINGS = "EMBEDDINGS", "Embeddings"
 
     id = models.UUIDField(
         primary_key=True,
@@ -64,6 +71,12 @@ class Questionnaire(models.Model):
     # limpio que un M2M: no requiere tabla extra, soporta lista de strings y
     # valida contra un set cerrado de opciones a nivel de formulario.
     current_providers = models.JSONField(default=list, blank=True)
+    other_provider_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Nombre del proveedor alternativo",
+    )
     monthly_spend = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -75,6 +88,11 @@ class Questionnaire(models.Model):
         choices=TrafficPattern.choices,
         blank=True,
         default="",
+    )
+    ai_tasks = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Tareas y capacidades de IA",
     )
     submitted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

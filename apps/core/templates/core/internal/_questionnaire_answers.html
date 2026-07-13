@@ -22,15 +22,28 @@
     </div>
   </div>
 
-  <div>
-    <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan mb-3">Proveedores actuales</h4>
-    {% if questionnaire.current_providers %}
-      <div class="flex flex-wrap gap-2">
-        {% for prov in questionnaire.current_providers %}
-          <span class="inline-flex px-3 py-1 rounded-lg border border-border bg-surface text-xs font-mono uppercase tracking-widest text-neon">{{ prov }}</span>
-        {% endfor %}
-      </div>
-    {% else %}<p class="text-slate text-sm">Sin proveedores registrados.</p>{% endif %}
+  <div class="grid sm:grid-cols-2 gap-6">
+    <div class="card p-5">
+      <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-4">Proveedores actuales</h4>
+      {% if display_providers %}
+        <div class="flex flex-wrap gap-2">
+          {% for prov in display_providers %}
+            <span class="inline-flex px-3 py-1.5 rounded-lg border border-border bg-deep text-xs font-mono uppercase tracking-widest text-neon font-semibold">{{ prov }}</span>
+          {% endfor %}
+        </div>
+      {% else %}<p class="text-slate text-sm">Sin proveedores registrados.</p>{% endif %}
+    </div>
+
+    <div class="card p-5">
+      <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-4">Tareas y capacidades de IA</h4>
+      {% if display_tasks %}
+        <div class="flex flex-wrap gap-2">
+          {% for task in display_tasks %}
+            <span class="inline-flex px-3 py-1.5 rounded-lg border border-border bg-deep text-xs font-mono uppercase tracking-widest text-cyan font-semibold">{{ task }}</span>
+          {% endfor %}
+        </div>
+      {% else %}<p class="text-slate text-sm">Sin tareas registradas.</p>{% endif %}
+    </div>
   </div>
 
   <div>

@@ -300,6 +300,19 @@ def questionnaire_answers_partial(request, questionnaire_id):
         }
         for p in processes
     ]
+    from apps.core.forms import PROVIDER_CHOICES, AI_TASK_CHOICES
+    provider_map = dict(PROVIDER_CHOICES)
+    task_map = dict(AI_TASK_CHOICES)
+
+    display_providers = []
+    for p in questionnaire.current_providers:
+        name = provider_map.get(p, p)
+        if p == "OTHER" and questionnaire.other_provider_name:
+            name = f"Otro ({questionnaire.other_provider_name})"
+        display_providers.append(name)
+
+    display_tasks = [task_map.get(t, t) for t in questionnaire.ai_tasks]
+
     return render(
         request,
         "core/internal/_questionnaire_answers.html",
@@ -307,6 +320,8 @@ def questionnaire_answers_partial(request, questionnaire_id):
             "questionnaire": questionnaire,
             "processes": processes,
             "processes_json": processes_json,
+            "display_providers": display_providers,
+            "display_tasks": display_tasks,
         },
     )
 
@@ -367,8 +382,10 @@ def public_questionnaire(request, questionnaire_id):
                         "submitted_at",
                         "updated_at",
                         "current_providers",
+                        "other_provider_name",
                         "monthly_spend",
                         "traffic_pattern",
+                        "ai_tasks",
                     ]
                 )
 
@@ -413,5 +430,6 @@ def _render_questionnaire(
             "formset": formset,
             "readonly": readonly,
             "just_submitted": just_submitted,
+            "empresa_nombre": questionnaire.lead.empresa,
         },
     )
