@@ -348,3 +348,35 @@ class QuestionnaireFlowTestCase(TestCase):
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(Lead.objects.filter(correo="manual@acme.io").count(), 1)
         mock_async.assert_not_called()
+
+
+class AuthenticationTests(TestCase):
+    def test_login_required_redirects(self):
+        # Accessing protected view redirects to login URL
+        url = reverse("core:internal_leads")
+        response = self.client.get(url)
+        # It should redirect with the next parameter
+        self.assertRedirects(response, f"/accounts/login/?next={url}")
+
+    def test_login_page_renders(self):
+        # Access login page directly
+        url = reverse("core:login")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/login.html")
+        self.assertContains(response, "Sooni")
+        self.assertContains(response, "verse")
+        self.assertContains(response, "ADVANCED TECH UNIVERSE")
+
+    def test_login_success_redirects_to_internal_leads(self):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        User.objects.create_user("testuser", "test@sooniverse.com", "password123")
+        
+        url = reverse("core:login")
+        response = self.client.post(url, {
+            "username": "testuser",
+            "password": "password123"
+        })
+        self.assertRedirects(response, reverse("core:internal_leads"))
+
