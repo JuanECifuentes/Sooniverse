@@ -1,5 +1,6 @@
-"""URL routes for the core app (Landing Page is fully public)."""
+"""URL routes for the core app."""
 
+from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic import TemplateView
 
@@ -8,10 +9,10 @@ from . import views
 app_name = "core"
 
 urlpatterns = [
+    # Public landing / contact
     path("", views.landing, name="landing"),
     path("contacto/", views.contacto_lead, name="contacto"),
     path(
-
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_txt",
@@ -23,13 +24,49 @@ urlpatterns = [
     ),
     path(
         "sitemap.xml",
-        TemplateView.as_view(template_name="sitemap.xml", content_type="application/xml"),
+        TemplateView.as_view(
+            template_name="sitemap.xml", content_type="application/xml"
+        ),
         name="sitemap_xml",
     ),
+    path("manifest.json", views.manifest, name="manifest"),
+    # Public diagnostic questionnaire
     path(
-        "manifest.json",
-        views.manifest,
-        name="manifest",
+        "diagnostico/cuestionario/<uuid:questionnaire_id>/",
+        views.public_questionnaire,
+        name="public_questionnaire",
+    ),
+    # Internal Lead CRUD + questionnaire management (staff only)
+    path("interno/leads/", views.internal_leads_dashboard, name="internal_leads"),
+    path(
+        "interno/leads/estado/actualizar/",
+        views.lead_update_status,
+        name="lead_update_status",
+    ),
+    path(
+        "interno/leads/<int:lead_pk>/cuestionarios/",
+        views.questionnaire_modal_partial,
+        name="questionnaire_modal",
+    ),
+    path(
+        "interno/leads/<int:lead_pk>/cuestionarios/crear/",
+        views.questionnaire_create,
+        name="questionnaire_create",
+    ),
+    path(
+        "interno/cuestionarios/<uuid:questionnaire_id>/respuestas/",
+        views.questionnaire_answers_partial,
+        name="questionnaire_answers",
+    ),
+    # Authentication
+    path(
+        "accounts/login/",
+        auth_views.LoginView.as_view(template_name="registration/login.html"),
+        name="login",
+    ),
+    path(
+        "accounts/logout/",
+        auth_views.LogoutView.as_view(),
+        name="logout",
     ),
 ]
-

@@ -1,0 +1,64 @@
+{# Read-only snapshot of a COMPLETED questionnaire rendered into a sub-modal. #}
+<div class="space-y-6">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="font-mono text-xs text-cyan break-all">{{ questionnaire.id }}</span>
+    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest bg-neon/10 text-neon">Completado</span>
+    {% if questionnaire.submitted_at %}<span class="font-mono text-[10px] text-slate">Enviado: {{ questionnaire.submitted_at|date:"Y-m-d H:i" }}</span>{% endif %}
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-4">
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Lead</div>
+      <div class="mt-1 text-white font-semibold">{{ questionnaire.lead.nombre }}</div>
+      <div class="text-xs text-slate">{{ questionnaire.lead.empresa }} · {{ questionnaire.lead.correo }}</div>
+    </div>
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Gasto mensual (USD)</div>
+      <div class="mt-1 text-neon font-mono text-lg">{% if questionnaire.monthly_spend %}${{ questionnaire.monthly_spend|floatformat:2 }}{% else %}—{% endif %}</div>
+    </div>
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Patrón de tráfico</div>
+      <div class="mt-1 text-white text-sm">{% if questionnaire.traffic_pattern %}{{ questionnaire.get_traffic_pattern_display }}{% else %}—{% endif %}</div>
+    </div>
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-6">
+    <div class="card p-5">
+      <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-4">Proveedores actuales</h4>
+      {% if display_providers %}
+        <div class="flex flex-wrap gap-2">
+          {% for prov in display_providers %}
+            <span class="inline-flex px-3 py-1.5 rounded-lg border border-border bg-deep text-xs font-mono uppercase tracking-widest text-neon font-semibold">{{ prov }}</span>
+          {% endfor %}
+        </div>
+      {% else %}<p class="text-slate text-sm">Sin proveedores registrados.</p>{% endif %}
+    </div>
+
+    <div class="card p-5">
+      <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-4">Tareas y capacidades de IA</h4>
+      {% if display_tasks %}
+        <div class="flex flex-wrap gap-2">
+          {% for task in display_tasks %}
+            <span class="inline-flex px-3 py-1.5 rounded-lg border border-border bg-deep text-xs font-mono uppercase tracking-widest text-cyan font-semibold">{{ task }}</span>
+          {% endfor %}
+        </div>
+      {% else %}<p class="text-slate text-sm">Sin tareas registradas.</p>{% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan">Inventario de procesos</h4>
+      <button type="button" onclick="exportProcessInventoryCsv()"
+              class="btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wide inline-flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Exportar a Excel
+      </button>
+    </div>
+    <div class="card p-1 overflow-hidden">
+      <div id="process-inventory-grid" class="ag-theme-alpine-dark w-full" style="height: 360px;"></div>
+    </div>
+  </div>
+</div>
+
+{{ processes_json|json_script:"process-inventory-data" }}

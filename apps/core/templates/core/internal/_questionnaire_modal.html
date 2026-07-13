@@ -1,0 +1,47 @@
+{# Partial for the "Gestionar Cuestionarios" modal body. Loaded via AJAX. #}
+<p class="font-mono text-[10px] uppercase tracking-widest text-slate">{{ lead.nombre }} · {{ lead.empresa }}</p>
+
+{% if questionnaires %}
+  <ul class="space-y-3">
+    {% for q in questionnaires %}
+      <li class="card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-mono text-xs text-cyan break-all">{{ q.id }}</span>
+            <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest
+              {% if q.status == 'COMPLETED' %}bg-neon/10 text-neon{% else %}bg-slate/10 text-slate border border-border{% endif %}">
+              {{ q.get_status_display }}
+            </span>
+            <span class="font-mono text-[10px] text-slate">{{ q.created_at|date:"Y-m-d H:i" }}</span>
+          </div>
+          <div class="mt-2">
+            <code class="block font-mono text-[11px] text-white truncate">{{ q.public_url }}</code>
+          </div>
+        </div>
+
+        <div class="shrink-0 flex items-center gap-2">
+          <button onclick="copyUrl('{{ q.public_url }}', this)"
+                  class="btn-secondary px-3 py-2 rounded-lg text-[11px] font-bold text-white uppercase tracking-wide whitespace-nowrap">
+            Copiar
+          </button>
+          {% if q.status == 'COMPLETED' %}
+            <button onclick="viewAnswers('{{ q.id }}')"
+                    class="btn-primary px-3.5 py-2 rounded-lg text-[11px] font-bold text-deep uppercase tracking-wide whitespace-nowrap">
+              Ver Respuestas
+            </button>
+          {% else %}
+            <a href="{{ q.public_url }}" target="_blank" rel="noopener"
+               class="btn-secondary inline-block px-3.5 py-2 rounded-lg text-[11px] font-bold text-white uppercase tracking-wide whitespace-nowrap">
+              Abrir
+            </a>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="card p-6 text-center">
+    <p class="font-mono text-xs uppercase tracking-widest text-slate">Este lead aún no tiene cuestionarios.</p>
+    <p class="text-slate text-sm mt-2">Pulsa <span class="text-neon font-semibold">Generar Nuevo Link</span> para crear uno.</p>
+  </div>
+{% endif %}

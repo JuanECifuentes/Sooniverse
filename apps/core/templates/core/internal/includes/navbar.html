@@ -1,0 +1,17 @@
+<header class="border-b border-border bg-surface/80 backdrop-blur-xl sticky top-0 z-30 shrink-0">
+  <div class="mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="font-extrabold text-xl tracking-tight select-none">
+        <span class="text-white">Sooni</span><span class="text-cosmic">verse</span>
+      </span>
+      <span class="font-mono text-[10px] uppercase tracking-brand text-neon border-l border-border pl-3">Internal CRM</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/admin/" class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Admin Django</a>
+      <form method="post" action="{% url 'core:logout' %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary px-4 py-2 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">Cerrar Sesión</button>
+      </form>
+    </div>
+  </div>
+</header>

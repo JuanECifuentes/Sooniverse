@@ -228,6 +228,14 @@ RATE_LIMIT_WINDOW = env.int("RATE_LIMIT_WINDOW", default=600)  # default 10 minu
 
 
 # ──────────────────────────────────────────────
+# Authentication Redirections
+# ──────────────────────────────────────────────
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "core:internal_leads"
+LOGOUT_REDIRECT_URL = "core:landing"
+
+
+# ──────────────────────────────────────────────
 # Active environment banner
 # ──────────────────────────────────────────────
 if DJANGO_ENV == "production":

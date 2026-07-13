@@ -1,0 +1,23 @@
+Tipo de instancia,Familia de instancias,GPU,Precios de Linux bajo demanda USD por hora,Tipo de GPU,VRAM por GPU,Velocidad (tokens/s Modelo 8B),Capacidad Pico Inferencia (TFLOPS),Rendimiento por Inferencia (TFLOPS/USD)
+g5g.xlarge,g5g,1,0.42,T4G,16,18.75,65,154.76
+g4dn.xlarge,g4dn,1,0.526,T4,16,18.75,65,123.57
+g6.xlarge,g6,1,0.8048,L4,24,18.75,121,150.35
+g5.xlarge,g5,1,1.006,A10G,24,37.5,125,124.25
+gr6.4xlarge,gr6,1,1.5392,L4,24,18.75,121,78.61
+g6e.xlarge,g6e,1,1.861,L40S,48,54,362,194.52
+g7.2xlarge,g7,1,2.52,RTX PRO 4500,32,27,317,125.79
+g5g.16xlarge,g5g,2,2.744,T4G,16,37.5,130,47.38
+g7e.2xlarge,g7e,1,3.36312,RTX PRO 6000,96,93.75,1800,535.22
+g4dn.12xlarge,g4dn,4,3.912,T4,16,75,260,66.46
+g6.12xlarge,g6,4,4.6016,L4,24,75,484,105.18
+g5.12xlarge,g5,4,5.672,A10G,24,150,500,88.15
+p5.4xlarge,p5,1,6.88,H100,80,209.38,1000,145.35
+g7.12xlarge,g7,2,7.12832,RTX PRO 4500,32,54,634,88.94
+g4dn.metal,g4dn,8,7.824,T4,16,150,520,66.46
+g7e.12xlarge,g7e,2,8.28608,RTX PRO 6000,96,187.5,3600,434.46
+g6e.12xlarge,g6e,4,10.49264,L40S,48,216,1448,138
+g6.48xlarge,g6,8,13.3504,L4,24,150,968,72.51
+g7.24xlarge,g7,4,14.25664,RTX PRO 4500,32,108,1268,88.94
+g5.48xlarge,g5,8,16.288,A10G,24,300,1000,61.39
+g7e.24xlarge,g7e,4,16.57216,RTX PRO 6000,96,375,7200,434.46
+p4d.24xlarge,p4d,8,21.957642,A100,40,777.5,2496,113.67
