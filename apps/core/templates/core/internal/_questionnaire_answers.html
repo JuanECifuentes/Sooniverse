@@ -1,0 +1,72 @@
+{# Read-only snapshot of a COMPLETED questionnaire rendered into a sub-modal. #}
+<div class="space-y-6">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="font-mono text-xs text-cyan break-all">{{ questionnaire.id }}</span>
+    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest bg-neon/10 text-neon">Completado</span>
+    {% if questionnaire.submitted_at %}<span class="font-mono text-[10px] text-slate">Enviado: {{ questionnaire.submitted_at|date:"Y-m-d H:i" }}</span>{% endif %}
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-4">
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Lead</div>
+      <div class="mt-1 text-white font-semibold">{{ questionnaire.lead.nombre }}</div>
+      <div class="text-xs text-slate">{{ questionnaire.lead.empresa }} · {{ questionnaire.lead.correo }}</div>
+    </div>
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Gasto mensual (USD)</div>
+      <div class="mt-1 text-neon font-mono text-lg">{% if questionnaire.monthly_spend %}${{ questionnaire.monthly_spend|floatformat:2 }}{% else %}—{% endif %}</div>
+    </div>
+    <div class="card p-4">
+      <div class="font-mono text-[10px] uppercase tracking-widest text-slate">Patrón de tráfico</div>
+      <div class="mt-1 text-white text-sm">{% if questionnaire.traffic_pattern %}{{ questionnaire.get_traffic_pattern_display }}{% else %}—{% endif %}</div>
+    </div>
+  </div>
+
+  <div>
+    <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan mb-3">Proveedores actuales</h4>
+    {% if questionnaire.current_providers %}
+      <div class="flex flex-wrap gap-2">
+        {% for prov in questionnaire.current_providers %}
+          <span class="inline-flex px-3 py-1 rounded-lg border border-border bg-surface text-xs font-mono uppercase tracking-widest text-neon">{{ prov }}</span>
+        {% endfor %}
+      </div>
+    {% else %}<p class="text-slate text-sm">Sin proveedores registrados.</p>{% endif %}
+  </div>
+
+  <div>
+    <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan mb-3">Inventario de procesos</h4>
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-surface/80 text-slate font-mono text-[10px] uppercase tracking-widest">
+          <tr class="border-b border-border text-left">
+            <th class="px-4 py-2">Proceso</th>
+            <th class="px-4 py-2">Tipo</th>
+            <th class="px-4 py-2 text-right">Tokens in</th>
+            <th class="px-4 py-2 text-right">Tokens out</th>
+            <th class="px-4 py-2 text-right">Concurrencia</th>
+            <th class="px-4 py-2 text-right">Ejec./mes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in processes %}
+            <tr class="border-b border-border/60">
+              <td class="px-4 py-2 text-white font-semibold">{{ p.name }}</td>
+              <td class="px-4 py-2">
+                <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest
+                  {% if p.execution_type == 'REAL_TIME' %}bg-cyan/10 text-cyan{% else %}bg-violet/20 text-violet{% endif %}">
+                  {{ p.get_execution_type_display }}
+                </span>
+              </td>
+              <td class="px-4 py-2 text-right font-mono text-slate">{{ p.input_tokens|default:0 }}</td>
+              <td class="px-4 py-2 text-right font-mono text-slate">{{ p.output_tokens|default:0 }}</td>
+              <td class="px-4 py-2 text-right font-mono text-slate">{% if p.peak_concurrency is not None %}{{ p.peak_concurrency }}{% else %}—{% endif %}</td>
+              <td class="px-4 py-2 text-right font-mono text-slate">{% if p.monthly_executions is not None %}{{ p.monthly_executions }}{% else %}—{% endif %}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-slate text-center py-6 font-mono text-xs uppercase tracking-widest">Sin procesos registrados</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

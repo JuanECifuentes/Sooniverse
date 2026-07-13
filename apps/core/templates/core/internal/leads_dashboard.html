@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leads · Sooniverse Interno</title>
+<link href="{% static 'css/dist/tailwind.css' %}" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; background-color: #070A12; color: #FFFFFF; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .glow-dot { filter: drop-shadow(0 0 6px rgba(0,255,135,0.7)); }
+  .glow-cyan { filter: drop-shadow(0 0 12px rgba(96,239,255,0.6)); }
+  .btn-primary { background-image: linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%); transition: all .3s ease; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(96,239,255,.35); }
+  .btn-secondary { border:1.5px solid #60EFFF; transition: all .3s ease; }
+  .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(96,239,255,.45); }
+  .card { background-color: #0F172A; border:1px solid #1E293B; border-radius:12px; }
+  table.leads td, table.leads th { padding: .75rem 1rem; }
+</style>
+</head>
+<body class="min-h-screen bg-deep text-white antialiased">
+
+<header class="border-b border-border bg-surface/80 backdrop-blur-xl sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="font-extrabold text-xl tracking-tight"><span class="text-white">Sooni</span><span class="bg-cosmic-gradient bg-clip-text text-transparent">verse</span></span>
+      <span class="font-mono text-[10px] uppercase tracking-brand text-neon border-l border-border pl-3">Internal CRM</span>
+    </div>
+    <a href="/admin/" class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Admin Django</a>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+
+  {% if messages %}
+    <div class="mb-6 space-y-2">
+      {% for m in messages %}
+        <div class="card px-4 py-3 text-sm {% if m.tags == 'error' %}border-cyan text-cyan{% else %}border-neon/40 text-neon{% endif %} font-mono">{{ m }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <section class="grid lg:grid-cols-3 gap-6 mb-10">
+    <div class="lg:col-span-1">
+      <h2 class="text-2xl font-bold tracking-tight text-white">Crear Lead interno</h2>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-slate mt-1">Correos automáticos silenciados</p>
+      <form method="post" action="{% url 'core:internal_leads' %}" class="card p-6 mt-4 space-y-4">
+        {% csrf_token %}
+        {% for field in form %}
+          <div>
+            <label class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-1.5">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<p class="text-xs text-cyan mt-1">{{ field.errors|join:" // " }}</p>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Crear Lead (sin correo)</button>
+      </form>
+    </div>
+
+    <div class="lg:col-span-2">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-2xl font-bold tracking-tight text-white">Leads registrados</h2>
+        <span class="font-mono text-[11px] uppercase tracking-widest text-slate">{{ leads|length }} registros</span>
+      </div>
+
+      <div class="card overflow-hidden">
+        <table class="leads w-full text-sm">
+          <thead class="bg-surface/80 text-slate font-mono text-[10px] uppercase tracking-widest">
+            <tr class="border-b border-border text-left">
+              <th>Lead</th>
+              <th>Empresa</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lead in leads %}
+              <tr class="border-b border-border/60 hover:bg-surface/60 transition">
+                <td>
+                  <div class="font-semibold text-white">{{ lead.nombre }}</div>
+                  <div class="text-xs text-slate">{{ lead.correo }}</div>
+                </td>
+                <td class="text-slate">{{ lead.empresa }}</td>
+                <td>
+                  <span class="inline-flex px-2 py-1 rounded text-[10px] font-mono uppercase tracking-widest
+                    {% if lead.estado == 'nuevo' %}bg-neon/10 text-neon
+                    {% elif lead.estado == 'cerrado' %}bg-violet/20 text-violet
+                    {% else %}bg-cyan/10 text-cyan{% endif %}">{{ lead.get_estado_display }}</span>
+                </td>
+                <td class="text-slate font-mono text-xs">{{ lead.creado_en|date:"Y-m-d H:i" }}</td>
+                <td class="text-right">
+                  <button type="button"
+                          data-lead-pk="{{ lead.pk }}"
+                          onclick="openQuestionnairesModal({{ lead.pk }})"
+                          class="btn-secondary px-3 py-1.5 rounded-lg text-[11px] font-bold text-white uppercase tracking-wide">
+                    Gestionar Cuestionarios
+                  </button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-slate text-center py-10 font-mono text-xs uppercase tracking-widest">Sin leads aún</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ───────────── MODAL: Gestionar Cuestionarios ───────────── -->
+<div id="q-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeQuestionnairesModal()"></div>
+  <div class="relative card w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
+      <div>
+        <h3 class="text-lg font-bold text-white">Cuestionarios del Lead</h3>
+        <p id="q-modal-lead-name" class="font-mono text-[10px] uppercase tracking-widest text-slate mt-0.5"></p>
+      </div>
+      <button onclick="closeQuestionnairesModal()" class="text-slate hover:text-white transition text-2xl leading-none">&times;</button>
+    </div>
+    <div id="q-modal-body" class="overflow-y-auto p-6 space-y-4">
+      <p class="text-slate font-mono text-xs">Cargando…</p>
+    </div>
+    <div class="px-6 py-4 border-t border-border bg-surface/80 flex justify-between items-center">
+      <button id="q-create-btn" onclick="generateNewQuestionnaire()"
+              class="btn-primary px-4 py-2.5 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">Generar Nuevo Link de Cuestionario</button>
+      <button onclick="closeQuestionnairesModal()" class="btn-secondary px-4 py-2.5 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────── SUB-MODAL: Ver Respuestas ───────────── -->
+<div id="a-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeAnswersModal()"></div>
+  <div class="relative card w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
+      <h3 class="text-lg font-bold text-white">Respuestas del cuestionario</h3>
+      <button onclick="closeAnswersModal()" class="text-slate hover:text-white transition text-2xl leading-none">&times;</button>
+    </div>
+    <div id="a-modal-body" class="overflow-y-auto p-6 space-y-6"><p class="text-slate font-mono text-xs">Cargando…</p></div>
+  </div>
+</div>
+
+<script>
+  let currentLeadPk = null;
+
+  function openQuestionnairesModal(leadPk) {
+    currentLeadPk = leadPk;
+    document.getElementById('q-modal').classList.remove('hidden');
+    const body = document.getElementById('q-modal-body');
+    body.innerHTML = '<p class="text-slate font-mono text-xs">Cargando…</p>';
+    fetch(`/interno/leads/${leadPk}/cuestionarios/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(r => r.text())
+      .then(html => { body.innerHTML = html; })
+      .catch(() => { body.innerHTML = '<p class="text-cyan font-mono text-xs">Error al cargar los cuestionarios.</p>'; });
+    document.getElementById('q-create-btn').disabled = false;
+  }
+
+  function closeQuestionnairesModal() {
+    document.getElementById('q-modal').classList.add('hidden');
+    currentLeadPk = null;
+  }
+
+  function generateNewQuestionnaire() {
+    const btn = document.getElementById('q-create-btn');
+    if (!currentLeadPk) return;
+    btn.disabled = true;
+    fetch(`/interno/leads/${currentLeadPk}/cuestionarios/crear/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '' }
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) throw new Error('No se pudo crear el link.');
+        // Re-render the list
+        return fetch(`/interno/leads/${currentLeadPk}/cuestionarios/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+          .then(r => r.text())
+          .then(html => {
+            document.getElementById('q-modal-body').innerHTML = html;
+            // Auto-copy new URL
+            if (navigator.clipboard && data.public_url) {
+              navigator.clipboard.writeText(data.public_url).catch(() => {});
+            }
+          });
+      })
+      .catch(err => { alert(err.message); })
+      .finally(() => { btn.disabled = false; });
+  }
+
+  function copyUrl(url, btn) {
+    navigator.clipboard.writeText(url).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copiado ✓';
+      setTimeout(() => { btn.textContent = old; }, 1500);
+    });
+  }
+
+  function viewAnswers(uuid) {
+    document.getElementById('a-modal').classList.remove('hidden');
+    const body = document.getElementById('a-modal-body');
+    body.innerHTML = '<p class="text-slate font-mono text-xs">Cargando…</p>';
+    fetch(`/interno/cuestionarios/${uuid}/respuestas/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(r => r.text())
+      .then(html => { body.innerHTML = html; })
+      .catch(() => { body.innerHTML = '<p class="text-cyan font-mono text-xs">Error al cargar respuestas.</p>'; });
+  }
+
+  function closeAnswersModal() { document.getElementById('a-modal').classList.add('hidden'); }
+</script>
+</body>
+</html>
