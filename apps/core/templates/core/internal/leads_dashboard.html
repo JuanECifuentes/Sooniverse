@@ -1,41 +1,88 @@
+{% extends "core/base_internal.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es" class="dark">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leads · Sooniverse Interno</title>
-<link href="{% static 'css/dist/tailwind.css' %}" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{% block title %}Leads · Sooniverse Interno{% endblock %}
+{% block meta_description %}Gestión interna de leads de Sooniverse.{% endblock %}
+
+{% block extra_head %}
 <style>
-  body { font-family: 'Inter', system-ui, sans-serif; background-color: #070A12; color: #FFFFFF; }
-  .font-mono { font-family: 'JetBrains Mono', monospace; }
-  .glow-dot { filter: drop-shadow(0 0 6px rgba(0,255,135,0.7)); }
-  .glow-cyan { filter: drop-shadow(0 0 12px rgba(96,239,255,0.6)); }
-  .btn-primary { background-image: linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%); transition: all .3s ease; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(96,239,255,.35); }
-  .btn-secondary { border:1.5px solid #60EFFF; transition: all .3s ease; }
-  .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(96,239,255,.45); }
-  .card { background-color: #0F172A; border:1px solid #1E293B; border-radius:12px; }
-  table.leads td, table.leads th { padding: .75rem 1rem; }
+  /* Custom overrides to style ag-Grid alpine-dark to match Manual_de_imagen_sooniverse.md */
+  .ag-theme-alpine-dark {
+    --ag-background-color: #0F172A; /* Cyber Surface */
+    --ag-header-background-color: #0F172A;
+    --ag-odd-row-background-color: #0F172A;
+    --ag-border-color: #1E293B;
+    --ag-row-border-color: #1E293B;
+    --ag-foreground-color: #FFFFFF;
+    --ag-secondary-foreground-color: #94A3B8;
+    --ag-font-family: 'Inter', system-ui, sans-serif;
+    --ag-active-color: #00FF87; /* Neon Green */
+    --ag-selected-row-background-color: rgba(96, 239, 255, 0.08); /* Electric Cyan tint */
+    --ag-input-focus-border-color: #60EFFF; /* Electric Cyan */
+    --ag-range-selection-border-color: #60EFFF;
+    --ag-font-size: 13px;
+    border: 1px solid #1E293B !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+
+  .ag-theme-alpine-dark .ag-header {
+    border-bottom: 1px solid #1E293B;
+  }
+
+  .ag-theme-alpine-dark .ag-header-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #94A3B8 !important;
+  }
+
+  .ag-theme-alpine-dark .ag-row {
+    border-bottom: 1px solid #1E293B;
+    transition: background-color 0.2s ease;
+  }
+
+  .ag-theme-alpine-dark .ag-row-hover {
+    background-color: rgba(96, 239, 255, 0.04) !important;
+  }
+
+  .ag-theme-alpine-dark .ag-paging-panel {
+    border-top: 1px solid #1E293B !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #94A3B8;
+  }
+
+  .ag-theme-alpine-dark .ag-paging-button {
+    color: #94A3B8;
+    transition: color 0.2s ease;
+  }
+
+  .ag-theme-alpine-dark .ag-paging-button:hover {
+    color: #60EFFF;
+  }
+
+  /* Remove default border of grid container since the card already handles it */
+  .card .ag-theme-alpine-dark {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Force normal line height and vertical flex layout on all ag-Grid cells */
+  .ag-theme-alpine-dark .ag-cell {
+    display: flex;
+    align-items: center;
+    line-height: normal !important;
+  }
 </style>
-</head>
-<body class="min-h-screen bg-deep text-white antialiased">
+{% endblock %}
 
-<header class="border-b border-border bg-surface/80 backdrop-blur-xl sticky top-0 z-30">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <span class="font-extrabold text-xl tracking-tight"><span class="text-white">Sooni</span><span class="bg-cosmic-gradient bg-clip-text text-transparent">verse</span></span>
-      <span class="font-mono text-[10px] uppercase tracking-brand text-neon border-l border-border pl-3">Internal CRM</span>
-    </div>
-    <a href="/admin/" class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Admin Django</a>
-  </div>
-</header>
+{% block content %}
+{% csrf_token %}
 
-<main class="max-w-7xl mx-auto px-6 py-10">
-
+<div class="max-w-7xl mx-auto">
   {% if messages %}
     <div class="mb-6 space-y-2">
       {% for m in messages %}
@@ -44,11 +91,39 @@
     </div>
   {% endif %}
 
-  <section class="grid lg:grid-cols-3 gap-6 mb-10">
-    <div class="lg:col-span-1">
-      <h2 class="text-2xl font-bold tracking-tight text-white">Crear Lead interno</h2>
-      <p class="font-mono text-[11px] uppercase tracking-widest text-slate mt-1">Correos automáticos silenciados</p>
-      <form method="post" action="{% url 'core:internal_leads' %}" class="card p-6 mt-4 space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-white">Leads registrados</h1>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-slate mt-1">Módulo de gestión de prospectos</p>
+    </div>
+    <button type="button" onclick="openCreateLeadModal()"
+            class="btn-primary px-6 py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide inline-flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+      Crear Lead
+    </button>
+  </div>
+
+  <div class="card p-1 overflow-hidden">
+    <div id="leads-grid" class="ag-theme-alpine-dark w-full" style="height: 640px;"></div>
+  </div>
+</div>
+
+<!-- ───────────── MODAL: Crear Lead Interno ───────────── -->
+<div id="create-lead-modal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeCreateLeadModal()"></div>
+  <div class="relative card w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
+      <div class="flex items-center gap-2">
+        <h3 class="text-lg font-bold text-white">Crear Lead</h3>
+        <span class="has-tooltip text-slate hover:text-cyan transition cursor-help">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a6 6 0 100-12 6 6 0 000 12z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v4"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.5h.01"/></svg>
+          <span class="tooltip">Los correos automáticos están silenciados para leads creados internamente.</span>
+        </span>
+      </div>
+      <button onclick="closeCreateLeadModal()" class="text-slate hover:text-white transition text-2xl leading-none">&times;</button>
+    </div>
+    <div class="overflow-y-auto p-6">
+      <form id="create-lead-form" method="post" action="{% url 'core:internal_leads' %}" class="space-y-4">
         {% csrf_token %}
         {% for field in form %}
           <div>
@@ -57,65 +132,16 @@
             {% if field.errors %}<p class="text-xs text-cyan mt-1">{{ field.errors|join:" // " }}</p>{% endif %}
           </div>
         {% endfor %}
-        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Crear Lead (sin correo)</button>
+        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Crear Lead</button>
       </form>
     </div>
-
-    <div class="lg:col-span-2">
-      <div class="flex items-baseline justify-between mb-4">
-        <h2 class="text-2xl font-bold tracking-tight text-white">Leads registrados</h2>
-        <span class="font-mono text-[11px] uppercase tracking-widest text-slate">{{ leads|length }} registros</span>
-      </div>
-
-      <div class="card overflow-hidden">
-        <table class="leads w-full text-sm">
-          <thead class="bg-surface/80 text-slate font-mono text-[10px] uppercase tracking-widest">
-            <tr class="border-b border-border text-left">
-              <th>Lead</th>
-              <th>Empresa</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th class="text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for lead in leads %}
-              <tr class="border-b border-border/60 hover:bg-surface/60 transition">
-                <td>
-                  <div class="font-semibold text-white">{{ lead.nombre }}</div>
-                  <div class="text-xs text-slate">{{ lead.correo }}</div>
-                </td>
-                <td class="text-slate">{{ lead.empresa }}</td>
-                <td>
-                  <span class="inline-flex px-2 py-1 rounded text-[10px] font-mono uppercase tracking-widest
-                    {% if lead.estado == 'nuevo' %}bg-neon/10 text-neon
-                    {% elif lead.estado == 'cerrado' %}bg-violet/20 text-violet
-                    {% else %}bg-cyan/10 text-cyan{% endif %}">{{ lead.get_estado_display }}</span>
-                </td>
-                <td class="text-slate font-mono text-xs">{{ lead.creado_en|date:"Y-m-d H:i" }}</td>
-                <td class="text-right">
-                  <button type="button"
-                          data-lead-pk="{{ lead.pk }}"
-                          onclick="openQuestionnairesModal({{ lead.pk }})"
-                          class="btn-secondary px-3 py-1.5 rounded-lg text-[11px] font-bold text-white uppercase tracking-wide">
-                    Gestionar Cuestionarios
-                  </button>
-                </td>
-              </tr>
-            {% empty %}
-              <tr><td colspan="5" class="text-slate text-center py-10 font-mono text-xs uppercase tracking-widest">Sin leads aún</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-</main>
+  </div>
+</div>
 
 <!-- ───────────── MODAL: Gestionar Cuestionarios ───────────── -->
 <div id="q-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeQuestionnairesModal()"></div>
-  <div class="relative card w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+  <div class="relative card w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
     <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
       <div>
         <h3 class="text-lg font-bold text-white">Cuestionarios del Lead</h3>
@@ -126,7 +152,7 @@
     <div id="q-modal-body" class="overflow-y-auto p-6 space-y-4">
       <p class="text-slate font-mono text-xs">Cargando…</p>
     </div>
-    <div class="px-6 py-4 border-t border-border bg-surface/80 flex justify-between items-center">
+    <div class="px-6 py-4 border-t border-border bg-surface/80 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
       <button id="q-create-btn" onclick="generateNewQuestionnaire()"
               class="btn-primary px-4 py-2.5 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">Generar Nuevo Link de Cuestionario</button>
       <button onclick="closeQuestionnairesModal()" class="btn-secondary px-4 py-2.5 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Cerrar</button>
@@ -137,7 +163,7 @@
 <!-- ───────────── SUB-MODAL: Ver Respuestas ───────────── -->
 <div id="a-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeAnswersModal()"></div>
-  <div class="relative card w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+  <div class="relative card w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
     <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
       <h3 class="text-lg font-bold text-white">Respuestas del cuestionario</h3>
       <button onclick="closeAnswersModal()" class="text-slate hover:text-white transition text-2xl leading-none">&times;</button>
@@ -145,8 +171,156 @@
     <div id="a-modal-body" class="overflow-y-auto p-6 space-y-6"><p class="text-slate font-mono text-xs">Cargando…</p></div>
   </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
+{{ leads_json|json_script:"leads-data" }}
 <script>
+  window.LEADS_DATA = JSON.parse(document.getElementById('leads-data').textContent);
+  window.LEAD_UPDATE_URL = "{% url 'core:lead_update_status' %}";
+
+  function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+  }
+
+  // ── State select cell renderer ───────────────────────────────────────────
+  function stateCellRenderer(params) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex items-center h-full w-full py-1';
+    const select = document.createElement('select');
+    select.className = 'w-full rounded bg-deep border border-border px-2 py-1 text-xs text-white focus:outline-none focus:border-cyan cursor-pointer';
+    const options = [
+      { value: 'nuevo', label: 'Nuevo', cls: 'text-neon' },
+      { value: 'contactado', label: 'Contactado', cls: 'text-cyan' },
+      { value: 'en_proceso', label: 'En proceso', cls: 'text-cyan' },
+      { value: 'cerrado', label: 'Cerrado', cls: 'text-violet' },
+    ];
+    options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      option.className = opt.cls;
+      if (opt.value === params.value) option.selected = true;
+      select.appendChild(option);
+    });
+    select.addEventListener('change', () => {
+      const leadId = params.data.id;
+      const newState = select.value;
+      updateLeadState(leadId, newState, params.api, params.data);
+    });
+    wrap.appendChild(select);
+    return wrap;
+  }
+
+  function updateLeadState(leadId, newState, api, rowData) {
+    fetch(window.LEAD_UPDATE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCsrfToken(),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ lead_id: leadId, estado: newState })
+    })
+    .then(r => r.json().then(data => ({ ok: r.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok) throw new Error(data.message || 'Error al actualizar el estado.');
+      rowData.estado = newState;
+      rowData.estado_display = data.estado_display;
+      api.applyTransaction({ update: [rowData] });
+      api.refreshClientSideRowModel('sort');
+    })
+    .catch(err => { alert(err.message); });
+  }
+
+  // ── Actions cell renderer ────────────────────────────────────────────────
+  function actionsCellRenderer(params) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex items-center justify-center h-full w-full py-1';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-secondary rounded-md text-[9px] font-bold text-white uppercase tracking-wider transition-all flex items-center justify-center';
+    btn.style.height = '24px';
+    btn.style.padding = '0 10px';
+    btn.textContent = 'Gestionar Cuestionarios';
+    btn.addEventListener('click', () => openQuestionnairesModal(params.data.id));
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  // ── Lead badge renderer ──────────────────────────────────────────────────
+  function leadCellRenderer(params) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex flex-col justify-center h-full py-1 leading-none gap-0.5';
+    const name = document.createElement('div');
+    name.className = 'font-semibold text-white text-xs leading-none';
+    name.textContent = params.data.nombre;
+    const email = document.createElement('div');
+    email.className = 'text-[10px] text-slate font-mono leading-none';
+    email.textContent = params.data.correo;
+    wrap.appendChild(name);
+    wrap.appendChild(email);
+    return wrap;
+  }
+
+  function estadoSortComparator(a, b) {
+    const order = { nuevo: 0, contactado: 1, en_proceso: 2, cerrado: 3 };
+    return (order[a] ?? 99) - (order[b] ?? 99);
+  }
+
+  // ── Build Ag-Grid ────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const gridDiv = document.getElementById('leads-grid');
+    const gridOptions = {
+      columnDefs: [
+        { headerName: 'Lead', valueGetter: p => p.data.nombre + ' ' + p.data.correo, cellRenderer: leadCellRenderer, minWidth: 220, flex: 1, filter: 'agTextColumnFilter', filterParams: { filterOptions: ['contains'] } },
+        { headerName: 'Empresa', field: 'empresa', minWidth: 180, flex: 1, filter: 'agTextColumnFilter' },
+        { headerName: 'Estado', field: 'estado', cellRenderer: stateCellRenderer, minWidth: 160, sortable: true, sort: 'asc', comparator: estadoSortComparator, filter: 'agTextColumnFilter' },
+        { headerName: 'Fecha', field: 'creado_en', minWidth: 150, sortable: true, filter: 'agTextColumnFilter' },
+        { headerName: 'Acciones', cellRenderer: actionsCellRenderer, minWidth: 190, sortable: false, filter: false }
+      ],
+      rowData: window.LEADS_DATA,
+      defaultColDef: {
+        resizable: true,
+        sortable: true,
+        filter: true,
+        suppressMenu: false
+      },
+      pagination: true,
+      paginationPageSize: 30,
+      suppressCellFocus: true,
+      animateRows: true,
+      rowHeight: 56,
+      localeText: {
+        page: 'Página',
+        more: 'Más',
+        to: 'a',
+        of: 'de',
+        next: 'Siguiente',
+        last: 'Última',
+        first: 'Primera',
+        previous: 'Anterior',
+        loadingOoo: 'Cargando...',
+        noRowsToShow: 'Sin leads aún',
+        filterOoo: 'Filtrar...',
+        contains: 'Contiene',
+        notContains: 'No contiene',
+        startsWith: 'Empieza con',
+        endsWith: 'Termina con',
+        equals: 'Igual a',
+        notEqual: 'Distinto de',
+        lessThan: 'Menor que',
+        greaterThan: 'Mayor que'
+      }
+    };
+    new agGrid.Grid(gridDiv, gridOptions);
+  });
+
+  // ── Create lead modal helpers ────────────────────────────────────────────
+  function openCreateLeadModal() { document.getElementById('create-lead-modal').classList.remove('hidden'); }
+  function closeCreateLeadModal() { document.getElementById('create-lead-modal').classList.add('hidden'); }
+
+  // ── Questionnaires modal helpers ─────────────────────────────────────────
   let currentLeadPk = null;
 
   function openQuestionnairesModal(leadPk) {
@@ -172,32 +346,45 @@
     btn.disabled = true;
     fetch(`/interno/leads/${currentLeadPk}/cuestionarios/crear/`, {
       method: 'POST',
-      headers: { 'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '' }
+      headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' }
     })
-      .then(r => r.json())
-      .then(data => {
-        if (!data.success) throw new Error('No se pudo crear el link.');
-        // Re-render the list
-        return fetch(`/interno/leads/${currentLeadPk}/cuestionarios/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-          .then(r => r.text())
-          .then(html => {
-            document.getElementById('q-modal-body').innerHTML = html;
-            // Auto-copy new URL
-            if (navigator.clipboard && data.public_url) {
-              navigator.clipboard.writeText(data.public_url).catch(() => {});
-            }
-          });
-      })
-      .catch(err => { alert(err.message); })
-      .finally(() => { btn.disabled = false; });
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) throw new Error('No se pudo crear el link.');
+      return fetch(`/interno/leads/${currentLeadPk}/cuestionarios/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById('q-modal-body').innerHTML = html;
+          if (navigator.clipboard && data.public_url) {
+            navigator.clipboard.writeText(data.public_url).catch(() => {});
+          }
+        });
+    })
+    .catch(err => { alert(err.message); })
+    .finally(() => { btn.disabled = false; });
   }
 
-  function copyUrl(url, btn) {
-    navigator.clipboard.writeText(url).then(() => {
+  async function copyUrl(url, btn) {
+    try {
+      await navigator.clipboard.writeText(url);
       const old = btn.textContent;
       btn.textContent = 'Copiado ✓';
       setTimeout(() => { btn.textContent = old; }, 1500);
-    });
+    } catch (err) {
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        const old = btn.textContent;
+        btn.textContent = 'Copiado ✓';
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      } catch (e) {
+        alert('No se pudo copiar el enlace. Copie manualmente: ' + url);
+      }
+      document.body.removeChild(textArea);
+    }
   }
 
   function viewAnswers(uuid) {
@@ -206,11 +393,51 @@
     body.innerHTML = '<p class="text-slate font-mono text-xs">Cargando…</p>';
     fetch(`/interno/cuestionarios/${uuid}/respuestas/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(r => r.text())
-      .then(html => { body.innerHTML = html; })
+      .then(html => {
+        body.innerHTML = html;
+        initProcessInventoryGrid();
+      })
       .catch(() => { body.innerHTML = '<p class="text-cyan font-mono text-xs">Error al cargar respuestas.</p>'; });
   }
 
   function closeAnswersModal() { document.getElementById('a-modal').classList.add('hidden'); }
+
+  // ── Process Inventory Ag-Grid (rendered inside answers modal) ────────────
+  window.processInventoryGridApi = null;
+
+  function initProcessInventoryGrid() {
+    const gridDiv = document.getElementById('process-inventory-grid');
+    const dataScript = document.getElementById('process-inventory-data');
+    if (!gridDiv || !dataScript) return;
+    const rowData = JSON.parse(dataScript.textContent);
+
+    const gridOptions = {
+      columnDefs: [
+        { headerName: 'Proceso', field: 'name', minWidth: 180, flex: 1, filter: 'agTextColumnFilter' },
+        { headerName: 'Tipo', field: 'execution_type_display', minWidth: 140, filter: 'agTextColumnFilter' },
+        { headerName: 'Tokens in', field: 'input_tokens', type: 'numericColumn', minWidth: 110, valueFormatter: p => p.value == null ? '—' : p.value },
+        { headerName: 'Tokens out', field: 'output_tokens', type: 'numericColumn', minWidth: 110, valueFormatter: p => p.value == null ? '—' : p.value },
+        { headerName: 'Concurrencia', field: 'peak_concurrency', type: 'numericColumn', minWidth: 130, valueFormatter: p => p.value == null ? '—' : p.value },
+        { headerName: 'Ejec./mes', field: 'monthly_executions', type: 'numericColumn', minWidth: 120, valueFormatter: p => p.value == null ? '—' : p.value }
+      ],
+      rowData: rowData,
+      defaultColDef: { resizable: true, sortable: true, filter: true },
+      pagination: true,
+      paginationPageSize: 10,
+      animateRows: true,
+      rowHeight: 48,
+      domLayout: 'normal'
+    };
+    new agGrid.Grid(gridDiv, gridOptions);
+    window.processInventoryGridApi = gridOptions.api;
+  }
+
+  function exportProcessInventoryCsv() {
+    if (!window.processInventoryGridApi) return;
+    window.processInventoryGridApi.exportDataAsCsv({
+      fileName: 'inventario_procesos.csv',
+      columnSeparator: ';'
+    });
+  }
 </script>
-</body>
-</html>
+{% endblock %}

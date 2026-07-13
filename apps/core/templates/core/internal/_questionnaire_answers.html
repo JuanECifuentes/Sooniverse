@@ -34,39 +34,18 @@
   </div>
 
   <div>
-    <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan mb-3">Inventario de procesos</h4>
-    <div class="card overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-surface/80 text-slate font-mono text-[10px] uppercase tracking-widest">
-          <tr class="border-b border-border text-left">
-            <th class="px-4 py-2">Proceso</th>
-            <th class="px-4 py-2">Tipo</th>
-            <th class="px-4 py-2 text-right">Tokens in</th>
-            <th class="px-4 py-2 text-right">Tokens out</th>
-            <th class="px-4 py-2 text-right">Concurrencia</th>
-            <th class="px-4 py-2 text-right">Ejec./mes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in processes %}
-            <tr class="border-b border-border/60">
-              <td class="px-4 py-2 text-white font-semibold">{{ p.name }}</td>
-              <td class="px-4 py-2">
-                <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest
-                  {% if p.execution_type == 'REAL_TIME' %}bg-cyan/10 text-cyan{% else %}bg-violet/20 text-violet{% endif %}">
-                  {{ p.get_execution_type_display }}
-                </span>
-              </td>
-              <td class="px-4 py-2 text-right font-mono text-slate">{{ p.input_tokens|default:0 }}</td>
-              <td class="px-4 py-2 text-right font-mono text-slate">{{ p.output_tokens|default:0 }}</td>
-              <td class="px-4 py-2 text-right font-mono text-slate">{% if p.peak_concurrency is not None %}{{ p.peak_concurrency }}{% else %}—{% endif %}</td>
-              <td class="px-4 py-2 text-right font-mono text-slate">{% if p.monthly_executions is not None %}{{ p.monthly_executions }}{% else %}—{% endif %}</td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="6" class="text-slate text-center py-6 font-mono text-xs uppercase tracking-widest">Sin procesos registrados</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="flex items-center justify-between mb-3">
+      <h4 class="font-mono text-[11px] uppercase tracking-widest text-cyan">Inventario de procesos</h4>
+      <button type="button" onclick="exportProcessInventoryCsv()"
+              class="btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wide inline-flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Exportar a Excel
+      </button>
+    </div>
+    <div class="card p-1 overflow-hidden">
+      <div id="process-inventory-grid" class="ag-theme-alpine-dark w-full" style="height: 360px;"></div>
     </div>
   </div>
 </div>
+
+{{ processes_json|json_script:"process-inventory-data" }}

@@ -39,6 +39,11 @@ urlpatterns = [
     # Internal Lead CRUD + questionnaire management (staff only)
     path("interno/leads/", views.internal_leads_dashboard, name="internal_leads"),
     path(
+        "interno/leads/estado/actualizar/",
+        views.lead_update_status,
+        name="lead_update_status",
+    ),
+    path(
         "interno/leads/<int:lead_pk>/cuestionarios/",
         views.questionnaire_modal_partial,
         name="questionnaire_modal",

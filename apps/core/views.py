@@ -169,20 +169,56 @@ def internal_leads_dashboard(request):
             lead.skip_email_signal = True
             lead.ip_origen = get_client_ip(request)
             lead.save()
-            messages.success(
-                request,
-                f"Lead interno creado: {lead.nombre}. Correos silenciados (skip_email_signal).",
-            )
+            messages.success(request, f"Lead interno creado: {lead.nombre}.")
             return redirect("core:internal_leads")
         messages.error(request, "Corrige los errores del formulario.")
     else:
         form = InternalLeadForm()
 
     leads = Lead.objects.all().prefetch_related("questionnaires")
+    leads_json = [
+        {
+            "id": lead.pk,
+            "nombre": lead.nombre,
+            "correo": lead.correo,
+            "empresa": lead.empresa,
+            "estado": lead.estado,
+            "estado_display": lead.get_estado_display(),
+            "creado_en": lead.creado_en.strftime("%Y-%m-%d %H:%M"),
+        }
+        for lead in leads
+    ]
     return render(
         request,
         "core/internal/leads_dashboard.html",
-        {"leads": leads, "form": form},
+        {"leads": leads, "leads_json": leads_json, "form": form},
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def lead_update_status(request):
+    """AJAX endpoint to update a Lead's estado. CSRF-protected and login-only."""
+    lead_id = request.POST.get("lead_id")
+    estado = request.POST.get("estado")
+    valid_states = {code for code, _ in Lead.ESTADO_CHOICES}
+
+    if not lead_id or estado not in valid_states:
+        return JsonResponse(
+            {"success": False, "message": "Petición inválida."}, status=400
+        )
+
+    lead = get_object_or_404(Lead, pk=lead_id)
+    lead.estado = estado
+    lead.save(update_fields=["estado"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "lead_id": lead.pk,
+            "estado": lead.estado,
+            "estado_display": lead.get_estado_display(),
+        }
     )
 
 
@@ -197,13 +233,14 @@ def questionnaire_modal_partial(request, lead_pk):
         reverse("core:public_questionnaire", kwargs={"questionnaire_id": dummy_uuid})
     )
     public_url_template = public_base.replace(dummy_uuid, "{}")
+    for q in questionnaires:
+        q.public_url = public_url_template.format(q.id)
     return render(
         request,
         "core/internal/_questionnaire_modal.html",
         {
             "lead": lead,
             "questionnaires": questionnaires,
-            "public_url_template": public_url_template,
         },
     )
 
@@ -250,12 +287,26 @@ def questionnaire_answers_partial(request, questionnaire_id):
         Questionnaire.objects.select_related("lead").prefetch_related("processes"),
         pk=qid,
     )
+    processes = list(questionnaire.processes.all())
+    processes_json = [
+        {
+            "name": p.name,
+            "execution_type": p.execution_type,
+            "execution_type_display": p.get_execution_type_display(),
+            "input_tokens": p.input_tokens or 0,
+            "output_tokens": p.output_tokens or 0,
+            "peak_concurrency": p.peak_concurrency,
+            "monthly_executions": p.monthly_executions,
+        }
+        for p in processes
+    ]
     return render(
         request,
         "core/internal/_questionnaire_answers.html",
         {
             "questionnaire": questionnaire,
-            "processes": list(questionnaire.processes.all()),
+            "processes": processes,
+            "processes_json": processes_json,
         },
     )
 
