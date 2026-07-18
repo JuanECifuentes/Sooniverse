@@ -3,6 +3,29 @@
 
 {% block title %}Cuestionario · Sooniverse{% endblock %}
 
+{% block extra_head %}
+<style>
+  #id_metric_files {
+    color: transparent !important;
+    font-size: 0 !important;
+  }
+  #id_metric_files::file-selector-button {
+    display: none !important;
+  }
+  #id_metric_files::-webkit-file-upload-button {
+    display: none !important;
+  }
+
+
+
+  /* Validation Error border */
+  .border-error-custom {
+    border-color: #EF4444 !important; /* red-500 */
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 
 {% if just_submitted %}
@@ -14,7 +37,7 @@
 
 <section class="mb-10">
   <span class="font-mono text-[11px] uppercase tracking-widest text-neon">Cuestionario {{ questionnaire.id }} · Dirigido a: {{ empresa_nombre }}</span>
-  <h1 class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Diagnóstico técnico de tu infraestructura de IA</h1>
+  <h1 id="page-top" class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Diagnóstico técnico de tu infraestructura de IA</h1>
   <p class="mt-2 text-slate leading-relaxed">Reúne tus finanzas actuales y tu inventario de procesos. La información queda resguardada y vinculada de forma exclusiva a este enlace.</p>
 </section>
 
@@ -25,7 +48,7 @@
 </div>
 {% endif %}
 
-<form method="post" action="{% url 'core:public_questionnaire' questionnaire_id=questionnaire.id %}" id="diag-form" class="{% if readonly %}opacity-60 pointer-events-none{% endif %}" {% if readonly %}onsubmit="return false;"{% endif %}>
+<form method="post" enctype="multipart/form-data" action="{% url 'core:public_questionnaire' questionnaire_id=questionnaire.id %}" id="diag-form" class="{% if readonly %}opacity-60 pointer-events-none{% endif %}" {% if readonly %}onsubmit="return false;"{% endif %} novalidate>
   {% csrf_token %}
   {{ formset.management_form }}
 
@@ -170,6 +193,61 @@
     {% endif %}
   </section>
 
+  <section class="card p-6 sm:p-8 mb-8">
+    <h2 class="font-mono text-[11px] uppercase tracking-widest text-cyan mb-4">Bloque IV · Métricas de Uso de Proveedores</h2>
+
+    <p class="text-slate text-sm leading-relaxed mb-6">
+      Si dispone de reportes detallados, puede adjuntar sus archivos con métricas de uso aquí. Normalmente, estos datos se exportan en formatos csv y/o Excel desde las plataformas de sus proveedores comerciales de IA (OpenAI, Anthropic, DeepSeek, etc.). Lo ideal sería extraer y adjuntar las métricas correspondientes a los últimos 3 meses para ayudarnos a calibrar su infraestructura con la máxima precisión posible.
+    </p>
+
+    {% if not readonly %}
+    <div>
+      <label for="id_metric_files" class="block font-mono text-[10px] uppercase tracking-widest text-slate mb-3">Adjuntar archivos de métricas (opcional)</label>
+
+      <div id="drop-zone" class="relative group cursor-pointer border border-dashed border-border rounded-xl bg-deep/50 hover:border-cyan/60 hover:bg-cyan/5 transition p-6 sm:p-8 text-center">
+        <input
+          type="file"
+          name="metric_files"
+          id="id_metric_files"
+          multiple
+          accept=".csv,.parquet,.xls,.xlsx"
+          data-max-files="10"
+          data-max-size-mb="50"
+          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer file:hidden"
+        >
+        <div class="pointer-events-none flex flex-col items-center">
+          <svg class="w-8 h-8 mx-auto mb-3 text-cyan" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+          <p class="text-sm text-white font-medium mb-2">Arrastra tus archivos aquí o</p>
+          <span class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide inline-block mb-3">Elegir archivos</span>
+          <p class="text-xs text-slate">Hasta 10 archivos · CSV, Parquet, Excel · Máx. 50 MB por archivo</p>
+        </div>
+      </div>
+
+      <div id="metric-file-list" class="mt-4 space-y-2 empty:hidden"></div>
+      {% if metric_form.metric_files.errors %}<p class="text-xs text-cyan mt-2">{{ metric_form.metric_files.errors|join:" // " }}</p>{% endif %}
+    </div>
+    {% else %}
+    <div class="space-y-3">
+      <p class="font-mono text-[10px] uppercase tracking-widest text-slate">Archivos cargados · {{ metric_files|length }}</p>
+      {% if metric_files %}
+        <ul class="divide-y divide-border border border-border rounded-xl bg-deep/40">
+          {% for mf in metric_files %}
+            <li class="flex items-center justify-between gap-3 px-4 py-3 text-sm text-slate">
+              <div class="flex items-center gap-3 truncate">
+                <svg class="w-4 h-4 text-cyan flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                <span class="truncate" title="{{ mf.original_name }}">{{ mf.original_name }}</span>
+              </div>
+              <a href="{{ mf.file.url }}" download class="text-xs text-cyan hover:underline hover:text-white transition flex-shrink-0">Descargar</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-sm text-slate italic">No se adjuntaron archivos de métricas.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </section>
+
   {% if not readonly %}
   <div class="flex justify-end gap-3">
     <button type="submit" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Enviar diagnóstico</button>
@@ -181,9 +259,12 @@
   {% endif %}
 </form>
 
+{% include "core/includes/spinner_overlay.html" %}
+
 {% endblock %}
 
 {% block extra_scripts %}
+{% include "core/includes/scroll_to_top.html" %}
 <script>
 (function () {
   const container = document.getElementById('process-cards');
@@ -228,9 +309,7 @@
       rm.addEventListener('click', e => {
         e.preventDefault();
         const delBox = card.querySelector('[name$="-DELETE"]');
-        const idInput = card.querySelector('[name$="-id"]');
-        const persisted = idInput && idInput.value;
-        if (delBox && persisted) {
+        if (delBox) {
           delBox.checked = true;
           card.style.display = 'none';
         } else {
@@ -272,6 +351,221 @@
     otherCheckbox.addEventListener('change', toggleOther);
     toggleOther();
   }
+})();
+
+(function () {
+  const fileInput = document.getElementById('id_metric_files');
+  const fileList = document.getElementById('metric-file-list');
+  const dropZone = document.getElementById('drop-zone');
+  const form = document.getElementById('diag-form');
+  const overlay = document.getElementById('upload-overlay');
+  const statusText = document.getElementById('upload-status');
+  if (!form || !overlay || !statusText) return;
+
+  const MESSAGES = [
+    "Subiendo y analizando sus archivos de métricas... (Este proceso puede demorar hasta 5 minutos dependiendo del tamaño de sus logs).",
+    "Validando formatos de tokens y estructuras de datos comerciales...",
+    "Calculando perfiles de demanda para optimizar su futura infraestructura...",
+    "Asegurando la inmutabilidad y privacidad de sus datos en Sooniverse...",
+  ];
+
+  function renderFileList() {
+    if (!fileList) return;
+    fileList.innerHTML = '';
+    const files = fileInput ? Array.from(fileInput.files) : [];
+    const maxFiles = parseInt(fileInput?.dataset.maxFiles || '10', 10);
+    const maxSizeMb = parseInt(fileInput?.dataset.maxSizeMb || '50', 10);
+
+    files.forEach(file => {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      const isTooBig = file.size > maxSizeMb * 1024 * 1024;
+      const item = document.createElement('div');
+      item.className = 'flex items-center justify-between card px-3 py-2.5 text-sm';
+      item.innerHTML = `
+        <span class="truncate ${isTooBig ? 'text-cyan' : 'text-white'}">${file.name} · ${sizeMb} MB</span>
+        <span class="text-xs font-mono uppercase tracking-wider ${isTooBig ? 'text-cyan' : 'text-slate'}">${isTooBig ? 'Excede límite' : 'Listo'}</span>
+      `;
+      fileList.appendChild(item);
+    });
+
+    if (files.length > maxFiles) {
+      const warning = document.createElement('p');
+      warning.className = 'text-xs text-cyan';
+      warning.textContent = `Máximo ${maxFiles} archivos permitidos. Seleccionados: ${files.length}.`;
+      fileList.appendChild(warning);
+    }
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener('change', renderFileList);
+  }
+
+  if (dropZone && fileInput) {
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => dropZone.classList.add('border-cyan', 'bg-cyan/10'), false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => dropZone.classList.remove('border-cyan', 'bg-cyan/10'), false);
+    });
+    dropZone.addEventListener('drop', e => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files) {
+        fileInput.files = dt.files;
+        renderFileList();
+      }
+    }, false);
+  }
+
+  function validateForm() {
+    // Clear previous error styles
+    document.querySelectorAll('.border-error-custom').forEach(el => {
+      el.classList.remove('border-error-custom');
+    });
+
+    let firstInvalidField = null;
+
+    // Validate Monthly Spend
+    const spendInput = document.getElementById('id_monthly_spend');
+    if (spendInput && !spendInput.value.trim()) {
+      spendInput.classList.add('border-error-custom');
+      firstInvalidField = spendInput;
+    }
+
+    // Validate process cards
+    const cards = document.querySelectorAll('.form-row');
+    cards.forEach((card, idx) => {
+      const delBox = card.querySelector('[name$="-DELETE"]');
+      if (delBox && delBox.checked) return;
+
+      const nameInput = card.querySelector('input[name$="-name"]');
+      const execTypeSel = card.querySelector('.js-exec-type');
+      const inputTokensInput = card.querySelector('input[name$="-input_tokens"]');
+      const outputTokensInput = card.querySelector('input[name$="-output_tokens"]');
+      const peakInput = card.querySelector('.js-peak');
+      const batchInput = card.querySelector('.js-batch');
+
+      if (nameInput && !nameInput.value.trim()) {
+        nameInput.classList.add('border-error-custom');
+        if (!firstInvalidField) firstInvalidField = nameInput;
+      }
+      if (execTypeSel) {
+        const val = execTypeSel.value;
+        if (val === 'REAL_TIME') {
+          if (peakInput && !peakInput.value.trim()) {
+            peakInput.classList.add('border-error-custom');
+            if (!firstInvalidField) firstInvalidField = peakInput;
+          }
+        } else if (val === 'BATCH') {
+          if (batchInput && !batchInput.value.trim()) {
+            batchInput.classList.add('border-error-custom');
+            if (!firstInvalidField) firstInvalidField = batchInput;
+          }
+        }
+      }
+      if (inputTokensInput && !inputTokensInput.value.trim()) {
+        inputTokensInput.classList.add('border-error-custom');
+        if (!firstInvalidField) firstInvalidField = inputTokensInput;
+      }
+      if (outputTokensInput && !outputTokensInput.value.trim()) {
+        outputTokensInput.classList.add('border-error-custom');
+        if (!firstInvalidField) firstInvalidField = outputTokensInput;
+      }
+    });
+
+    if (firstInvalidField) {
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.offsetHeight : 80;
+      const targetY = Math.max(0, firstInvalidField.getBoundingClientRect().top + window.scrollY - headerHeight - 32);
+
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const duration = 900; // 0.9 seconds scroll
+      let startTime = null;
+
+      function easeInOutCubic(t, b, c, d) {
+        t /= d/2;
+        if (t < 1) return c/2*t*t*t + b;
+        t -= 2;
+        return c/2*(t*t*t + 2) + b;
+      }
+
+      function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const progress = easeInOutCubic(elapsed, startY, distance, duration);
+        window.scrollTo(0, progress);
+        if (elapsed < duration) {
+          requestAnimationFrame(animation);
+        } else {
+          window.scrollTo(0, targetY);
+          firstInvalidField.focus();
+        }
+      }
+      requestAnimationFrame(animation);
+
+      return false;
+    }
+    return true;
+  }
+
+  form.addEventListener('submit', function (e) {
+    if (!validateForm()) {
+      e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+
+    overlay.classList.remove('hidden');
+    let idx = 0;
+    statusText.textContent = MESSAGES[0];
+    const interval = setInterval(() => {
+      idx = (idx + 1) % MESSAGES.length;
+      statusText.textContent = MESSAGES[idx];
+    }, 4500);
+    form.dataset.uploadInterval = String(interval);
+
+    const startTime = Date.now();
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => {
+      const elapsed = Date.now() - startTime;
+      const delay = Math.max(0, 1500 - elapsed);
+
+      return response.text().then(html => {
+        setTimeout(() => {
+          clearInterval(interval);
+          if (response.ok && html.includes('registro inmutable')) {
+            overlay.classList.add('hidden');
+            window.location.reload();
+          } else {
+            overlay.classList.add('hidden');
+            document.open();
+            document.write(html);
+            document.close();
+          }
+        }, delay);
+      });
+    })
+    .catch(error => {
+      clearInterval(interval);
+      overlay.classList.add('hidden');
+      alert('Hubo un error al enviar el cuestionario. Por favor, inténtelo de nuevo.');
+      console.error(error);
+    });
+  });
 })();
 </script>
 {% endblock %}

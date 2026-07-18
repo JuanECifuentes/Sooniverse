@@ -1,28 +1,36 @@
+from pathlib import Path
+
 from django import forms
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
-from .models import Lead, Questionnaire, ProcessInventory
+from .models import Lead, Questionnaire, ProcessInventory, QuestionnaireMetricFile
 
 
 # Proveedores soportados por el diagnóstico. Mantener sincronizado con la UI.
 PROVIDER_CHOICES = (
-    ("OPENAI", "OpenAI"),
-    ("ANTHROPIC", "Anthropic"),
-    ("GOOGLE_VERTEX", "Google Vertex AI"),
-    ("AZURE_OPENAI", "Azure OpenAI"),
+    ("OPENAI_CHATGPT", "OpenAI / ChatGPT"),
+    ("ANTHROPIC_CLAUDE", "Anthropic / Claude"),
+    ("GEMINI", "Gemini"),
+    ("AZURE", "Azure"),
     ("DEEPSEEK", "DeepSeek"),
+    ("QWEN", "Qwen"),
     ("OTHER", "Otro"),
 )
 
 AI_TASK_CHOICES = (
-    ("EXTRACTION", "Extracción de datos"),
-    ("ATTENTION_RAG", "Atención al cliente / RAG"),
-    ("CODE", "Generación de código"),
-    ("CLASSIFICATION", "Clasificación"),
-    ("EMBEDDINGS", "Embeddings"),
+    ("TEXT_GENERATION_COMPREHENSION", "Generación y Comprensión de texto"),
+    ("EMBEDDINGS_RAG", "Embeddings y/o Técnicas RAG"),
+    ("CODE_GENERATION", "Generación de código"),
+    ("IMAGE_READING_SCANNING", "Lectura y/o escaneo de imágenes"),
+    ("IMAGE_GENERATION", "Generación de imágenes"),
+    ("VIDEO_GENERATION", "Generación de Videos"),
 )
+
+METRIC_FILE_EXTENSIONS = (".csv", ".parquet", ".xls", ".xlsx")
+MAX_METRIC_FILE_SIZE_MB = 50
+MAX_METRIC_FILES = 10
 
 
 class LeadForm(forms.ModelForm):
@@ -297,6 +305,80 @@ class ProcessInventoryForm(forms.ModelForm):
                 "monthly_executions", "Requerido para procesamiento por lotes."
             )
         return cleaned
+
+
+class MultipleFileInput(forms.FileInput):
+    """Widget que permite seleccionar varios archivos en un solo input."""
+
+    def render(self, name, value, attrs=None, renderer=None):
+        attrs = attrs or {}
+        attrs["multiple"] = True
+        return super().render(name, value, attrs, renderer)
+
+    def value_from_datadict(self, data, files, name):
+        if not files:
+            return None
+        if hasattr(files, "getlist"):
+            return files.getlist(name)
+        return files.get(name)
+
+
+class MultipleFileField(forms.FileField):
+    """Campo de archivo que acepta y valida una lista de archivos."""
+
+    widget = MultipleFileInput
+
+    def to_python(self, data):
+        if not data:
+            return []
+        if isinstance(data, list):
+            return [super(MultipleFileField, self).to_python(item) for item in data]
+        return [super().to_python(data)]
+
+    def validate(self, value):
+        if self.required and not value:
+            raise ValidationError(self.error_messages["required"], code="required")
+        for file in value:
+            super().validate(file)
+
+
+class QuestionnaireMetricFileForm(forms.Form):
+    """Subida múltiple de archivos de métricas para un cuestionario."""
+
+    metric_files = MultipleFileField(
+        required=False,
+        widget=MultipleFileInput(
+            attrs={
+                "accept": ",".join(METRIC_FILE_EXTENSIONS),
+            }
+        ),
+        label="Adjuntar métricas de uso",
+    )
+
+    def clean_metric_files(self):
+        files = self.cleaned_data.get("metric_files") or []
+        if not isinstance(files, list):
+            files = [files]
+        files = list(files)
+        if len(files) > MAX_METRIC_FILES:
+            raise ValidationError(
+                f"Puede adjuntar un máximo de {MAX_METRIC_FILES} archivos de métricas."
+            )
+
+        max_size = MAX_METRIC_FILE_SIZE_MB * 1024 * 1024
+        for uploaded_file in files:
+            ext = Path(uploaded_file.name).suffix.lower()
+            if ext not in METRIC_FILE_EXTENSIONS:
+                raise ValidationError(
+                    f"Formato no permitido: {uploaded_file.name}. "
+                    f"Solo se aceptan {', '.join(METRIC_FILE_EXTENSIONS)}."
+                )
+            if uploaded_file.size > max_size:
+                raise ValidationError(
+                    f"El archivo '{uploaded_file.name}' supera el límite de "
+                    f"{MAX_METRIC_FILE_SIZE_MB} MB."
+                )
+        return files
 
 
 ProcessInventoryFormSet = inlineformset_factory(

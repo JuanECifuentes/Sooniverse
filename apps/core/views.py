@@ -20,8 +20,9 @@ from .forms import (
     LeadForm,
     ProcessInventoryFormSet,
     QuestionnaireFinanceForm,
+    QuestionnaireMetricFileForm,
 )
-from .models import Lead, Questionnaire, ProcessInventory
+from .models import Lead, Questionnaire, ProcessInventory, QuestionnaireMetricFile
 
 logger = logging.getLogger("django.apps.core.views")
 
@@ -301,6 +302,7 @@ def questionnaire_answers_partial(request, questionnaire_id):
         for p in processes
     ]
     from apps.core.forms import PROVIDER_CHOICES, AI_TASK_CHOICES
+
     provider_map = dict(PROVIDER_CHOICES)
     task_map = dict(AI_TASK_CHOICES)
 
@@ -359,8 +361,14 @@ def public_questionnaire(request, questionnaire_id):
         formset = ProcessInventoryFormSet(
             instance=questionnaire, queryset=questionnaire.processes.all()
         )
+        metric_form = QuestionnaireMetricFileForm()
         return _render_questionnaire(
-            request, questionnaire, finance_form, formset, readonly=readonly
+            request,
+            questionnaire,
+            finance_form,
+            formset,
+            metric_form,
+            readonly=readonly,
         )
 
     # ── POST SUBMIT (only valid while PENDING) ──────────────────────
@@ -369,11 +377,17 @@ def public_questionnaire(request, questionnaire_id):
         formset = ProcessInventoryFormSet(
             request.POST, instance=questionnaire, queryset=questionnaire.processes.all()
         )
+        metric_form = QuestionnaireMetricFileForm(
+            request.POST or None, request.FILES or None
+        )
 
-        if finance_form.is_valid() and formset.is_valid():
+        if finance_form.is_valid() and formset.is_valid() and metric_form.is_valid():
             with transaction.atomic():
                 finance_form.save()
                 formset.save()
+                _save_metric_files(
+                    questionnaire, metric_form.cleaned_data.get("metric_files", [])
+                )
                 questionnaire.status = Questionnaire.Status.COMPLETED
                 questionnaire.submitted_at = timezone.now()
                 questionnaire.save(
@@ -394,22 +408,45 @@ def public_questionnaire(request, questionnaire_id):
             formset = ProcessInventoryFormSet(
                 instance=questionnaire, queryset=questionnaire.processes.all()
             )
+            metric_form = QuestionnaireMetricFileForm()
             return _render_questionnaire(
                 request,
                 questionnaire,
                 finance_form,
                 formset,
+                metric_form,
                 readonly=True,
                 just_submitted=True,
             )
 
         # Invalid: re-render editable with errors.
+        logger.warning(
+            f"Questionnaire {questionnaire.id} validation failed! "
+            f"Finance errors: {finance_form.errors.as_json()}, "
+            f"Formset errors: {formset.errors}, "
+            f"Metric errors: {metric_form.errors.as_json()}"
+        )
         return _render_questionnaire(
-            request, questionnaire, finance_form, formset, readonly=False
+            request,
+            questionnaire,
+            finance_form,
+            formset,
+            metric_form,
+            readonly=False,
         )
 
     # Defensive fallback.
     return redirect("core:public_questionnaire", questionnaire_id=str(questionnaire.id))
+
+
+def _save_metric_files(questionnaire, files):
+    """Persiste los archivos de métricas validados vinculados al cuestionario."""
+    for uploaded_file in files:
+        QuestionnaireMetricFile.objects.create(
+            questionnaire=questionnaire,
+            file=uploaded_file,
+            original_name=uploaded_file.name,
+        )
 
 
 def _render_questionnaire(
@@ -417,6 +454,7 @@ def _render_questionnaire(
     questionnaire,
     finance_form,
     formset,
+    metric_form,
     *,
     readonly=False,
     just_submitted=False,
@@ -428,6 +466,8 @@ def _render_questionnaire(
             "questionnaire": questionnaire,
             "finance_form": finance_form,
             "formset": formset,
+            "metric_form": metric_form,
+            "metric_files": questionnaire.metric_files.all(),
             "readonly": readonly,
             "just_submitted": just_submitted,
             "empresa_nombre": questionnaire.lead.empresa,
