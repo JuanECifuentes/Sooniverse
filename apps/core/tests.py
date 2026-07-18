@@ -1,11 +1,49 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 
 from .models import Lead
-from .forms import LeadForm
+from .forms import LeadForm, QuestionnaireMetricFileForm
 from .tasks import procesar_nuevo_lead
+
+
+class MetricFileFormTestCase(TestCase):
+    def _file(self, name, size_mb):
+        content = b"0" * (size_mb * 1024 * 1024)
+        return SimpleUploadedFile(name, content, content_type="text/csv")
+
+    def test_valid_csv_file(self):
+        file = SimpleUploadedFile(
+            "metrics.csv", b"date,requests\n2024-01-01,100\n", content_type="text/csv"
+        )
+        form = QuestionnaireMetricFileForm({}, {"metric_files": [file]})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(len(form.cleaned_data["metric_files"]), 1)
+
+    def test_invalid_extension_rejected(self):
+        file = SimpleUploadedFile(
+            "notes.txt", b"not allowed", content_type="text/plain"
+        )
+        form = QuestionnaireMetricFileForm({}, {"metric_files": [file]})
+        self.assertFalse(form.is_valid())
+        self.assertIn("metric_files", form.errors)
+
+    def test_file_over_50mb_rejected(self):
+        file = self._file("large.csv", 51)
+        form = QuestionnaireMetricFileForm({}, {"metric_files": [file]})
+        self.assertFalse(form.is_valid())
+        self.assertIn("metric_files", form.errors)
+
+    def test_more_than_10_files_rejected(self):
+        files = [
+            SimpleUploadedFile(f"m{i}.csv", b"a", content_type="text/csv")
+            for i in range(11)
+        ]
+        form = QuestionnaireMetricFileForm({}, {"metric_files": files})
+        self.assertFalse(form.is_valid())
+        self.assertIn("metric_files", form.errors)
 
 
 class LeadFormTestCase(TestCase):
@@ -283,7 +321,7 @@ class QuestionnaireFlowTestCase(TestCase):
 
         prefix = "processes"
         post_data = {
-            "current_providers": ["OPENAI", "ANTHROPIC"],
+            "current_providers": ["OPENAI_CHATGPT", "ANTHROPIC_CLAUDE"],
             "monthly_spend": "12500.00",
             "traffic_pattern": Questionnaire.TrafficPattern.ALL_BATCH,
             f"{prefix}-TOTAL_FORMS": "1",
@@ -302,7 +340,7 @@ class QuestionnaireFlowTestCase(TestCase):
         q.refresh_from_db()
         self.assertEqual(q.status, Questionnaire.Status.COMPLETED)
         self.assertIsNotNone(q.submitted_at)
-        self.assertEqual(q.current_providers, ["OPENAI", "ANTHROPIC"])
+        self.assertEqual(q.current_providers, ["OPENAI_CHATGPT", "ANTHROPIC_CLAUDE"])
         self.assertEqual(float(q.monthly_spend), 12500.00)
         self.assertEqual(q.processes.count(), 1)
         proc = q.processes.first()
@@ -328,6 +366,55 @@ class QuestionnaireFlowTestCase(TestCase):
         self.assertEqual(q.status, Questionnaire.Status.COMPLETED)
         self.assertIsNone(q.monthly_spend)
         self.assertEqual(q.current_providers, [])
+
+    def test_public_questionnaire_with_file_upload(self):
+        from .models import Questionnaire, QuestionnaireMetricFile
+        import os
+
+        lead = self._make_lead()
+        q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.PENDING)
+        url = reverse(
+            "core:public_questionnaire", kwargs={"questionnaire_id": str(q.id)}
+        )
+
+        prefix = "processes"
+        file = SimpleUploadedFile("metrics.csv", b"date,requests\n2024-01-01,100\n", content_type="text/csv")
+        
+        post_data = {
+            "current_providers": ["OPENAI_CHATGPT"],
+            "monthly_spend": "5000.00",
+            "traffic_pattern": Questionnaire.TrafficPattern.ALL_BATCH,
+            f"{prefix}-TOTAL_FORMS": "1",
+            f"{prefix}-INITIAL_FORMS": "0",
+            f"{prefix}-MIN_NUM_FORMS": "0",
+            f"{prefix}-MAX_NUM_FORMS": "1000",
+            f"{prefix}-0-name": "Test Process",
+            f"{prefix}-0-execution_type": "BATCH",
+            f"{prefix}-0-input_tokens": "100",
+            f"{prefix}-0-output_tokens": "200",
+            f"{prefix}-0-peak_concurrency": "",
+            f"{prefix}-0-monthly_executions": "1000",
+            "metric_files": [file],
+        }
+        
+        resp = self.client.post(url, post_data)
+        self.assertEqual(resp.status_code, 200)
+        
+        q.refresh_from_db()
+        self.assertEqual(q.status, Questionnaire.Status.COMPLETED)
+        self.assertEqual(q.metric_files.count(), 1)
+        
+        metric_file = q.metric_files.first()
+        self.assertEqual(metric_file.original_name, "metrics.csv")
+        self.assertTrue(metric_file.file.name.startswith(f"metrics_uploads/{q.id}/"))
+        
+        # Cleanup file after test
+        if os.path.exists(metric_file.file.path):
+            os.remove(metric_file.file.path)
+            try:
+                os.rmdir(os.path.dirname(metric_file.file.path))
+            except OSError:
+                pass
 
     def test_internal_lead_creation_skips_signal(self):
         from django.contrib.auth import get_user_model
@@ -370,13 +457,12 @@ class AuthenticationTests(TestCase):
 
     def test_login_success_redirects_to_internal_leads(self):
         from django.contrib.auth import get_user_model
+
         User = get_user_model()
         User.objects.create_user("testuser", "test@sooniverse.com", "password123")
-        
-        url = reverse("core:login")
-        response = self.client.post(url, {
-            "username": "testuser",
-            "password": "password123"
-        })
-        self.assertRedirects(response, reverse("core:internal_leads"))
 
+        url = reverse("core:login")
+        response = self.client.post(
+            url, {"username": "testuser", "password": "password123"}
+        )
+        self.assertRedirects(response, reverse("core:internal_leads"))

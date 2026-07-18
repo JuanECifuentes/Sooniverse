@@ -1,0 +1,60 @@
+<style>
+  @keyframes spin-custom {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(0.8); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+  .animate-spin-custom {
+    animation: spin-custom 1.1s cubic-bezier(0.5, 0, 0.5, 1) infinite !important;
+  }
+  .animate-spin-reverse {
+    animation: spin-reverse 1.6s cubic-bezier(0.5, 0, 0.5, 1) infinite !important;
+  }
+  .spinner-track-custom {
+    border-width: 6px !important;
+    border-style: solid !important;
+    border-color: rgba(96, 239, 255, 0.10) !important;
+    border-radius: 9999px !important;
+  }
+  .spinner-border-custom {
+    border-width: 6px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-top-color: #00FF87 !important;
+    border-right-color: #60EFFF !important;
+    border-radius: 9999px !important;
+  }
+  .spinner-inner-custom {
+    border-width: 4px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-bottom-color: #60EFFF !important;
+    border-left-color: #00FF87 !important;
+    border-radius: 9999px !important;
+    opacity: 0.7;
+  }
+  .spinner-dot-custom {
+    background: radial-gradient(circle, #00FF87 0%, #60EFFF 70%, transparent 100%);
+    border-radius: 9999px;
+    animation: pulse-dot 1.1s ease-in-out infinite !important;
+  }
+</style>
+
+<div id="upload-overlay" class="hidden fixed inset-0 z-50 bg-deep/90 backdrop-blur-md flex flex-col items-center justify-center">
+  <div class="relative w-20 h-20 sm:w-24 sm:h-24 mb-8">
+    <div class="absolute inset-0 spinner-track-custom"></div>
+    <div class="absolute inset-0 spinner-border-custom animate-spin-custom"></div>
+    <div class="absolute inset-3 spinner-inner-custom animate-spin-reverse"></div>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="w-2 h-2 sm:w-3 sm:h-3 spinner-dot-custom"></div>
+    </div>
+  </div>
+  <p id="upload-status" class="text-white text-sm sm:text-base font-medium text-center max-w-md px-6"></p>
+</div>

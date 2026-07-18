@@ -46,11 +46,18 @@ class Questionnaire(models.Model):
         ALL_BATCH = "ALL_BATCH", "Todo por Lotes"
 
     class AITask(models.TextChoices):
-        EXTRACTION = "EXTRACTION", "Extracción de datos"
-        ATTENTION_RAG = "ATTENTION_RAG", "Atención al cliente / RAG"
-        CODE = "CODE", "Generación de código"
-        CLASSIFICATION = "CLASSIFICATION", "Clasificación"
-        EMBEDDINGS = "EMBEDDINGS", "Embeddings"
+        TEXT_GENERATION_COMPREHENSION = (
+            "TEXT_GENERATION_COMPREHENSION",
+            "Generación y Comprensión de texto",
+        )
+        EMBEDDINGS_RAG = "EMBEDDINGS_RAG", "Embeddings y/o Técnicas RAG"
+        CODE_GENERATION = "CODE_GENERATION", "Generación de código"
+        IMAGE_READING_SCANNING = (
+            "IMAGE_READING_SCANNING",
+            "Lectura y/o escaneo de imágenes",
+        )
+        IMAGE_GENERATION = "IMAGE_GENERATION", "Generación de imágenes"
+        VIDEO_GENERATION = "VIDEO_GENERATION", "Generación de Videos"
 
     id = models.UUIDField(
         primary_key=True,
@@ -159,3 +166,38 @@ class ProcessInventory(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_execution_type_display()})"
+
+
+def metric_file_upload_path(instance, filename):
+    """Genera una ruta aislada por UUID de cuestionario para cada archivo."""
+    questionnaire_id = instance.questionnaire_id
+    if questionnaire_id is None and instance.questionnaire:
+        questionnaire_id = instance.questionnaire.id
+    return f"metrics_uploads/{questionnaire_id}/{filename}"
+
+
+class QuestionnaireMetricFile(models.Model):
+    """Archivo de métricas adjunto a un cuestionario por parte del cliente."""
+
+    questionnaire = models.ForeignKey(
+        Questionnaire,
+        related_name="metric_files",
+        on_delete=models.CASCADE,
+    )
+    file = models.FileField(
+        upload_to=metric_file_upload_path,
+        verbose_name="Archivo de métricas",
+    )
+    original_name = models.CharField(
+        max_length=255,
+        verbose_name="Nombre original",
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Archivo de métricas"
+        verbose_name_plural = "Archivos de métricas"
+        ordering = ["uploaded_at"]
+
+    def __str__(self):
+        return f"{self.original_name} ({self.questionnaire_id})"
