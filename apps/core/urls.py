@@ -30,6 +30,11 @@ urlpatterns = [
         name="sitemap_xml",
     ),
     path("manifest.json", views.manifest, name="manifest"),
+    path(
+        "interno/cuestionarios/archivos/<int:file_id>/descargar/",
+        views.download_metric_file,
+        name="download_metric_file",
+    ),
     # Public diagnostic questionnaire
     path(
         "diagnostico/cuestionario/<uuid:questionnaire_id>/",

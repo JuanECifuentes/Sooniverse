@@ -466,3 +466,46 @@ class AuthenticationTests(TestCase):
             url, {"username": "testuser", "password": "password123"}
         )
         self.assertRedirects(response, reverse("core:internal_leads"))
+
+
+class SecureDownloadViewTests(TestCase):
+    def setUp(self):
+        from .models import Questionnaire, QuestionnaireMetricFile
+        from django.contrib.auth import get_user_model
+
+        self.User = get_user_model()
+        self.user = self.User.objects.create_user("testuser", "test@sooniverse.com", "password123")
+
+        # Create lead, questionnaire, and metric file
+        lead = Lead.objects.create(nombre="Test", correo="t@t.com", empresa="Emp")
+        self.q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.COMPLETED)
+
+        self.uploaded_file = SimpleUploadedFile("metrics.csv", b"date,requests\n2024-01-01,100\n", content_type="text/csv")
+        self.metric_file = QuestionnaireMetricFile.objects.create(
+            questionnaire=self.q,
+            file=self.uploaded_file,
+            original_name="metrics.csv"
+        )
+
+    def tearDown(self):
+        import os
+        if self.metric_file.file and os.path.exists(self.metric_file.file.path):
+            os.remove(self.metric_file.file.path)
+            try:
+                os.rmdir(os.path.dirname(self.metric_file.file.path))
+            except OSError:
+                pass
+
+    def test_anonymous_user_redirected_to_login(self):
+        url = reverse("core:download_metric_file", kwargs={"file_id": self.metric_file.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, f"/accounts/login/?next={url}")
+
+    def test_authenticated_user_can_download(self):
+        self.client.force_login(self.user)
+        url = reverse("core:download_metric_file", kwargs={"file_id": self.metric_file.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Disposition"], 'attachment; filename="metrics.csv"')
+        self.assertEqual(b"".join(response.streaming_content), b"date,requests\n2024-01-01,100\n")
+

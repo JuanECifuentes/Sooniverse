@@ -5,7 +5,7 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.core.cache import cache
@@ -473,3 +473,19 @@ def _render_questionnaire(
             "empresa_nombre": questionnaire.lead.empresa,
         },
     )
+
+
+@login_required
+@require_GET
+def download_metric_file(request, file_id):
+    """Serves metric files securely only to logged in users."""
+    metric_file = get_object_or_404(QuestionnaireMetricFile, pk=file_id)
+    try:
+        file_handle = metric_file.file.open()
+    except FileNotFoundError:
+        raise Http404("El archivo no existe.")
+
+    response = FileResponse(file_handle, content_type="application/octet-stream")
+    response["Content-Disposition"] = f'attachment; filename="{metric_file.original_name}"'
+    return response
+
