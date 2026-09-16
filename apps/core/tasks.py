@@ -45,9 +45,12 @@ def procesar_nuevo_lead(lead_id: int) -> None:
     )
 
     # 2. Send Customer Confirmation
-    asunto_cliente = "Diagnóstico Tecnológico de IA - Solicitud Recibida"
-    plantilla_cliente = "core/emails/respuesta_cliente.html"
-    
+    # Nota: core/emails/respuesta_cliente.html se conserva intacta (no se
+    # elimina) pero ya no se usa aquí; el flujo de "reservar una reunión"
+    # usa la plantilla nueva reunion_agendada.html.
+    asunto_cliente = "Tu reunión con Sooniverse está en camino"
+    plantilla_cliente = "core/emails/reunion_agendada.html"
+
     logger.info(f"Sending customer confirmation for lead {lead_id} to {lead.correo}.")
     enviar_notificacion(
         destinatario=lead.correo,

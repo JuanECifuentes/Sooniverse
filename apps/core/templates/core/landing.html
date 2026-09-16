@@ -382,6 +382,7 @@
             html { scroll-behavior: auto; }
         }
     </style>
+    {% if RECAPTCHA_SITE_KEY %}<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}" async defer></script>{% endif %}
 </head>
 <body class="antialiased">
 
@@ -405,7 +406,7 @@
 
             <div class="flex items-center justify-end gap-4 md:justify-self-end">
                 <a href="{% url 'core:internal_leads' %}" class="hidden md:inline nav-link text-sm font-medium text-slate">Login</a>
-                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnóstico</a>
+                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                 <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
@@ -419,7 +420,7 @@
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
-                <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnóstico</a>
+                <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
             </div>
         </div>
     </header>
@@ -439,7 +440,7 @@
                         Obtén más capacidad de IA por cada dólar que inviertes. Sin sorpresas en la facturación y con privacidad absoluta de tu información.
                     </p>
                     <div class="mt-8 flex flex-wrap gap-4">
-                        <a href="#contacto" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar diagnóstico</a>
+                        <a href="#contacto" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                         <a href="#calculadora" class="btn-secondary px-7 py-3.5 rounded-lg text-sm font-bold text-white uppercase tracking-wide flex items-center gap-2">Calcular ahorro
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </a>
@@ -684,9 +685,9 @@
                 <div class="absolute top-0 right-0 w-64 h-64 bg-cyan opacity-10 blur-[80px] rounded-full"></div>
                 <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon opacity-10 blur-[80px] rounded-full"></div>
                 <div class="relative">
-                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Entra al universo de la eficiencia tecnológica.</h2>
-                    <p class="mt-4 text-slate max-w-xl mx-auto">Cuéntanos sobre tus necesidades tecnológicas o proyectos en mente y nosotros te asesoramos.</p>
-                    <form id="contact-form" action="{% url 'core:contacto' %}" method="POST" class="mt-8 space-y-4 max-w-xl mx-auto text-left">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Agenda una reunión y te mostramos tu ahorro real.</h2>
+                    <p class="mt-4 text-slate max-w-xl mx-auto">Cuéntanos qué procesos quieres mover a IA y en la reunión te entregamos el cálculo de costos y la arquitectura propuesta para tu caso.</p>
+                    <form id="contact-form" action="{% url 'core:contacto' %}" method="POST" data-recaptcha-site="{{ RECAPTCHA_SITE_KEY|default:'' }}" class="mt-8 space-y-4 max-w-xl mx-auto text-left">
                         {% csrf_token %}
                         
                         <div id="form-message" class="hidden rounded-lg p-4 mb-4 text-sm font-semibold border"></div>
@@ -718,9 +719,11 @@
                             <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
                         </div>
 
+                        <input type="hidden" name="g-recaptcha-response" id="id_recaptcha_token">
+
                         <div class="text-center pt-2">
                             <button type="submit" class="btn-primary w-full px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
-                                Solicitar diagnóstico
+                                Reservar una reunión
                             </button>
                         </div>
                     </form>
@@ -753,58 +756,87 @@
 
                                 // Set loading state
                                 submitBtn.disabled = true;
-                                submitBtn.innerHTML = 'PROCESANDO REGISTRO...';
+                                submitBtn.innerHTML = 'RESERVANDO...';
                                 submitBtn.style.opacity = '0.7';
 
-                                const formData = new FormData(form);
-                                formData.append('ajax', 'true');
-
-                                fetch(form.action, {
-                                    method: 'POST',
-                                    body: formData,
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                                    }
-                                })
-                                .then(response => {
-                                    return response.json()
-                                        .catch(() => {
-                                            throw new Error('Hubo un error interno. Por favor, intente más tarde.');
-                                        })
-                                        .then(data => {
-                                            if (!response.ok) {
-                                                throw new Error(data.message || 'Hubo un error interno. Por favor, intente más tarde.');
-                                            }
-                                            return data;
+                                // reCAPTCHA v3 (invisible): el token se acuña en el
+                                // submit (expira en ~120s) y nunca bloquea el envío —
+                                // si Google no responde en 4s, se envía sin token y el
+                                // servidor decide (fail-open si no hay claves).
+                                const siteKey = form.dataset.recaptchaSite || '';
+                                const getRecaptchaToken = () => new Promise((resolve) => {
+                                    if (!siteKey || typeof grecaptcha === 'undefined') { resolve(''); return; }
+                                    const bail = setTimeout(() => resolve(''), 4000);
+                                    try {
+                                        grecaptcha.ready(() => {
+                                            grecaptcha.execute(siteKey, { action: 'contacto_lead' })
+                                                .then((t) => { clearTimeout(bail); resolve(t || ''); })
+                                                .catch(() => { clearTimeout(bail); resolve(''); });
                                         });
-                                })
-                                .then(data => {
-                                    formMessage.classList.remove('hidden');
-                                    formMessage.classList.add('bg-surface', 'text-neon', 'border-neon');
-                                    formMessage.innerHTML = data.message;
-                                    form.reset();
-                                })
-                                .catch(error => {
-                                    formMessage.classList.remove('hidden');
-                                    formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
-                                    
-                                    let msg = error.message;
-                                    if (!msg || msg.includes('fetch') || msg.includes('NetworkError') || msg.includes('JSON') || msg.includes('Unexpected token')) {
-                                        msg = 'Hubo un error interno. Por favor, intente más tarde.';
+                                    } catch (err) {
+                                        clearTimeout(bail);
+                                        resolve('');
                                     }
-                                    formMessage.innerHTML = msg;
-                                })
-                                .finally(() => {
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = originalBtnText;
-                                    submitBtn.style.opacity = '1';
+                                });
+
+                                getRecaptchaToken().then((token) => {
+                                    document.getElementById('id_recaptcha_token').value = token;
+
+                                    const formData = new FormData(form);
+                                    formData.append('ajax', 'true');
+
+                                    fetch(form.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                                        }
+                                    })
+                                    .then(response => {
+                                        return response.json()
+                                            .catch(() => {
+                                                throw new Error('Hubo un error interno. Por favor, intente más tarde.');
+                                            })
+                                            .then(data => {
+                                                if (!response.ok) {
+                                                    throw new Error(data.message || 'Hubo un error interno. Por favor, intente más tarde.');
+                                                }
+                                                return data;
+                                            });
+                                    })
+                                    .then(data => {
+                                        formMessage.classList.remove('hidden');
+                                        formMessage.classList.add('bg-surface', 'text-neon', 'border-neon');
+                                        formMessage.innerHTML = data.message;
+                                        form.reset();
+                                    })
+                                    .catch(error => {
+                                        formMessage.classList.remove('hidden');
+                                        formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
+
+                                        let msg = error.message;
+                                        if (!msg || msg.includes('fetch') || msg.includes('NetworkError') || msg.includes('JSON') || msg.includes('Unexpected token')) {
+                                            msg = 'Hubo un error interno. Por favor, intente más tarde.';
+                                        }
+                                        formMessage.innerHTML = msg;
+                                    })
+                                    .finally(() => {
+                                        submitBtn.disabled = false;
+                                        submitBtn.innerHTML = originalBtnText;
+                                        submitBtn.style.opacity = '1';
+                                    });
                                 });
                             });
                         });
                     </script>
 
-                    <p class="mt-4 text-xs text-slate">Sin compromiso. Cumplimiento RGPD y politicas de privacidad empresariales.</p>
+                    <p class="mt-4 text-xs text-slate">
+                        Sin compromiso. Cumplimiento RGPD y políticas de privacidad empresariales.
+                        Este sitio está protegido por reCAPTCHA; aplican la
+                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-cyan hover:underline">Política de Privacidad</a> y los
+                        <a href="https://policies.google.com/terms" target="_blank" rel="noopener" class="text-cyan hover:underline">Términos de Servicio</a> de Google.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1057,7 +1089,7 @@
                             <div class="text-xs text-slate/70 mt-1 font-mono" id="savings-cop">~ $0 COP</div>
                         </div>
                     </div>
-                    <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Solicitar Diagnóstico</a>
+                    <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                 </div>
 
                 <div class="lg:col-span-3 glass-panel p-6 sm:p-8">

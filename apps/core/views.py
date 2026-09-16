@@ -23,6 +23,7 @@ from .forms import (
     QuestionnaireMetricFileForm,
 )
 from .models import Lead, Questionnaire, ProcessInventory, QuestionnaireMetricFile
+from .recaptcha import verify_recaptcha
 
 logger = logging.getLogger("django.apps.core.views")
 
@@ -77,6 +78,20 @@ def contacto_lead(request):
             return JsonResponse({"success": False, "message": msg}, status=429)
         return redirect("/#contacto")
 
+    # Verificación de reCAPTCHA v3, después del rate limit (para que no sea un
+    # amplificador de peticiones salientes) y antes de validar el formulario
+    # (para que los bots no lleguen a tocar la BD vía clean_correo).
+    captcha_ok, captcha_reason = verify_recaptcha(
+        request.POST.get("g-recaptcha-response", ""), remote_ip=ip
+    )
+    if not captcha_ok:
+        cache.set(cache_key, current_requests + 1, timeout=window)
+        logger.warning(f"reCAPTCHA rechazado para IP {ip} ({captcha_reason}).")
+        msg = "No fue posible validar la seguridad de la solicitud. Recargue la página e intente nuevamente."
+        if is_ajax:
+            return JsonResponse({"success": False, "message": msg}, status=400)
+        return redirect("/#contacto")
+
     form = LeadForm(request.POST)
     if form.is_valid():
         lead = form.save(commit=False)
@@ -85,9 +100,9 @@ def contacto_lead(request):
 
         cache.set(cache_key, current_requests + 1, timeout=window)
 
-        logger.info(f"Lead {lead.pk} created; notifications dispatched via signal.")
+        logger.info(f"Lead {lead.pk} created (captcha={captcha_reason}); notifications dispatched via signal.")
 
-        msg = "Su solicitud de diagnóstico ha sido registrada con éxito. Nos comunicaremos en menos de 24 horas."
+        msg = "Tu solicitud de reunión ha sido registrada con éxito. Nos comunicaremos en menos de 48 horas para confirmar el horario."
         if is_ajax:
             return JsonResponse({"success": True, "message": msg})
         return redirect("/#contacto")

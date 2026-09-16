@@ -280,7 +280,7 @@ class NotificationsTaskTestCase(TestCase):
 
         second_call = call_args_list[1]
         self.assertEqual(second_call[1]["to"], ["alice@wonderland.com"])
-        self.assertIn("Diagnóstico Tecnológico", second_call[1]["subject"])
+        self.assertIn("reunión", second_call[1]["subject"])
 
 
 class ManifestTestCase(TestCase):
