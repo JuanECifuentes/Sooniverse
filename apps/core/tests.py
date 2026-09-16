@@ -189,7 +189,11 @@ class ContactViewTestCase(TestCase):
             "mensaje": "Test message.",
             "website_verification": "",
         }
-        response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        # The dispatch is now wrapped in transaction.on_commit(); TestCase
+        # wraps each test in a non-committing transaction, so on_commit
+        # callbacks never fire unless captured explicitly like this.
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["success"])
 
@@ -217,13 +221,14 @@ class ContactViewTestCase(TestCase):
         }
 
         # Submit 3 times (limit is 3)
-        for i in range(3):
-            test_data = data.copy()
-            test_data["correo"] = f"jane{i}@company.com"
-            response = self.client.post(
-                url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
-            )
-            self.assertEqual(response.status_code, 200)
+        with self.captureOnCommitCallbacks(execute=True):
+            for i in range(3):
+                test_data = data.copy()
+                test_data["correo"] = f"jane{i}@company.com"
+                response = self.client.post(
+                    url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+                )
+                self.assertEqual(response.status_code, 200)
 
         # 4th submission must be blocked with 429
         test_data = data.copy()
@@ -477,7 +482,9 @@ class SecureDownloadViewTests(TestCase):
         self.user = self.User.objects.create_user("testuser", "test@sooniverse.com", "password123")
 
         # Create lead, questionnaire, and metric file
-        lead = Lead.objects.create(nombre="Test", correo="t@t.com", empresa="Emp")
+        lead = Lead(nombre="Test", correo="t@t.com", empresa="Emp")
+        lead.skip_email_signal = True  # avoid enqueuing a real notification task
+        lead.save()
         self.q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.COMPLETED)
 
         self.uploaded_file = SimpleUploadedFile("metrics.csv", b"date,requests\n2024-01-01,100\n", content_type="text/csv")

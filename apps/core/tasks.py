@@ -1,7 +1,7 @@
 import logging
 from django.conf import settings
 from .models import Lead
-from .services.notifications import enviar_notificacion
+from .services.notifications import build_url, enviar_notificacion
 
 logger = logging.getLogger("django.apps.core.tasks")
 
@@ -28,6 +28,7 @@ def procesar_nuevo_lead(lead_id: int) -> None:
         "creado_en": lead.creado_en,
         "estado": lead.get_estado_display(),
         "ip_origen": lead.ip_origen,
+        "base_url": build_url(""),
     }
 
     # 1. Send Internal Notification
