@@ -132,8 +132,35 @@ table.bd .off td{color:var(--slate-dim)}
 .rules p{margin:4px 0 0;color:var(--slate);font-size:13.5px}
 
 /* ---------- tiers ---------- */
-.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
-.tier{border:1px solid var(--line);border-radius:10px;padding:20px 18px;background:var(--cyber-surface)}
+.mant-selection-bar{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  margin-top:20px;padding:12px 16px;background:rgba(15,23,42,.7);
+  border:1px solid var(--line);border-radius:10px;
+}
+.mant-sel-title{font-size:13px;font-weight:600;color:var(--slate)}
+.mant-pills{display:inline-flex;gap:6px;flex-wrap:wrap;background:var(--deep-space);padding:4px;border-radius:8px;border:1px solid var(--line)}
+.mant-pill{
+  display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid transparent;
+  color:var(--slate);padding:6px 12px;border-radius:6px;font-size:12.5px;font-family:inherit;font-weight:500;
+  cursor:pointer;transition:all .15s ease;
+}
+.mant-pill:hover{color:var(--white);background:rgba(255,255,255,.05)}
+.mant-pill .pill-dot{width:6px;height:6px;border-radius:50%;background:var(--slate-dim);transition:background .15s}
+.mant-pill.active{background:var(--structural);color:var(--white);border-color:var(--line);font-weight:600}
+.mant-pill.active .pill-dot{background:var(--neon);box-shadow:0 0 6px var(--neon)}
+.mant-pill .pill-tag{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--neon);background:rgba(0,255,135,.12);padding:1px 5px;border-radius:3px}
+
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.tier{
+  border:1px solid var(--line);border-radius:10px;padding:20px 18px;background:var(--cyber-surface);
+  position:relative;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;
+}
+.tier:hover{border-color:#384f72;transform:translateY(-2px)}
+.tier.tier-selected{
+  border-color:var(--neon)!important;
+  box-shadow:0 0 0 1px var(--neon), 0 8px 24px rgba(0,255,135,.16);
+  background:linear-gradient(180deg,rgba(0,255,135,.09),var(--cyber-surface) 60%)!important;
+}
 .tier.mid{border-color:rgba(0,255,135,.4);background:linear-gradient(180deg,rgba(0,255,135,.06),transparent 60%)}
 .tier h4{margin:0 0 3px;font-size:16px;font-weight:650;letter-spacing:-.01em}
 .tier .price{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;margin:12px 0 3px;letter-spacing:-.02em}
@@ -142,6 +169,13 @@ table.bd .off td{color:var(--slate-dim)}
 .tier ul{margin:0;padding-left:16px;color:var(--slate);font-size:13px;line-height:1.65}
 .tier ul li{margin-bottom:5px}
 .tier .rec{font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--neon);margin-bottom:8px;display:block}
+.tier-select-action{
+  margin-top:16px;padding-top:12px;border-top:1px solid rgba(36,52,76,.6);
+  font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  color:var(--slate-dim);transition:color .15s;
+}
+.tier:hover .tier-select-action{color:var(--cyan)}
+.tier.tier-selected .tier-select-action{color:var(--neon)}
 
 /* ---------- rail ---------- */
 .rail{position:sticky;top:24px}
@@ -205,8 +239,8 @@ footer b{color:var(--slate);font-weight:600}
   <p class="sec-intro">Tu hora no es lo que "se paga en el mercado", es lo que necesitas que valga para que el año cierre. El divisor crítico son las <b>horas facturables</b>: de ~160 horas trabajadas al mes, un consultor solo factura entre 50 y 70. El resto se va en venta, administración y aprender lo que aún no sabes.</p>
 
   <div class="grid g2">
-    <label class="f"><span class="lbl">Ingreso mensual objetivo <span class="hint">millones COP</span></span><input type="number" id="i_ingreso" value="15" min="0" step="0.5"></label>
-    <label class="f"><span class="lbl">Costos fijos del negocio <span class="hint">millones COP / mes</span></span><input type="number" id="i_costos" value="3" min="0" step="0.25"></label>
+    <label class="f"><span class="lbl">Ingreso mensual objetivo <span class="hint">millones COP</span></span><input type="number" id="i_ingreso" value="40" min="0" step="0.5"></label>
+    <label class="f"><span class="lbl">Costos fijos del negocio <span class="hint">millones COP / mes</span></span><input type="number" id="i_costos" value="13" min="0" step="0.25"></label>
     <label class="f"><span class="lbl">Reserva para impuestos y seguridad social <span class="hint">%</span></span><input type="number" id="i_imp" value="30" min="0" max="70" step="1"></label>
     <label class="f"><span class="lbl">Horas facturables al mes <span class="hint">realistas, no deseadas</span></span><input type="number" id="i_horas" value="60" min="10" max="180" step="5"></label>
   </div>
@@ -243,7 +277,7 @@ footer b{color:var(--slate);font-weight:600}
   <p class="sec-intro">El piso sale de la complejidad real y no baja aunque el ahorro sea pobre. El valor sale del ahorro y sube cuando el cliente gana mucho. <b>Cobras el mayor de los dos</b>, nunca por encima de 10 meses de ahorro. Así, más workers con menos ahorro ya no significa cobrar menos por más trabajo.</p>
 
   <div class="grid g2">
-    <label class="f"><span class="lbl">Gasto actual en IA del cliente <span class="hint">millones COP / mes, verificado</span></span><input type="number" id="i_gasto" value="10" min="0" step="0.5"></label>
+    <label class="f"><span class="lbl">Gasto actual en IA del cliente <span class="hint">millones COP / mes, verificado</span></span><input type="number" id="i_gasto" value="7.5" min="0" step="0.5"></label>
     <label class="f"><span class="lbl">Costo mensual nuevo <span class="hint">infraestructura + cuota</span></span><input type="number" id="i_nuevo" value="2.6" min="0" step="0.1"></label>
   </div>
 
@@ -253,10 +287,7 @@ footer b{color:var(--slate);font-weight:600}
     <label class="f"><span class="lbl">Sistemas a integrar</span><input type="number" id="i_integr" value="1" min="1" max="30" step="1"></label>
   </div>
 
-  <div class="grid g2" style="margin-top:16px">
-    <label class="chk"><input type="checkbox" id="c_nube"><span><b>Nube del cliente, con sus políticas <span class="num">+25%</span></b><small>Sin permisos de administrador, VPC propia, aprobaciones internas</small></span></label>
-    <label class="chk"><input type="checkbox" id="c_cumpl"><span><b>Cumplimiento y auditoría <span class="num">+20%</span></b><small>Salud, seguros, financiero o legal: trazabilidad y datos personales</small></span></label>
-    <label class="chk"><input type="checkbox" id="c_ha"><span><b>Alta disponibilidad <span class="num">+30%</span></b><small>Redundancia, failover, sin ventana de caída</small></span></label>
+  <div style="margin-top:16px">
     <label class="chk"><input type="checkbox" id="c_urg"><span><b>Entrega en menos de 3 semanas <span class="num">+25%</span></b><small>Desplaza otros compromisos de tu agenda</small></span></label>
   </div>
 
@@ -277,28 +308,49 @@ footer b{color:var(--slate);font-weight:600}
   <div class="sec-head"><h2>Mantenimiento programado</h2><span>ventanas trimestrales</span></div>
   <p class="sec-intro">Se cotiza por dos caminos y ganas el mayor: <b>horas reales por ventana</b> (que crecen con los workers, como bien intuías) y <b>un porcentaje anual de la implementación</b>, que es la referencia estándar de la industria. Cuando ambos métodos dan parecido, sabes que el precio está bien puesto.</p>
 
+  <div class="mant-selection-bar">
+    <div class="mant-sel-title">Elige un plan de mantenimiento (opcional):</div>
+    <div class="mant-pills" role="radiogroup" aria-label="Plan de mantenimiento">
+      <button type="button" class="mant-pill active" data-plan="none" id="btn_plan_none">
+        <span class="pill-dot"></span> Sin mantenimiento
+      </button>
+      <button type="button" class="mant-pill" data-plan="esen" id="btn_plan_esen">
+        <span class="pill-dot"></span> Esencial
+      </button>
+      <button type="button" class="mant-pill" data-plan="std" id="btn_plan_std">
+        <span class="pill-dot"></span> Estándar <span class="pill-tag">Recomendado</span>
+      </button>
+      <button type="button" class="mant-pill" data-plan="crit" id="btn_plan_crit">
+        <span class="pill-dot"></span> Crítico
+      </button>
+    </div>
+  </div>
+
   <div class="tiers">
-    <div class="tier">
+    <div class="tier" id="tier_esen" data-plan="esen">
       <h4>Esencial</h4>
       <div style="color:var(--slate-dim);font-size:12.5px">2 ventanas al año</div>
       <div class="price num" id="o_m_esen">—</div>
       <div class="per">al año, facturado mensual</div>
       <ul><li>Limpieza y optimización</li><li>Parches de componentes</li><li>Informe de estado</li><li>Sin SLA de respuesta</li></ul>
+      <div class="tier-select-action"><span id="act_m_esen">Elegir plan</span></div>
     </div>
-    <div class="tier mid">
+    <div class="tier mid" id="tier_std" data-plan="std">
       <span class="rec">recomendado</span>
       <h4>Estándar</h4>
       <div style="color:var(--slate-dim);font-size:12.5px">4 ventanas al año</div>
       <div class="price num" id="o_m_std">—</div>
       <div class="per">al año, facturado mensual</div>
       <ul><li>Todo lo de Esencial</li><li>Actualización a la última versión de la familia</li><li>Monitoreo continuo</li><li>Respuesta en 2 días hábiles</li></ul>
+      <div class="tier-select-action"><span id="act_m_std">Elegir plan</span></div>
     </div>
-    <div class="tier">
+    <div class="tier" id="tier_crit" data-plan="crit">
       <h4>Crítico</h4>
       <div style="color:var(--slate-dim);font-size:12.5px">4 ventanas + incidentes</div>
       <div class="price num" id="o_m_crit">—</div>
       <div class="per">al año, facturado mensual</div>
       <ul><li>Todo lo de Estándar</li><li>Incidentes con SLA en horas</li><li>Evaluación de modelos nuevos</li><li>Un cambio de configuración por trimestre</li></ul>
+      <div class="tier-select-action"><span id="act_m_crit">Elegir plan</span></div>
     </div>
   </div>
 
@@ -355,12 +407,13 @@ footer b{color:var(--slate);font-weight:600}
         <li class="muted"><span class="k">Horas estimadas</span><span class="v" id="o_horas">—</span></li>
         <li class="muted"><span class="k">Rinde por hora</span><span class="v" id="o_rinde">—</span></li>
         <li><span class="k">Diagnóstico, deducible</span><span class="v" id="o_diag2">—</span></li>
-        <li><span class="k">Mantenimiento incluido</span><span class="v" id="o_m_incl">—</span></li>
+        <li><span class="k" id="o_m_lbl">Mantenimiento</span><span class="v" id="o_m_incl">—</span></li>
+        <li id="row_m_cuota" style="display:none"><span class="k">Cuota recurrente</span><span class="v" id="o_m_cuota">—</span></li>
         <li class="strong"><span class="k">Total a facturar</span><span class="v" id="o_total">—</span></li>
       </ul>
       <div class="reason" id="o_reason">—</div>
     </div>
-    <div class="qfoot">Valores antes de IVA. El diagnóstico se descuenta si contrata dentro de 45 días. Mantenimiento Estándar incluido el primer año.</div>
+    <div class="qfoot" id="o_qfoot">Valores antes de IVA. El diagnóstico se descuenta si contrata dentro de 45 días. Sin plan de mantenimiento contratado.</div>
   </div>
 </aside>
 
@@ -434,10 +487,7 @@ footer b{color:var(--slate);font-weight:600}
 
     var mults = [];
     var mTot = 1;
-    if ($('c_nube').checked)  { mTot *= 1.25; mults.push(['Nube del cliente con sus políticas','+25%']); }
-    if ($('c_cumpl').checked) { mTot *= 1.20; mults.push(['Cumplimiento y auditoría','+20%']); }
-    if ($('c_ha').checked)    { mTot *= 1.30; mults.push(['Alta disponibilidad','+30%']); }
-    if ($('c_urg').checked)   { mTot *= 1.25; mults.push(['Entrega acelerada','+25%']); }
+    if ($('c_urg') && $('c_urg').checked) { mTot *= 1.25; mults.push(['Entrega acelerada','+25%']); }
 
     var piso = round(hTot * rIng * mTot, 100000);
     var horasEfect = hTot * mTot;
@@ -551,18 +601,87 @@ footer b{color:var(--slate);font-weight:600}
     vrows += '<tr class="off"><td>Estándar por porcentaje · 18% del precio cotizado</td><td class="mono">—</td><td class="mono">'+cop(stdTD)+'</td></tr>';
     $('tb_vent').innerHTML = vrows;
 
-    /* ---------- qué mantenimiento regalar ---------- */
-    var holgura = precio >= piso*2;
-    $('o_m_incl').textContent = holgura
-      ? 'año 1 incluido · ' + copM(std)
-      : '2 ventanas · ' + copM(round(ventana*2,100000));
+    /* ---------- selección y desglose de mantenimiento ---------- */
+    var allPills = document.querySelectorAll('.mant-pill');
+    for (var pi = 0; pi < allPills.length; pi++) {
+      if (allPills[pi].getAttribute('data-plan') === selectedPlan) {
+        allPills[pi].classList.add('active');
+      } else {
+        allPills[pi].classList.remove('active');
+      }
+    }
+
+    var allTiers = document.querySelectorAll('.tier[data-plan]');
+    for (var ti = 0; ti < allTiers.length; ti++) {
+      var planCode = allTiers[ti].getAttribute('data-plan');
+      var actEl = $('act_m_' + planCode);
+      if (planCode === selectedPlan) {
+        allTiers[ti].classList.add('tier-selected');
+        if (actEl) actEl.textContent = '✓ Plan seleccionado';
+      } else {
+        allTiers[ti].classList.remove('tier-selected');
+        if (actEl) actEl.textContent = 'Elegir plan';
+      }
+    }
+
+    var mVal = 0;
+    var mName = '';
+    var mColor = 'var(--white)';
+    if (selectedPlan === 'esen') { mVal = esen; mName = 'Esencial'; mColor = 'var(--cyan)'; }
+    else if (selectedPlan === 'std') { mVal = std; mName = 'Estándar'; mColor = 'var(--neon)'; }
+    else if (selectedPlan === 'crit') { mVal = crit; mName = 'Crítico'; mColor = 'var(--amber)'; }
+
+    var rowCuota = $('row_m_cuota');
+    var qfoot = $('o_qfoot');
+
+    if (selectedPlan === 'none') {
+      $('o_m_incl').textContent = 'Ninguno ($0)';
+      $('o_m_incl').style.color = 'var(--slate-dim)';
+      if (rowCuota) rowCuota.style.display = 'none';
+      if (qfoot) qfoot.textContent = 'Valores antes de IVA. El diagnóstico se descuenta si contrata dentro de 45 días. Sin plan de mantenimiento contratado.';
+    } else {
+      var cuotaMes = round(mVal / 12, 10000);
+      $('o_m_incl').textContent = mName + ' · ' + copM(mVal) + '/año';
+      $('o_m_incl').style.color = mColor;
+      if (rowCuota) {
+        rowCuota.style.display = 'flex';
+        $('o_m_cuota').textContent = cop(cuotaMes) + '/mes';
+      }
+      if (qfoot) qfoot.textContent = 'Valores antes de IVA. El diagnóstico se descuenta si contrata dentro de 45 días. Mantenimiento ' + mName + ' facturado mensual (~' + cop(cuotaMes) + '/mes).';
+    }
+
     $('o_total').textContent  = cop(precio - diag);
+  }
+
+  var selectedPlan = 'none';
+
+  function setPlan(plan){
+    if (selectedPlan === plan && plan !== 'none') {
+      selectedPlan = 'none';
+    } else {
+      selectedPlan = plan;
+    }
+    calc();
+  }
+
+  var planPills = document.querySelectorAll('.mant-pill');
+  for (var p = 0; p < planPills.length; p++) {
+    planPills[p].addEventListener('click', function(e){
+      e.stopPropagation();
+      setPlan(this.getAttribute('data-plan'));
+    });
+  }
+
+  var tierCards = document.querySelectorAll('.tier[data-plan]');
+  for (var t = 0; t < tierCards.length; t++) {
+    tierCards[t].addEventListener('click', function(){
+      setPlan(this.getAttribute('data-plan'));
+    });
   }
 
   var ids = ['i_ingreso','i_costos','i_imp','i_horas','i_gasto','i_nuevo','i_workers','i_familias','i_integr'];
   for (var k=0;k<ids.length;k++) $(ids[k]).addEventListener('input', calc);
-  var cbs = ['c_nube','c_cumpl','c_ha','c_urg'];
-  for (var j=0;j<cbs.length;j++) $(cbs[j]).addEventListener('change', calc);
+  if ($('c_urg')) $('c_urg').addEventListener('change', calc);
 
   calc();
 })();
