@@ -179,8 +179,9 @@ class ContactViewTestCase(TestCase):
     def setUp(self):
         cache.clear()
 
+    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
     @patch("apps.core.signals.async_task")
-    def test_submit_lead_success(self, mock_async_task):
+    def test_submit_lead_success(self, mock_async_task, mock_recaptcha):
         url = reverse("core:contacto")
         data = {
             "nombre": "Jane Doe",
@@ -209,8 +210,9 @@ class ContactViewTestCase(TestCase):
             "apps.core.tasks.procesar_nuevo_lead", lead.pk
         )
 
+    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
     @patch("apps.core.signals.async_task")
-    def test_rate_limiting(self, mock_async_task):
+    def test_rate_limiting(self, mock_async_task, mock_recaptcha):
         url = reverse("core:contacto")
         data = {
             "nombre": "Jane Doe",

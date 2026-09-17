@@ -76,13 +76,18 @@
     align-items: center;
     line-height: normal !important;
   }
+
+  /* La grilla ganó columnas (Reunión, Mantenim.) y el contenedor
+     max-w-7xl (1280px) le sobraba espacio horizontal disponible en
+     pantallas anchas; se amplía el techo sin volverlo full-bleed. */
+  .crm-container { max-width: 1600px; }
 </style>
 {% endblock %}
 
 {% block content %}
 {% csrf_token %}
 
-<div class="max-w-7xl mx-auto">
+<div class="crm-container mx-auto">
   {% if messages %}
     <div class="mb-6 space-y-2">
       {% for m in messages %}
@@ -266,16 +271,23 @@
     btn.textContent = 'Cuestionarios';
     btn.addEventListener('click', () => openQuestionnairesModal(params.data.id));
 
-    const btn2 = document.createElement('button');
-    btn2.type = 'button';
-    btn2.className = 'btn-secondary rounded-md text-[9px] font-bold text-white uppercase tracking-wider transition-all flex items-center justify-center';
-    btn2.style.height = '24px';
-    btn2.style.padding = '0 10px';
-    btn2.textContent = 'Reunión / Mant.';
-    btn2.addEventListener('click', () => openLeadModal(params.data.id));
-
     wrap.appendChild(btn);
-    wrap.appendChild(btn2);
+
+    // El botón de Mantenimiento solo tiene sentido una vez el lead llega a
+    // "Mantenimiento programado" — es ahí donde se agendan (y reprograman)
+    // las ventanas. La reunión, en cambio, se gestiona automáticamente: el
+    // propio <select> de estado abre este mismo modal si intentas pasar a
+    // "Reunión Confirmada" sin fecha registrada.
+    if (params.data.estado === 'mantenimiento_programado') {
+      const btn2 = document.createElement('button');
+      btn2.type = 'button';
+      btn2.className = 'btn-secondary rounded-md text-[9px] font-bold text-white uppercase tracking-wider transition-all flex items-center justify-center';
+      btn2.style.height = '24px';
+      btn2.style.padding = '0 10px';
+      btn2.textContent = 'Mantenimiento';
+      btn2.addEventListener('click', () => openLeadModal(params.data.id));
+      wrap.appendChild(btn2);
+    }
     return wrap;
   }
 
