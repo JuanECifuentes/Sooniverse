@@ -8,7 +8,7 @@
     <title>{% block title %}Sooniverse | Diagnóstico Técnico{% endblock %}</title>
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'icons/icon-192x192.png' %}">
     <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="{% block robots %}noindex, nofollow{% endblock %}">
 
     <link href="{% static 'css/dist/tailwind.css' %}" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +79,7 @@
             <a href="/" class="flex items-center gap-2">
                 <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-8 w-auto">
             </a>
-            <span class="font-mono text-[10px] uppercase tracking-brand text-neon">Diagnóstico Técnico</span>
+            <span class="font-mono text-[10px] uppercase tracking-brand text-neon">{% block header_label %}Diagnóstico Técnico{% endblock %}</span>
         </div>
     </header>
 

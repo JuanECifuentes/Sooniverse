@@ -1,5 +1,6 @@
 from django.conf import settings
 
+
 def django_env(request):
     """Exposes the active DJANGO_ENV setting and the reCAPTCHA site key
     (public, safe to expose) to all templates."""

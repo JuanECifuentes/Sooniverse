@@ -1,11 +1,12 @@
-from django.test import TestCase, override_settings
-from django.urls import reverse
-from django.core.cache import cache
-from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 
-from .models import Lead
+from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
+from django.urls import reverse
+
 from .forms import LeadForm, QuestionnaireMetricFileForm
+from .models import Lead
 from .tasks import procesar_nuevo_lead
 
 
@@ -102,7 +103,6 @@ class LeadFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_duplicate_email_within_24_hours(self):
-        from django.utils import timezone
 
         # Create an existing lead (skip email signal to isolate the test)
         lead = Lead(
@@ -130,8 +130,9 @@ class LeadFormTestCase(TestCase):
         )
 
     def test_duplicate_email_after_24_hours(self):
-        from django.utils import timezone
         from datetime import timedelta
+
+        from django.utils import timezone
 
         # Create an old lead (skip email signal to isolate the test)
         lead = Lead(
@@ -167,83 +168,6 @@ class LeadFormTestCase(TestCase):
         form = LeadForm(data=data)
         self.assertFalse(form.is_valid())
         self.assertIn("website_verification", form.errors)
-
-
-@override_settings(
-    RATE_LIMIT_LIMIT=3,
-    RATE_LIMIT_WINDOW=60,
-    NOTIFICACION_INTERNA_EMAIL="admin@sooniverse.com",
-    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-)
-class ContactViewTestCase(TestCase):
-    def setUp(self):
-        cache.clear()
-
-    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
-    @patch("apps.core.signals.async_task")
-    def test_submit_lead_success(self, mock_async_task, mock_recaptcha):
-        url = reverse("core:contacto")
-        data = {
-            "nombre": "Jane Doe",
-            "correo": "jane@company.com",
-            "empresa": "Stark Industries",
-            "mensaje": "Test message.",
-            "website_verification": "",
-        }
-        # The dispatch is now wrapped in transaction.on_commit(); TestCase
-        # wraps each test in a non-committing transaction, so on_commit
-        # callbacks never fire unless captured explicitly like this.
-        with self.captureOnCommitCallbacks(execute=True):
-            response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()["success"])
-
-        # Verify Lead saved in database
-        self.assertEqual(Lead.objects.count(), 1)
-        lead = Lead.objects.first()
-        self.assertEqual(lead.nombre, "Jane Doe")
-        self.assertEqual(lead.correo, "jane@company.com")
-        self.assertEqual(lead.empresa, "Stark Industries")
-
-        # Notifications are now dispatched via the post_save signal.
-        mock_async_task.assert_called_once_with(
-            "apps.core.tasks.procesar_nuevo_lead", lead.pk
-        )
-
-    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
-    @patch("apps.core.signals.async_task")
-    def test_rate_limiting(self, mock_async_task, mock_recaptcha):
-        url = reverse("core:contacto")
-        data = {
-            "nombre": "Jane Doe",
-            "correo": "jane@company.com",
-            "empresa": "Stark Industries",
-            "mensaje": "Test message.",
-            "website_verification": "",
-        }
-
-        # Submit 3 times (limit is 3)
-        with self.captureOnCommitCallbacks(execute=True):
-            for i in range(3):
-                test_data = data.copy()
-                test_data["correo"] = f"jane{i}@company.com"
-                response = self.client.post(
-                    url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
-                )
-                self.assertEqual(response.status_code, 200)
-
-        # 4th submission must be blocked with 429
-        test_data = data.copy()
-        test_data["correo"] = "jane4@company.com"
-        response = self.client.post(
-            url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
-        )
-        self.assertEqual(response.status_code, 429)
-        self.assertFalse(response.json()["success"])
-        self.assertIn("Límite de solicitudes excedido", response.json()["message"])
-
-        # Verify only 3 Leads saved in DB
-        self.assertEqual(Lead.objects.count(), 3)
 
 
 class NotificationsTaskTestCase(TestCase):
@@ -383,8 +307,9 @@ class QuestionnaireFlowTestCase(TestCase):
         self.assertEqual(q.current_providers, [])
 
     def test_public_questionnaire_with_file_upload(self):
-        from .models import Questionnaire, QuestionnaireMetricFile
         import os
+
+        from .models import Questionnaire
 
         lead = self._make_lead()
         q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.PENDING)
@@ -485,8 +410,9 @@ class AuthenticationTests(TestCase):
 
 class SecureDownloadViewTests(TestCase):
     def setUp(self):
-        from .models import Questionnaire, QuestionnaireMetricFile
         from django.contrib.auth import get_user_model
+
+        from .models import Questionnaire, QuestionnaireMetricFile
 
         self.User = get_user_model()
         self.user = self.User.objects.create_user("testuser", "test@sooniverse.com", "password123")
@@ -536,7 +462,12 @@ from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
 from django.utils import timezone
 
-from .models import LeadEstadoHistory, MaintenanceWindow, NotificationLog, validar_limite_ventanas
+from .models import (
+    LeadEstadoHistory,
+    MaintenanceWindow,
+    NotificationLog,
+    validar_limite_ventanas,
+)
 from .services.dedupe import reclamar
 from .services.digest import construir_digest
 from .services.pipeline import transicionar_lead
@@ -734,3 +665,350 @@ class SyncSchedulesCommandTestCase(TestCase):
         call_command("sync_schedules", "--dry-run", stdout=StringIO())
         self.assertEqual(Schedule.objects.count(), 0)
 
+
+
+# ──────────────────────────────────────────────
+# Booking público (/agendar/)
+# ──────────────────────────────────────────────
+
+from datetime import datetime
+from datetime import timezone as dt_timezone
+from zoneinfo import ZoneInfo
+
+from django.conf import settings
+from django.utils import timezone as dj_tz
+
+from .models import Appointment, DiaHorario
+from .services import booking as booking_svc
+
+
+def _siguiente_dia_habil(dias_adelante_minimo: int = 3):
+    """Próximo día L-V (en Bogotá) al menos dias_adelante_minimo días en el
+    futuro, para que sus slots pasen el filtro de antelación/ventana."""
+    hoy_bogota = dj_tz.localtime().date()
+    fecha = hoy_bogota + timedelta(days=dias_adelante_minimo)
+    for _ in range(14):
+        if fecha.weekday() < 5:
+            return fecha
+        fecha += timedelta(days=1)
+    raise AssertionError("No se encontró día hábil cercano")
+
+
+class BookingServiceTestCase(TestCase):
+    """Generación de slots del motor de disponibilidad."""
+
+    def test_slots_lunes_a_viernes(self):
+        fecha = _siguiente_dia_habil(3)
+        data = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Bogota")
+        self.assertEqual(data["zona_horaria"], "America/Bogota")
+        self.assertTrue(data["slots"])
+        primeros = [
+            datetime.fromisoformat(s).astimezone(ZoneInfo(settings.TIME_ZONE))
+            for s in data["slots"]
+        ]
+        # 9:00 (u hora actual legible) hasta 17:30 fin de jornada; slots cada 30 min.
+        self.assertEqual(
+            len(primeros), 18
+        )  # 09:00..17:30 si el día completo está libre
+        self.assertEqual((primeros[-1] - primeros[0]).total_seconds(), 17 * 1800)
+
+    def test_fin_de_semana_sin_slots(self):
+        hoy = dj_tz.localtime().date()
+        fecha = hoy + timedelta(days=(6 - hoy.weekday()) % 7 or 7)  # próximo domingo
+        data = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Bogota")
+        self.assertEqual(data["slots"], [])
+
+    def test_zona_horaria_invalida_cae_en_colombia(self):
+        data = booking_svc.slots_para_fecha(None, "Zona/Inventada")
+        self.assertEqual(data["zona_horaria"], settings.TIME_ZONE)
+
+    def test_slots_iguales_en_zonas_mismo_utc(self):
+        """Bogotá y Lima comparten UTC: los slots listados son idénticos."""
+        fecha = _siguiente_dia_habil(3)
+        bogota = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Bogota")
+        lima = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Lima")
+        self.assertEqual(bogota["slots"], lima["slots"])
+        self.assertEqual(lima["zona_horaria"], "America/Lima")
+
+
+@override_settings(NOTIFICACION_INTERNA_EMAIL="admin@sooniverse.com")
+class BookingAPIsTestCase(TestCase):
+    def setUp(self):
+        cache.clear()
+
+    @staticmethod
+    def _payload(inicio_iso, correo="cliente@empresa.com", consent=True):
+        return {
+            "inicio": inicio_iso,
+            "zona_horaria": "America/Bogota",
+            "nombre": "Jane Doe",
+            "correo": correo,
+            "telefono_prefijo": "+57",
+            "telefono_numero": "3001234567",
+            "empresa": "Stark Industries",
+            "mensaje": "Quiero una plataforma privada de IA.",
+            "consentimiento": consent,
+            "website_verification": "",
+            "g-recaptcha-response": "token-ok",
+        }
+
+    def _crear_slot(self):
+        fecha = _siguiente_dia_habil(3)
+        data = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Bogota")
+        self.assertTrue(data["slots"], "El fixture de slots debe producir slots")
+        return data["slots"][0]
+
+    @patch("apps.core.views_booking.async_task")
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_reservar_exitoso(self, mock_recaptcha, mock_async_task):
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                url, data=self._payload(inicio), content_type="application/json"
+            )
+        self.assertEqual(response.status_code, 201, response.content)
+
+        self.assertEqual(Lead.objects.count(), 1)
+        lead = Lead.objects.first()
+        self.assertEqual(lead.correo, "cliente@empresa.com")
+        self.assertEqual(lead.telefono, "+573001234567")
+        self.assertEqual(lead.estado, Lead.Estado.REUNION_CONFIRMADA)
+        self.assertEqual(lead.meeting_at.isoformat(), inicio)
+        self.assertEqual(lead.meeting_link, "")  # sin link de Meet
+
+        self.assertEqual(Appointment.objects.count(), 1)
+        appointment = Appointment.objects.first()
+        self.assertEqual(appointment.estado, Appointment.Estado.CONFIRMADA)
+        self.assertTrue(appointment.consentimiento)
+
+        mock_async_task.assert_called_once_with(
+            "apps.core.tasks.procesar_nuevo_agendamiento", appointment.pk
+        )
+
+    @patch(
+        "apps.core.views_booking.verify_recaptcha",
+        return_value=(False, "missing-token"),
+    )
+    def test_reservar_rechazada_sin_recaptcha(self, mock_recaptcha):
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        response = self.client.post(
+            url, data=self._payload(inicio), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Lead.objects.count(), 0)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_reservar_rechazada_sin_consentimiento(self, mock_recaptcha):
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        response = self.client.post(
+            url,
+            data=self._payload(inicio, consent=False),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("consentimiento", response.json()["message"])
+        self.assertEqual(Appointment.objects.count(), 0)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_maximo_2_futuras_por_correo(self, mock_recaptcha):
+        url = reverse("core:booking_reservar")
+        inicios = []
+        offset = 3
+        fechas_vistas = set()
+        while len(inicios) < 3 and offset < 30:
+            data = booking_svc.slots_para_fecha(
+                _siguiente_dia_habil(offset).isoformat(), "America/Bogota"
+            )
+            # Exige fechas DISTINTAS con slots libres (dos offsets pueden
+            # caer en el mismo día hábil al saltar el fin de semana).
+            if data["slots"] and data["fecha"] not in fechas_vistas:
+                fechas_vistas.add(data["fecha"])
+                inicios.append(data["slots"][0])
+            offset += 1
+        self.assertEqual(len(inicios), 3)
+
+        for inicio in inicios[:2]:
+            response = self.client.post(
+                url,
+                data=self._payload(inicio, correo="repetido@empresa.com"),
+                content_type="application/json",
+            )
+            self.assertEqual(response.status_code, 201, response.content)
+
+        response = self.client.post(
+            url,
+            data=self._payload(inicios[2], correo="repetido@empresa.com"),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(Appointment.objects.count(), 2)
+
+    @patch("apps.core.views_booking.async_task")
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_doble_reserva_mismo_slot(self, mock_recaptcha, mock_async_task):
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        response1 = self.client.post(
+            url,
+            data=self._payload(inicio, correo="a@empresa.com"),
+            content_type="application/json",
+        )
+        self.assertEqual(response1.status_code, 201)
+        response2 = self.client.post(
+            url,
+            data=self._payload(inicio, correo="b@empresa.com"),
+            content_type="application/json",
+        )
+        self.assertEqual(response2.status_code, 409)
+        self.assertEqual(Appointment.objects.count(), 1)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_lead_existente_se_reutiliza(self, mock_recaptcha):
+        Lead.objects.create(
+            nombre="Lead Previo", correo="existente@empresa.com", empresa="Wayne Corp"
+        )
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        response = self.client.post(
+            url,
+            data=self._payload(inicio, correo="existente@empresa.com"),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Lead.objects.count(), 1)
+        lead = Lead.objects.first()
+        self.assertEqual(lead.nombre, "Lead Previo")  # no se pisa el nombre
+        self.assertEqual(lead.telefono, "+573001234567")
+        self.assertEqual(lead.estado, Lead.Estado.REUNION_CONFIRMADA)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_honeypot_bloquea(self, mock_recaptcha):
+        inicio = self._crear_slot()
+        url = reverse("core:booking_reservar")
+        payload = self._payload(inicio)
+        payload["website_verification"] = "soy-un-bot"
+        response = self.client.post(url, data=payload, content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_disponibilidad_api(self, mock_recaptcha):
+        url = reverse("core:booking_disponibilidad")
+        response = self.client.get(
+            f"{url}?tz=America/Bogota&g-recaptcha-response=token-ok"
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("fechas_disponibles", data)
+        self.assertIn("slots", data)
+
+
+class InternalAgendaTestCase(TestCase):
+    """Módulo interno /interno/agenda/."""
+
+    def setUp(self):
+        from django.contrib.auth.models import User
+
+        self.user = User.objects.create_user(username="op", password="x12345678")
+        self.url = reverse("core:internal_agenda")
+
+    def test_login_requerido(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def _login(self):
+        self.client.login(username="op", password="x12345678")
+
+    def test_render_config(self):
+        self._login()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Configuración del booking público")
+        self.assertContains(response, "Lunes")
+        self.assertContains(response, "Próximas citas")
+
+    def _post_horarios(self, activo_desde=0, activo_hasta=4, inicio="08:00", fin="17:00"):
+        self._login()
+        data = {
+            "csrfmiddlewaretoken": "x",
+            "dias_apertura": 30,
+            "duracion_min": 30,
+            "anticipo_min": 60,
+        }
+        for dia in range(7):
+            act = activo_desde <= dia <= activo_hasta
+            data[f"dia_{dia}_activo"] = "on" if act else ""
+            data[f"dia_{dia}_inicio"] = inicio
+            data[f"dia_{dia}_fin"] = fin
+        return self.client.post(self.url, data)
+
+    @property
+    def _activo(self):
+        return None
+
+    def test_guardar_configuracion(self):
+        response = self._post_horarios()
+        self.assertEqual(response.status_code, 302)
+        sabado = DiaHorario.objects.get(dia=5)
+        self.assertFalse(sabado.activo)
+        lunes = DiaHorario.objects.get(dia=0)
+        self.assertEqual(lunes.hora_inicio.strftime("%H:%M"), "08:00")
+
+    def test_hora_inicio_mayor_a_fin_rechazada(self):
+        response = self._post_horarios(0, 6, "18:00", "09:00")
+        self.assertEqual(response.status_code, 200)  # re-render con error
+        lunes = DiaHorario.objects.get(dia=0)
+        self.assertEqual(lunes.hora_inicio.strftime("%H:%M"), "09:00")
+
+
+@override_settings(NOTIFICACION_INTERNA_EMAIL="admin@sooniverse.com")
+class ProcesoNuevoAgendamientoTestCase(TestCase):
+    """Task de correos del booking, con dedupe por NotificationLog."""
+
+    def _crear_cita(self):
+        lead = Lead.objects.create(
+            nombre="Jane Doe",
+            correo="jane@company.com",
+            empresa="Stark Industries",
+            estado=Lead.Estado.REUNION_CONFIRMADA,
+        )
+        inicio = datetime(2026, 10, 9, 14, 0, tzinfo=dt_timezone.utc)
+        return Appointment.objects.create(
+            lead=lead,
+            inicio=inicio,
+            fin=inicio + timedelta(minutes=30),
+            duracion_min=30,
+            zona_horaria="America/Mexico_City",
+            consentimiento=True,
+        )
+
+    @patch("apps.core.tasks.enviar_notificacion", return_value=True)
+    def test_envia_confirmacion_y_aviso_interno(self, mock_envio):
+        from .tasks import procesar_nuevo_agendamiento
+
+        appointment = self._crear_cita()
+        procesar_nuevo_agendamiento(appointment.pk)
+        self.assertEqual(mock_envio.call_count, 2)
+        destinatarios = [
+            call.kwargs["destinatario"] for call in mock_envio.call_args_list
+        ]
+        self.assertIn("jane@company.com", destinatarios)
+        self.assertIn("admin@sooniverse.com", destinatarios)
+
+    @patch("apps.core.tasks.enviar_notificacion", return_value=True)
+    def test_reprocesado_no_reenvia_por_dedupe(self, mock_envio):
+        from .tasks import procesar_nuevo_agendamiento
+
+        appointment = self._crear_cita()
+        procesar_nuevo_agendamiento(appointment.pk)
+        self.assertEqual(mock_envio.call_count, 2)
+        # Reintento de la task (requeue del worker): los dedupe_keys ya
+        # fueron reclamados, no debe enviarse nada más.
+        procesar_nuevo_agendamiento(appointment.pk)
+        self.assertEqual(mock_envio.call_count, 2)

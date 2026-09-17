@@ -1,0 +1,554 @@
+"""
+Public booking views – client-facing.
+
+Each barbershop has a unique booking URL: /book/<slug>-<uuid>/
+Clients authenticate via Google (allauth) to reserve.
+"""
+
+import json
+from datetime import datetime, timedelta
+from urllib.parse import quote
+
+from django.conf import settings
+from django.core import signing
+from django.http import (
+    Http404,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+    JsonResponse,
+)
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.views import View
+from django.views.generic import TemplateView
+
+from django.db.models import Q
+
+from apps.accounts.models import BarberProfile, Barbershop, Organization
+from apps.clients.models import Client
+from apps.scheduling import services as svc
+from apps.scheduling.models import Appointment, BarberService, Service, WorkSchedule
+
+
+def _get_barbershop(booking_uid):
+    """Resolve a barbershop from its booking UUID string."""
+    return get_object_or_404(Barbershop, booking_uid=booking_uid, is_active=True)
+
+
+class BookingPageView(TemplateView):
+    """
+    Public booking page for a barbershop.
+    URL: /book/<slug>-<uuid:booking_uid>/
+    """
+
+    template_name = "booking/public_booking.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        uid = self.kwargs["booking_uid"]
+        barbershop = _get_barbershop(uid)
+
+        # All barbers assigned to this barbershop (via membership OR sucursales M2M)
+        barbers_with_schedule = set(
+            WorkSchedule.objects.values_list("barber_id", flat=True).distinct()
+        )
+
+        barbers = (
+            BarberProfile.objects.filter(
+                Q(membership__barbershop=barbershop) | Q(sucursales=barbershop),
+                is_active=True,
+                membership__is_active=True,
+            )
+            .select_related("membership__user")
+            .distinct()
+        )
+
+        # Annotate each barber with availability info
+        barbers_list = []
+        for barber in barbers:
+            barber.has_schedule = barber.pk in barbers_with_schedule
+            barbers_list.append(barber)
+
+        services = Service.objects.filter(barbershop=barbershop, is_active=True)
+
+        ctx["barbershop"] = barbershop
+        ctx["barbers"] = barbers_list
+        ctx["services"] = services
+        ctx["is_booking_page"] = True
+        return ctx
+
+
+class BookingBarbersAPI(View):
+    """Returns barbers + their services for a barbershop."""
+
+    def get(self, request, booking_uid):
+        barbershop = _get_barbershop(booking_uid)
+
+        # All barbers assigned to this barbershop
+        barbers_with_schedule = set(
+            WorkSchedule.objects.values_list("barber_id", flat=True).distinct()
+        )
+
+        barbers = (
+            BarberProfile.objects.filter(
+                Q(membership__barbershop=barbershop) | Q(sucursales=barbershop),
+                is_active=True,
+            )
+            .select_related("membership__user")
+            .distinct()
+        )
+
+        data = []
+        for barber in barbers:
+            barber_services = BarberService.objects.filter(
+                barber=barber,
+                service__is_active=True,
+            ).select_related("service")
+
+            data.append(
+                {
+                    "id": barber.pk,
+                    "name": str(barber),
+                    "photo": barber.photo.url if barber.photo else None,
+                    "has_schedule": barber.pk in barbers_with_schedule,
+                    "services": [
+                        {
+                            "id": bs.service.pk,
+                            "name": bs.service.name,
+                            "duration": bs.effective_duration,
+                            "price": str(bs.effective_price),
+                        }
+                        for bs in barber_services
+                    ],
+                }
+            )
+
+        return JsonResponse({"barbers": data})
+
+
+class BookingSlotsAPI(View):
+    """Returns available time slots for a barber on a date."""
+
+    def get(self, request, booking_uid):
+        barbershop = _get_barbershop(booking_uid)
+        barber_id = request.GET.get("barber_id")
+        date_str = request.GET.get("date")
+        duration = int(request.GET.get("duration", 30))
+
+        if not barber_id or not date_str:
+            return JsonResponse({"error": "barber_id y date requeridos"}, status=400)
+
+        barber = BarberProfile.objects.filter(
+            Q(membership__barbershop=barbershop) | Q(sucursales=barbershop),
+            pk=barber_id,
+        ).first()
+        if not barber:
+            return JsonResponse({"error": "Barbero no encontrado"}, status=404)
+
+        try:
+            target_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return JsonResponse({"error": "Fecha inválida"}, status=400)
+
+        # Available dates (respects barber's intervalo_apertura_dias)
+        available_dates = [
+            d.isoformat()
+            for d in svc.get_available_dates(barber, barbershop=barbershop)
+        ]
+
+        slots = svc.get_available_slots(
+            barber, target_date, duration, barbershop=barbershop
+        )
+        slot_data = [
+            {"start": s["start"].isoformat(), "end": s["end"].isoformat()}
+            for s in slots
+        ]
+
+        intervalo = getattr(barber, "intervalo_apertura_dias", 15) or 15
+
+        return JsonResponse(
+            {
+                "slots": slot_data,
+                "available_dates": available_dates,
+                "intervalo_apertura_dias": intervalo,
+            }
+        )
+
+
+class BookingCreateAPI(View):
+    """
+    Creates a booking from the public page.
+    Requires the user to be authenticated (Google Auth).
+    """
+
+    def post(self, request, booking_uid):
+        if not request.user.is_authenticated:
+            return JsonResponse(
+                {"error": "Debes iniciar sesión con Google para reservar."},
+                status=401,
+            )
+
+        barbershop = _get_barbershop(booking_uid)
+
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "JSON inválido"}, status=400)
+
+        barber_id = data.get("barber_id")
+        start_time_str = data.get("start_time")
+        service_ids = data.get("service_ids", [])
+
+        if not all([barber_id, start_time_str, service_ids]):
+            return JsonResponse({"error": "Faltan campos"}, status=400)
+
+        barber = BarberProfile.objects.filter(
+            Q(membership__barbershop=barbershop) | Q(sucursales=barbershop),
+            pk=barber_id,
+        ).first()
+        if not barber:
+            return JsonResponse({"error": "Barbero no encontrado"}, status=404)
+
+        try:
+            start_time = datetime.fromisoformat(start_time_str)
+            if timezone.is_naive(start_time):
+                start_time = timezone.make_aware(start_time)
+        except (ValueError, TypeError):
+            return JsonResponse({"error": "Formato de fecha inválido"}, status=400)
+
+        # Get or create client from authenticated user
+        client, _ = Client.objects.get_or_create(
+            organization=barbershop.organization,
+            user=request.user,
+            defaults={
+                "name": request.user.get_full_name() or request.user.email,
+                "email": request.user.email,
+                "source": "booking",
+                "updated_by": request.user,
+            },
+        )
+
+        try:
+            appointment = svc.create_appointment(
+                barbershop=barbershop,
+                barber=barber,
+                client=client,
+                start_time=start_time,
+                service_ids=service_ids,
+                notes="Reserva online",
+                created_by=request.user,
+            )
+            svc.notify_appointment_mutation(appointment, "create", request.user)
+        except ValueError as e:
+            return JsonResponse({"error": str(e)}, status=409)
+
+        return JsonResponse(
+            {
+                "message": "¡Reserva confirmada!",
+                "appointment_id": appointment.pk,
+                "start": appointment.start_time.isoformat(),
+                "end": appointment.end_time.isoformat(),
+                "barber": str(appointment.barber),
+            },
+            status=201,
+        )
+
+
+class MyBookingsAPI(View):
+    """
+    Returns the authenticated client's appointments (paginated 30-by-30).
+    Filters by tab: 'current' (active/upcoming) or 'history' (past/completed).
+    """
+
+    def get(self, request, booking_uid):
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "No autorizado"}, status=403)
+
+        barbershop = _get_barbershop(booking_uid)
+
+        # Anti-IDOR check: verify that the user's client profile belongs to this organization
+        client = Client.objects.filter(
+            organization=barbershop.organization,
+            user=request.user,
+        ).first()
+
+        if not client:
+            return JsonResponse({"appointments": [], "has_more": False})
+
+        # Ensure the organization matches
+        if client.organization_id != barbershop.organization_id:
+            return JsonResponse(
+                {"error": "Violación de límites de tenant."}, status=403
+            )
+
+        # Parse query params
+        tab = request.GET.get("tab", "current")
+        try:
+            page = int(request.GET.get("page", 1))
+            if page < 1:
+                page = 1
+        except (ValueError, TypeError):
+            page = 1
+
+        page_size = 30
+        offset = (page - 1) * page_size
+
+        # Base query
+        qs = client.appointments.filter(barbershop=barbershop)
+
+        # Filter by tab
+        if tab == "current":
+            qs = qs.filter(
+                status__in=["pending", "confirmed", "in_progress"],
+                start_time__gt=timezone.now(),
+            ).order_by("start_time")
+        else:
+            qs = qs.filter(
+                Q(status__in=["completed", "cancelled", "no_show"])
+                | Q(
+                    status__in=["pending", "confirmed", "in_progress"],
+                    start_time__lte=timezone.now(),
+                )
+            ).order_by("-start_time")
+
+        total_count = qs.count()
+        appointments_page = list(
+            qs[offset : offset + page_size].select_related("barber__membership__user")
+        )
+        has_more = (offset + page_size) < total_count
+
+        data = [
+            {
+                "id": apt.pk,
+                "barber": str(apt.barber),
+                "start": apt.start_time.isoformat(),
+                "end": apt.end_time.isoformat(),
+                "status": apt.status,
+                "status_display": apt.get_status_display(),
+                "services": list(apt.services.values_list("service__name", flat=True)),
+                "total": str(apt.total_price),
+            }
+            for apt in appointments_page
+        ]
+
+        return JsonResponse({"appointments": data, "has_more": has_more})
+
+
+# ─────────────────────────────────────────────
+# Self-service appointment management
+# ─────────────────────────────────────────────
+class AppointmentManageView(View):
+    """
+    Self-service cancellation endpoint accessed via a single-use signed token
+    sent in the confirmation email.
+
+    Security locks:
+      A. 10-minute cutoff: cannot cancel < 10 min before start_time
+      B. Auth required: anonymous users redirected to login with ?next=
+      C. Identity match: logged-in user must be the appointment's client
+      D. Multi-tenant isolation: token-scoped to single appointment only
+    """
+
+    template_name = "booking/manage_appointment.html"
+    signer_salt = "barbersync-appointment-manage"
+    cutoff_minutes = 10
+
+    def _decode_token(self, token):
+        try:
+            data = signing.loads(token, salt=self.signer_salt)
+            appointment_id = data.get("a")
+            if not appointment_id:
+                raise Http404("Token inválido")
+            return int(appointment_id)
+        except signing.BadSignature:
+            raise Http404("Token inválido o expirado")
+
+    def _get_appointment(self, appointment_id):
+        try:
+            return (
+                Appointment.objects.select_related(
+                    "barbershop",
+                    "barbershop__organization",
+                    "barber__membership__user",
+                    "client",
+                    "client__user",
+                )
+                .prefetch_related("services__service")
+                .get(pk=appointment_id)
+            )
+        except Appointment.DoesNotExist:
+            raise Http404("Cita no encontrada")
+
+    def _check_time_window(self, appointment):
+        now = timezone.now()
+        cutoff = appointment.start_time - timedelta(minutes=self.cutoff_minutes)
+        if now >= cutoff:
+            return False
+        return True
+
+    def _check_status(self, appointment):
+        cancellable = [
+            Appointment.Status.PENDING,
+            Appointment.Status.CONFIRMED,
+        ]
+        return appointment.status in cancellable
+
+    def get(self, request, token):
+        appointment_id = self._decode_token(token)
+        appointment = self._get_appointment(appointment_id)
+
+        if not request.user.is_authenticated:
+            manage_path = request.get_full_path()
+            login_url = f"{reverse('account_login')}?next={quote(manage_path)}"
+            return redirect(login_url)
+
+        if not self._check_client_match(request, appointment):
+            return render(
+                request,
+                "booking/manage_forbidden.html",
+                {
+                    "error_title": "Acceso Denegado",
+                    "error_message": "Esta cita no pertenece a tu cuenta.",
+                },
+                status=403,
+            )
+
+        if not self._check_status(appointment):
+            return render(
+                request,
+                "booking/manage_error.html",
+                {
+                    "error_title": "Cita no modificable",
+                    "error_message": "Esta cita ya fue cancelada o completada y no puede gestionarse mediante este enlace.",
+                    "appointment": appointment,
+                },
+            )
+
+        if not self._check_time_window(appointment):
+            return render(
+                request,
+                "booking/manage_error.html",
+                {
+                    "error_title": "Tiempo límite expirado",
+                    "error_message": f"Las cancelaciones autónomas solo están permitidas hasta {self.cutoff_minutes} minutos antes del inicio de la cita. Por favor, comunícate directamente con la barbería.",
+                    "appointment": appointment,
+                },
+            )
+
+        service_names = ", ".join(
+            appointment.services.values_list("service__name", flat=True)
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "appointment": appointment,
+                "service_names": service_names,
+                "token": token,
+            },
+        )
+
+    def post(self, request, token):
+        appointment_id = self._decode_token(token)
+        appointment = self._get_appointment(appointment_id)
+
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("Autenticación requerida")
+
+        if not self._check_client_match(request, appointment):
+            return HttpResponseForbidden("Esta cita no pertenece a tu cuenta")
+
+        if not self._check_status(appointment):
+            return render(
+                request,
+                "booking/manage_error.html",
+                {
+                    "error_title": "Cita no modificable",
+                    "error_message": "Esta cita ya no puede ser cancelada mediante este enlace.",
+                    "appointment": appointment,
+                },
+            )
+
+        if not self._check_time_window(appointment):
+            return render(
+                request,
+                "booking/manage_error.html",
+                {
+                    "error_title": "Tiempo límite expirado",
+                    "error_message": f"El plazo para cancelaciones autónomas ({self.cutoff_minutes} min antes) ha expirado.",
+                    "appointment": appointment,
+                },
+            )
+
+        reason = request.POST.get("reason", "Cancelada por el cliente")
+        svc.cancel_appointment(appointment, reason=reason, cancelled_by=request.user)
+
+        svc.notify_appointment_mutation(appointment, "cancel", request.user)
+
+        return render(
+            request,
+            "booking/manage_cancelled.html",
+            {
+                "appointment": appointment,
+                "barbershop_name": appointment.barbershop.name,
+            },
+        )
+
+    def _check_client_match(self, request, appointment):
+        if not appointment.client:
+            return False
+        client_user = getattr(appointment.client, "user", None)
+        return client_user and client_user.pk == request.user.pk
+
+
+# ─────────────────────────────────────────────
+# Global (organization-level) booking
+# ─────────────────────────────────────────────
+class BookingGlobalPageView(TemplateView):
+    """
+    Global booking page – shows branch selection as step 1.
+    URL: /book/org/<org_slug>/
+    """
+
+    template_name = "booking/public_booking_global.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        org_slug = self.kwargs["org_slug"]
+        organization = get_object_or_404(Organization, slug=org_slug, is_active=True)
+
+        barbershops = Barbershop.objects.filter(
+            organization=organization,
+            is_active=True,
+        )
+
+        ctx["organization"] = organization
+        ctx["barbershops"] = barbershops
+        ctx["is_booking_page"] = True
+        return ctx
+
+
+class BookingBarbershopsAPI(View):
+    """Returns active barbershops for an organization."""
+
+    def get(self, request, org_slug):
+        organization = get_object_or_404(Organization, slug=org_slug, is_active=True)
+
+        barbershops = Barbershop.objects.filter(
+            organization=organization,
+            is_active=True,
+        )
+
+        data = [
+            {
+                "id": shop.pk,
+                "name": shop.name,
+                "address": shop.address,
+                "phone": shop.phone,
+                "booking_url": f"/book/{shop.slug}-{shop.booking_uid}/",
+            }
+            for shop in barbershops
+        ]
+        return JsonResponse({"barbershops": data})

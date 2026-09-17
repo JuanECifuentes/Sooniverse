@@ -1,0 +1,695 @@
+{% extends "core/base_public.html" %}
+{% load static %}
+
+{% block title %}Sooniverse | Agenda una reunión{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block header_label %}Agenda tu reunión{% endblock %}
+
+{% block extra_head %}
+{% if RECAPTCHA_SITE_KEY %}<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}" async defer></script>{% endif %}
+<style>
+    /* ── Layout del booking (CSS propio: el dist Tailwind no incluye
+       variantes responsive compiladas) ───────────────────────────── */
+    .booking-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 90px; }
+    .booking-grid { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
+    @media (min-width: 900px) {
+        .booking-grid { grid-template-columns: 5fr 7fr; gap: 40px; }
+    }
+
+    /* ── Panel izquierdo: logo + mensaje ─────────────────────────────── */
+    .booking-side {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #1E293B;
+        border-radius: 12px;
+        padding: 32px 28px;
+        backdrop-filter: blur(12px);
+        position: relative;
+        overflow: hidden;
+    }
+    .booking-side .glow-neon, .booking-side .glow-cyan2 {
+        position: absolute; width: 220px; height: 220px; border-radius: 50%; filter: blur(70px); pointer-events: none;
+    }
+    .booking-side .glow-neon { top: -90px; right: -70px; background: rgba(0, 255, 135, 0.12); }
+    .booking-side .glow-cyan2 { bottom: -90px; left: -70px; background: rgba(96, 239, 255, 0.10); }
+    .booking-side-logo { height: 38px; width: auto; margin-bottom: 22px; }
+    .booking-side-title {
+        font-family: 'Inter', system-ui, sans-serif; font-size: 22px; font-weight: 600;
+        letter-spacing: -0.4px; color: #FFFFFF; line-height: 1.3; margin: 0 0 16px;
+    }
+    .booking-side p { color: #94A3B8; font-size: 15px; line-height: 1.65; margin: 0 0 14px; }
+    .booking-side strong { color: #FFFFFF; font-weight: 600; }
+    .booking-side ul { margin: 18px 0; padding: 0; list-style: none; }
+    .booking-side li {
+        position: relative; padding-left: 20px; color: #94A3B8; font-size: 14.5px;
+        line-height: 1.6; margin-bottom: 10px;
+    }
+    .booking-side li::before {
+        content: ''; position: absolute; left: 0; top: 0.55em;
+        width: 6px; height: 6px; border-radius: 50%; background: #00FF87;
+        box-shadow: 0 0 8px rgba(0, 255, 135, 0.6);
+    }
+    .booking-side .closing { color: #FFFFFF; font-weight: 600; }
+    .side-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+        letter-spacing: 3px; text-transform: uppercase; color: #00FF87;
+        padding: 6px 12px; border: 1px solid rgba(0, 255, 135, 0.25); border-radius: 6px;
+        background: rgba(0, 255, 135, 0.06); margin-bottom: 18px;
+    }
+
+    /* ── Wizard derecha ─────────────────────────────────────────────── */
+    .progress-row {
+        display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace;
+        font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #94A3B8; margin-bottom: 7px;
+    }
+    .progress-track { height: 8px; background: #1E293B; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 50%; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); border-radius: 999px; transition: width 0.5s ease; filter: drop-shadow(0 0 6px rgba(0,255,135,.5)); }
+    .step-panel { display: none; margin-top: 26px; }
+    .step-panel.active { display: block; }
+    .field-label {
+        display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px;
+        color: #60EFFF; margin-bottom: 7px;
+    }
+    .input-brand {
+        width: 100%; background: #070A12; border: 1px solid #1E293B; border-radius: 8px;
+        padding: 13px 16px; color: #FFFFFF; font-size: 14px; font-family: 'Inter', system-ui, sans-serif;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .input-brand:focus { outline: none; border-color: #60EFFF; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.12); }
+    .textarea-brand { resize: none; }
+
+    /* Selector de zona horaria / país */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+        content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+        color: #94A3B8; pointer-events: none; font-size: 12px;
+    }
+    .select-brand { appearance: none; -webkit-appearance: none; padding-right: 38px !important; }
+
+    /* Teléfono con prefijo + bandera */
+    .phone-row { display: flex; gap: 10px; }
+    .phone-prefix {
+        display: flex; align-items: center; gap: 8px; background: #070A12;
+        border: 1px solid #1E293B; border-radius: 8px; padding: 0 10px 0 12px;
+        position: relative; flex-shrink: 0;
+    }
+    /* select prefijo transparente encima */
+    .phone-prefix select {
+        appearance: none; -webkit-appearance: none; background: transparent; border: 0; color: #FFFFFF;
+        font-size: 14px; font-family: 'JetBrains Mono', monospace; padding: 13px 6px 13px 0; cursor: pointer; outline: none;
+        text-align: center;
+    }
+    .phone-flag { width: 22px; height: 15px; border-radius: 2px; object-fit: cover; flex-shrink: 0; filter: drop-shadow(0 0 3px rgba(0,0,0,.6)); }
+
+    /* Tira de fechas */
+    .dates-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 20px; }
+    .dates-strip::-webkit-scrollbar { height: 6px; }
+    .date-chip {
+        flex-shrink: 0; min-width: 74px; padding: 12px 10px; border-radius: 10px; cursor: pointer;
+        background: #0F172A; border: 1px solid #1E293B; text-align: center; color: #94A3B8;
+        transition: all .25s ease; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .date-chip:hover { border-color: rgba(96, 239, 255, 0.5); transform: translateY(-2px); }
+    .date-chip.selected {
+        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+        border-color: transparent; color: #070A12; font-weight: 700;
+        filter: drop-shadow(0 0 12px rgba(0, 255, 135, 0.45));
+    }
+    .date-chip .dow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .date-chip .dnum { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; line-height: 1.1; }
+    .date-chip .mon { font-size: 11px; }
+
+    /* Grid de slots */
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 10px; }
+    .slot-btn {
+        padding: 11px 8px; border-radius: 8px; border: 1px solid #1E293B; background: #0F172A;
+        color: #94A3B8; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+        cursor: pointer; transition: all .22s ease; text-align: center; letter-spacing: 0.5px;
+    }
+    .slot-btn:hover { border-color: rgba(96, 239, 255, 0.55); color: #FFFFFF; transform: translateY(-2px); }
+    .slot-btn.selected {
+        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+        border-color: transparent; color: #070A12; font-weight: 700;
+        filter: drop-shadow(0 0 10px rgba(0, 255, 135, 0.5));
+    }
+    .empty-state { color: #94A3B8; font-size: 14px; text-align: center; padding: 30px 10px; }
+
+    /* Checkbox de consentimiento */
+    .consent-box {
+        display: flex; gap: 12px; align-items: flex-start; padding: 16px;
+        background: rgba(15, 23, 42, 0.8); border: 1px solid #1E293B; border-radius: 10px;
+        cursor: pointer; transition: border-color .2s ease;
+    }
+    .consent-box:hover { border-color: rgba(0, 255, 135, 0.4); }
+    .consent-box input[type="checkbox"] {
+        appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px;
+        border: 1.5px solid #475569; border-radius: 5px; background: #070A12; cursor: pointer; position: relative;
+        transition: all .2s ease;
+    }
+    .consent-box input[type="checkbox"]:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 10px rgba(0,255,135,0.45); }
+    .consent-box input[type="checkbox"]:checked::after {
+        content: ''; position: absolute; left: 6px; top: 2.5px; width: 5px; height: 10px;
+        border: solid #070A12; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+    }
+    .consent-box span { color: #94A3B8; font-size: 13.5px; line-height: 1.6; }
+    .consent-box.err { border-color: #EF4444; box-shadow: 0 0 12px rgba(239,68,68,0.35); }
+
+    /* Mensaje de feedback */
+    .form-message { display: none; border-radius: 8px; padding: 12px 16px; margin-top: 4px; font-size: 13.5px; font-weight: 600; }
+    .form-message.ok { display: block; background: rgba(0,255,135,.08); color: #00FF87; border: 1px solid rgba(0,255,135,.35); }
+    .form-message.err { display: block; background: rgba(239,68,68,.08); color: #EF4444; border: 1px solid rgba(239,68,68,.35); }
+
+    /* Botones */
+    .btn-next {
+        width: 100%; margin-top: 22px; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+        color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1px; font-size: 13px; border: 0; border-radius: 10px; padding: 15px 22px;
+        cursor: pointer; transition: all .3s ease;
+    }
+    .btn-next:hover:not(:disabled) { transform: translateY(-2px); filter: drop-shadow(0 0 12px rgba(0,255,135,0.6)); }
+    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-back { margin-top: 14px; width: 100%; background: transparent; border: 1.5px solid #60EFFF; color: #FFFFFF; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; border-radius: 10px; padding: 13px 20px; cursor: pointer; transition: all .3s ease; }
+    .btn-back:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(96,239,255,0.35); }
+    .btn-row { display: flex; gap: 12px; margin-top: 22px; }
+    .btn-row .btn-back, .btn-row .btn-next { margin-top: 0; }
+
+    /* Resumen y éxito */
+    .summary-card { background: #0F172A; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; margin-bottom: 4px; }
+    .summary-card .row { display: flex; justify-content: space-between; gap: 14px; font-size: 14px; padding: 6px 0; }
+    .summary-card .row + .row { border-top: 1px solid #1E293B; }
+    .summary-card .lbl { color: #94A3B8; }
+    .summary-card .val { color: #FFFFFF; font-weight: 600; text-align: right; }
+    .success-panel { text-align: center; padding: 40px 10px 20px; }
+    .success-panel .check {
+        width: 76px; height: 76px; margin: 0 auto 22px; border-radius: 50%;
+        background: rgba(0,255,135,0.1); border: 1px solid rgba(0,255,135,0.4);
+        display: flex; align-items: center; justify-content: center;
+        filter: drop-shadow(0 0 16px rgba(0,255,135,0.4));
+    }
+    .success-panel h2 { color: #FFFFFF; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 12px; }
+    .success-panel p { color: #94A3B8; font-size: 15px; line-height: 1.65; margin: 0 0 14px; }
+    .success-panel .dt { font-family: 'JetBrains Mono', monospace; color: #00FF87; font-size: 18px; font-weight: 700; }
+
+    .spinner { width: 20px; height: 20px; border: 2.5px solid rgba(7,10,18,0.35); border-top-color: #070A12; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: -4px; margin-right: 8px; }
+    .slots-loading { text-align: center; padding: 26px; color: #94A3B8; }
+    .tz-note { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: #64748B; margin-top: 8px; }
+    .grecaptcha-badge { visibility: hidden; }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="post" class="hidden" style="display:none">{% csrf_token %}</form>
+
+<div class="booking-wrap">
+    <div class="booking-grid">
+
+        <!-- ── Izquierda: logo + mensaje ─────────────────────────── -->
+        <aside class="booking-side">
+            <div class="glow-neon"></div>
+            <div class="glow-cyan2"></div>
+            <img src="{% static 'logos_v1/logo_sin_fondo.svg' %}" alt="Sooniverse" class="booking-side-logo">
+            <div class="side-badge">Llamada exploratoria · 30 min</div>
+            <p class="booking-side-title">Únase a nosotros para una llamada exploratoria de 30 minutos donde analizaremos las necesidades de su proyecto y cómo nuestro equipo puede ayudarle.</p>
+            <p>En esta llamada:</p>
+            <ul>
+                <li>Comprenderemos claramente sus objetivos, desafíos y plazos.</li>
+                <li>Le explicaremos cómo <strong>DEV.co</strong> (desarrollo web y de software a medida) y <strong>LLM.co</strong> (soluciones personalizadas de IA/LLM) pueden serle útiles.</li>
+                <li>Responderemos a sus preguntas y le presentaremos los posibles próximos pasos.</li>
+            </ul>
+            <p>Esta es una conversación abierta y sin compromiso, diseñada para descubrir oportunidades y determinar si somos la opción adecuada para respaldar su visión.</p>
+            <p class="closing">¡Esperamos conectar con usted!</p>
+        </aside>
+
+        <!-- ── Derecha: wizard ───────────────────────────────────── -->
+        <section>
+            <div class="progress-row">
+                <span id="progress-label">Paso 1 de 2 · Fecha y hora</span>
+                <span id="progress-pct">50%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+            <!-- Paso 1: fecha y hora -->
+            <div class="step-panel active" id="step-1">
+                <div style="margin-bottom: 20px;">
+                    <label class="field-label" for="id_tz">Zona horaria</label>
+                    <div class="select-wrap">
+                        <select id="id_tz" class="input-brand select-brand"></select>
+                    </div>
+                    <p class="tz-note">Los horarios se muestran 24h en tu zona · La disponibilidad se calcula en hora Colombia ({{ zona_negocio }})</p>
+                </div>
+
+                <label class="field-label">Elige el día</label>
+                <div id="dates-strip" class="dates-strip"></div>
+
+                <label class="field-label">Elige la hora</label>
+                <div id="slots-loading" class="slots-loading" style="display:none">Cargando horarios disponibles…</div>
+                <div id="slots-grid" class="slots-grid"></div>
+                <div id="slots-empty" class="empty-state" style="display:none">No hay horarios disponibles para esta fecha. Intenta con otro día.</div>
+
+                <button type="button" id="btn-step2" class="btn-next" disabled>Continuar</button>
+            </div>
+
+            <!-- Paso 2: datos -->
+            <div class="step-panel" id="step-2">
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <label class="field-label" for="id_nombre">Nombre Completo *</label>
+                        <input class="input-brand" id="id_nombre" name="nombre" type="text" required placeholder="Ingresa tu nombre completo" autocomplete="name">
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr; gap:16px;">
+                        <div style="grid-column:1 / -1;">
+                            <label class="field-label" for="id_correo">Correo electrónico *</label>
+                            <input class="input-brand" id="id_correo" name="correo" type="email" required placeholder="tu@empresa.com" autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="id_telefono">Teléfono *</label>
+                        <div class="phone-row">
+                            <div class="phone-prefix">
+                                <img id="phone-flag" src="https://flagcdn.com/w40/co.png" alt="Bandera" class="phone-flag">
+                                <select id="id_telefono_prefijo" aria-label="Prefijo del país"></select>
+                            </div>
+                            <input class="input-brand" id="id_telefono_numero" name="telefono" type="tel" required placeholder="300 123 4567" inputmode="numeric" autocomplete="tel-national">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="id_empresa">Nombre de la Empresa (Opcional)</label>
+                        <input class="input-brand" id="id_empresa" name="empresa" type="text" placeholder="Nombre de tu empresa" autocomplete="organization">
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="id_mensaje">Mensaje (Opcional)</label>
+                        <textarea class="input-brand textarea-brand" id="id_mensaje" name="mensaje" rows="3" placeholder="Cuéntanos sobre tus necesidades actuales"></textarea>
+                    </div>
+
+                    <!-- Honeypot -->
+                    <div style="display:none !important;">
+                        <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <label class="consent-box" id="consent-box">
+                        <input type="checkbox" id="id_consentimiento">
+                        <span>Confirmo que deseo recibir contenido de esta empresa utilizando la información de contacto que proporciono.</span>
+                    </label>
+                </div>
+
+                <div id="form-message" class="form-message"></div>
+
+                <div class="btn-row">
+                    <button type="button" id="btn-back" class="btn-back" style="flex:0 0 auto; padding: 15px 22px;">Atrás</button>
+                    <button type="button" id="btn-confirm" class="btn-next" disabled>Confirmar reunión</button>
+                </div>
+
+                <p style="margin-top:14px; font-size:11.5px; color:#64748B; text-align:center;">
+                    Este sitio está protegido por reCAPTCHA; aplican la
+                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:#60EFFF;">Política de Privacidad</a> y los
+                    <a href="https://policies.google.com/terms" target="_blank" rel="noopener" style="color:#60EFFF;">Términos de Servicio</a> de Google.
+                </p>
+            </div>
+
+            <!-- Éxito -->
+            <div class="step-panel" id="step-done">
+                <div class="success-panel">
+                    <div class="check">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h2>¡Reunión agendada con éxito!</h2>
+                    <p>Tu llamada exploratoria quedó agendada para:</p>
+                    <p class="dt" id="done-datetime"></p>
+                    <p id="done-msg">En un lapso máximo de <strong style="color:#00FF87">24 horas</strong> recibirás por correo la invitación con el enlace de la reunión (Google Meet).</p>
+                    <a href="/" style="display:inline-block; margin-top:10px; border:1.5px solid #60EFFF; color:#FFFFFF; text-transform:uppercase; font-weight:700; font-size:12px; padding:12px 22px; border-radius:10px; text-decoration:none; letter-spacing:1px;">Volver al inicio</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    const API_DISPONIBILIDAD = "{% url 'core:booking_disponibilidad' %}";
+    const API_RESERVAR = "{% url 'core:booking_reservar' %}";
+    const SITE_KEY = "{{ RECAPTCHA_SITE_KEY|default:'' }}";
+    const RECAPTCHA_ACTION = "{{ recaptcha_action }}";
+    const ZONA_NEGOCIO = "{{ zona_negocio }}";
+
+    const $ = (id) => document.getElementById(id);
+
+    const state = {
+        step: 1,
+        tz: null,
+        fecha: null,
+        slot: null,
+        duracion: 30,
+        fechas: [],
+        slots: [],
+        pais: 'CO',
+        cargando: false,
+    };
+
+    /* ── reCAPTCHA v3 invisible ─────────────────────────────────────── */
+    function recaptchaToken() {
+        return new Promise((resolve) => {
+            if (!SITE_KEY || typeof grecaptcha === 'undefined') { resolve(''); return; }
+            const bail = setTimeout(() => resolve(''), 4000);
+            try {
+                grecaptcha.ready(() => {
+                    grecaptcha.execute(SITE_KEY, { action: RECAPTCHA_ACTION })
+                        .then((t) => { clearTimeout(bail); resolve(t || ''); })
+                        .catch(() => { clearTimeout(bail); resolve(''); });
+                });
+            } catch (err) { clearTimeout(bail); resolve(''); }
+        });
+    }
+
+    /* ── Detección de zona horaria / país ───────────────────────────── */
+    async function detectarGeo() {
+        // 1) IP geolocalizada (client-side, ipapi.co, gratuito y sin claves).
+        try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 3500);
+            const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
+            clearTimeout(timer);
+            if (res.ok) {
+                const geo = await res.json();
+                if (geo.timezone) state.tz = geo.timezone;
+                if (geo.country_code) state.pais = geo.country_code;
+                return;
+            }
+        } catch (e) { /* falla silenciosa */ }
+        // 2) Zona horaria del navegador (Intl).
+        try {
+            const tzIntl = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if (tzIntl && !state.tz) state.tz = tzIntl;
+        } catch (e) { /* noop */ }
+    }
+
+    /* ── Zonas horarias ─────────────────────────────────────────────── */
+    function llenarTimezones() {
+        const sel = $('id_tz');
+        let tzs = [];
+        try { tzs = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : []; } catch (e) { tzs = []; }
+        if (!tzs.length) tzs = ['America/Bogota', 'America/New_York', 'America/Mexico_City', 'America/Lima', 'America/Santiago', 'America/Argentina/Buenos_Aires', 'America/Sao_Paulo', 'Europe/Madrid', 'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo', 'Australia/Sydney', 'UTC'];
+        if (!tzs.includes('America/Bogota')) tzs.push('America/Bogota');
+        const set = new Set(tzs.includes(state.tz) ? tzs : [state.tz].concat(tzs));
+        sel.innerHTML = '';
+        [...set].sort().forEach((tz) => {
+            const label = offsetDe(tz) + ' — ' + tz.replaceAll('_', ' ');
+            sel.insertAdjacentHTML('beforeend', `<option value="${tz}" ${tz === state.tz ? 'selected' : ''}>${label}</option>`);
+        });
+        sel.addEventListener('change', () => {
+            state.tz = sel.value;
+            state.slot = null;
+            cargarDisponibilidad(state.fecha);
+        });
+    }
+
+    function offsetDe(tz) {
+        try {
+            const hoy = new Date();
+            const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, timeZoneName: 'shortOffset' });
+            const part = dtf.formatToParts(hoy).find((p) => p.type === 'timeZoneName');
+            return part ? part.value : '';
+        } catch (e) { return ''; }
+    }
+
+    /* ── Formato 24h ────────────────────────────────────────────────── */
+    const DOW = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom', 'Lun'];
+    const MON = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    function fmtHora(iso) {
+        const d = new Date(iso);
+        const p = new Intl.DateTimeFormat('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: state.tz }).format(d);
+        return p;
+    }
+    function fmtLarga(iso) {
+        const d = new Date(iso);
+        const fecha = new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: state.tz }).format(d);
+        const hora = fmtHora(iso);
+        return `${fecha}, ${hora} (${state.tz})`;
+    }
+
+    /* ── Disponibilidad ─────────────────────────────────────────────── */
+    async function cargarDisponibilidad(fechaOpcional) {
+        if (state.cargando) return;
+        state.cargando = true;
+        $('slots-loading').style.display = 'block';
+        $('slots-grid').innerHTML = '';
+        $('slots-empty').style.display = 'none';
+
+        const token = await recaptchaToken();
+        const params = new URLSearchParams({ tz: state.tz });
+        if (fechaOpcional) params.set('fecha', fechaOpcional);
+        params.set('g-recaptcha-response', token);
+
+        try {
+            const res = await fetch(`${API_DISPONIBILIDAD}?${params}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Error de disponibilidad');
+
+            state.tz = data.zona_horaria || state.tz;
+            state.duracion = data.duracion_min;
+            state.fechas = data.fechas_disponibles || [];
+            if (!state.fecha || !state.fechas.includes(state.fecha)) {
+                state.fecha = data.fecha || state.fechas[0] || null;
+            }
+            state.slots = data.slots || [];
+            pintarFechas();
+            pintarSlots();
+        } catch (e) {
+            state.fechas = state.fechas || [];
+            state.slots = [];
+            pintarSlots(e.message);
+        }
+        state.cargando = false;
+        $('slots-loading').style.display = 'none';
+    }
+
+    function pintarFechas() {
+        const strip = $('dates-strip');
+        strip.innerHTML = '';
+        state.fechas.forEach((iso) => {
+            const d = new Date(iso + 'T12:00:00');
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'date-chip' + (iso === state.fecha ? ' selected' : '');
+            chip.innerHTML = `
+                <span class="dow">${DOW[(d.getDay() + 6) % 7]}</span>
+                <span class="dnum">${d.getDate()}</span>
+                <span class="mon">${MON[d.getMonth()]}</span>`;
+            chip.addEventListener('click', () => {
+                if (state.fecha === iso) return;
+                state.fecha = iso;
+                state.slot = null;
+                actualizarUI();
+                cargarDisponibilidad(iso);
+            });
+            strip.appendChild(chip);
+        });
+    }
+
+    function pintarSlots(msgError) {
+        const grid = $('slots-grid');
+        grid.innerHTML = '';
+        $('slots-empty').style.display = 'none';
+        if (msgError) { $('slots-empty').textContent = msgError || 'No hay horarios disponibles.'; $('slots-empty').style.display = 'block'; return; }
+        if (!state.slots.length) { $('slots-empty').style.display = 'block'; actualizarUI(); return; }
+        state.slots.forEach((iso) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'slot-btn' + (state.slot === iso ? ' selected' : '');
+            b.textContent = fmtHora(iso);
+            b.addEventListener('click', () => {
+                state.slot = iso;
+                Array.from(grid.children).forEach((el) => el.classList.remove('selected'));
+                b.classList.add('selected');
+                actualizarUI();
+            });
+            grid.appendChild(b);
+        });
+        actualizarUI();
+    }
+
+    /* ── Teléfono: prefijos + banderas ──────────────────────────────── */
+    // Lista curada: ISO2 -> dial. La bandera se pinta con flagcdn.
+    const PAIS_PREFIJO = [
+        ['CO', '+57'], ['MX', '+52'], ['US', '+1'], ['AR', '+54'], ['BR', '+55'],
+        ['CL', '+56'], ['PE', '+51'], ['EC', '+593'], ['VE', '+58'], ['BO', '+591'],
+        ['PY', '+595'], ['UY', '+598'], ['CR', '+506'], ['PA', '+507'], ['GT', '+502'],
+        ['DO', '+1809'], ['PR', '+1787'], ['CU', '+53'], ['HN', '+504'], ['SV', '+503'],
+        ['NI', '+505'], ['ES', '+34'], ['GB', '+44'], ['PT', '+351'], ['FR', '+33'],
+        ['DE', '+49'], ['IT', '+39'], ['NL', '+31'], ['BE', '+32'], ['CH', '+41'],
+        ['AT', '+43'], ['SE', '+46'], ['NO', '+47'], ['DK', '+45'], ['FI', '+358'],
+        ['PL', '+48'], ['IE', '+353'], ['CA', '+1'], ['JP', '+81'], ['KR', '+82'],
+        ['CN', '+86'], ['IN', '+91'], ['AE', '+971'], ['SA', '+966'], ['SG', '+65'],
+        ['AU', '+61'], ['NZ', '+64'], ['ZA', '+27'], ['IL', '+972'],
+    ];
+    const PAIS_NOMBRE = { CO: 'Colombia', MX: 'México', US: 'EE. UU.' };
+
+    function llenarPaises() {
+        const sel = $('id_telefono_prefijo');
+        sel.innerHTML = '';
+        PAIS_PREFIJO.forEach(([iso2, dial]) => {
+            const opt = document.createElement('option');
+            opt.value = iso2 + '|' + dial;
+            opt.textContent = dial;
+            sel.appendChild(opt);
+        });
+        // Default: +57 Colombia si no se detectó geo/nombre país conocido.
+        setPais(state.pais || 'CO');
+        sel.addEventListener('change', () => setPais(sel.value.split('|')[0]));
+    }
+
+    function setPais(iso2) {
+        const sel = $('id_telefono_prefijo');
+        const fila = PAIS_PREFIJO.find(([i]) => i === iso2);
+        const objetivo = fila ? iso2 : 'CO';
+        const indice = PAIS_PREFIJO.findIndex(([i]) => i === objetivo);
+        sel.selectedIndex = indice;
+        $('phone-flag').src = `https://flagcdn.com/w40/${objetivo.toLowerCase()}.png`;
+        const dial = PAIS_PREFIJO[indice][1];
+        sel.dataset.dial = dial;
+        sel.title = PAIS_NOMBRE[objetivo] || objetivo;
+    }
+
+    /* ── Wizard: navegación y resumen ───────────────────────────────── */
+    function setStep(n) {        state.step = n;
+        ['step-1', 'step-2', 'step-done'].forEach((id, i) => {
+            $(id).classList.toggle('active', i + 1 === Math.min(n, 3));
+        });
+        const pct = n === 3 ? 100 : (n / 2) * 100;
+        $('progress-fill').style.width = pct + '%';
+        $('progress-pct').textContent = Math.round(pct) + '%';
+        $('progress-label').textContent = n === 1 ? 'Paso 1 de 2 · Fecha y hora'
+            : n === 2 ? 'Paso 2 de 2 · Tus datos'
+            : 'Reserva confirmada';
+        if (n === 2) pintarResumen();
+    }
+
+    function pintarResumen() {
+        let card = document.querySelector('.summary-card');
+        if (!state.slot) return;
+        if (!card) {
+            card = document.createElement('div');
+            card.className = 'summary-card';
+            card.innerHTML = `
+                <div class="row"><span class="lbl">Fecha y hora</span><span class="val" id="sum-fecha"></span></div>
+                <div class="row"><span class="lbl">Zona horaria</span><span class="val" id="sum-tz"></span></div>
+                <div class="row"><span class="lbl">Duración</span><span class="val" id="sum-dur"></span></div>`;
+            $('step-2').prepend(card);
+        }
+        $('sum-fecha').textContent = `${new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: state.tz }).format(new Date(state.slot))}, ${fmtHora(state.slot)}`;
+        $('sum-tz').textContent = `${state.tz} (${offsetDe(state.tz)})`;
+        $('sum-dur').textContent = `${state.duracion || 30} min`;
+    }
+
+    function actualizarUI() {
+        $('btn-step2').disabled = !state.slot;
+    }
+
+    /* ── Submit ─────────────────────────────────────────────────────── */
+    async function reservar() {
+        const msg = $('form-message');
+        msg.className = 'form-message';
+        const consent = $('id_consentimiento');
+        if (!consent.checked) {
+            $('consent-box').classList.add('err');
+            msg.classList.add('err');
+            msg.textContent = "Debes confirmar el consentimiento de contacto para agendar.";
+            return;
+        }
+        $('consent-box').classList.remove('err');
+
+        if (!state.slot) {
+            msg.classList.add('err');
+            msg.textContent = 'Selecciona primero una fecha y un horario.';
+            setStep(1);
+            return;
+        }
+
+        const nombre = $('id_nombre').value.trim();
+        const correo = $('id_correo').value.trim();
+        const dial = $('id_telefono_prefijo').dataset.dial || '+57';
+        const numero = $('id_telefono_numero').value.replace(/[^\d]/g, '');
+
+        if (!nombre || !correo || !numero) {
+            msg.classList.add('err');
+            msg.textContent = 'Completa tu nombre, correo y teléfono para continuar.';
+            return;
+        }
+
+        const btn = $('btn-confirm');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>Agendando…';
+
+        try {
+            const token = await recaptchaToken();
+            const res = await fetch(API_RESERVAR, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                },
+                body: JSON.stringify({
+                    inicio: state.slot,
+                    zona_horaria: state.tz,
+                    nombre: nombre,
+                    correo: correo,
+                    telefono_prefijo: dial,
+                    telefono_numero: numero,
+                    empresa: $('id_empresa').value.trim(),
+                    mensaje: $('id_mensaje').value.trim(),
+                    consentimiento: true,
+                    website_verification: $('id_website_verification').value,
+                    'g-recaptcha-response': token,
+                }),
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                $('done-datetime').textContent = data.fecha_hora_visitante;
+                if (document.querySelector('.summary-card')) document.querySelector('.summary-card').remove();
+                setStep(3);
+            } else {
+                msg.classList.add('err');
+                msg.textContent = data.message || 'Hubo un error interno. Por favor, intente más tarde.';
+                btn.disabled = false;
+                btn.innerHTML = 'Confirmar reunión';
+                if (String(res.status) === '409' || String(res.status) === '429') { setStep(1); cargarDisponibilidad(); }
+            }
+        } catch (e) {
+            msg.classList.add('err');
+            msg.textContent = 'Hubo un error interno. Por favor, intente más tarde.';
+            btn.disabled = false;
+            btn.innerHTML = 'Confirmar reunión';
+        }
+    }
+
+    /* ── Init ───────────────────────────────────────────────────────── */
+    async function init() {
+        await detectarGeo();
+        if (!state.tz) state.tz = 'America/Bogota';
+        llenarTimezones();
+        llenarPaises();
+
+        $('btn-step2').addEventListener('click', () => setStep(2));
+        $('btn-back').addEventListener('click', () => setStep(1));
+        $('btn-confirm').addEventListener('click', reservar);
+        $('id_consentimiento').addEventListener('change', () => {
+            $('btn-confirm').disabled = !$('id_consentimiento').checked;
+            if ($('id_consentimiento').checked) $('consent-box').classList.remove('err');
+        });
+
+        await cargarDisponibilidad();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+{% endblock %}

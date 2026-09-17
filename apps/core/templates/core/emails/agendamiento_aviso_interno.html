@@ -1,0 +1,71 @@
+{% extends "core/emails/base_email.html" %}
+
+{% block title %}Nueva Agenda - Sooniverse{% endblock %}
+
+{% block content %}
+<h2 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">
+    Nueva reunión agendada desde el booking público
+</h2>
+
+<p style="font-size: 15px; line-height: 1.6; color: #94A3B8; margin-bottom: 22px;">
+    Una persona registró su agenda desde <strong style="color: #FFFFFF;">/agendar/</strong>.
+    Recuerda cargar el enlace de Google Meet en el CRM dentro de las
+    <strong style="color: #00FF87;">próximas 24 horas</strong>.
+</p>
+
+<!-- Datos de la reunión -->
+<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 22px;">
+    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;">
+        Detalles de la reunión
+    </h3>
+    <table cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; color: #94A3B8; line-height: 1.8;">
+        <tr>
+            <td style="color: #64748B; width: 130px; padding: 2px 0;">Fecha y hora</td>
+            <td style="color: #FFFFFF; font-weight: 600;">{{ fecha_hora_bogota }}</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0;">Zona del cliente</td>
+            <td style="color: #FFFFFF;">{{ fecha_hora_visitante }} ({{ zona_horaria }})</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0;">Enlace Meet</td>
+            <td style="color: #94A3B8; font-style: italic;">Pendiente de asignar (máx. 24h)</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Datos del lead -->
+<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;">
+        Datos de contacto
+    </h3>
+    <table cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; color: #94A3B8; line-height: 1.8;">
+        <tr>
+            <td style="color: #64748B; width: 130px; padding: 2px 0;">Nombre</td>
+            <td style="color: #FFFFFF; font-weight: 600;">{{ nombre }}</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0;">Correo</td>
+            <td style="color: #FFFFFF;">{{ correo }}</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0;">Teléfono</td>
+            <td style="color: #FFFFFF;">{% if telefono %}{{ telefono }}{% else %}—{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0;">Empresa</td>
+            <td style="color: #FFFFFF;">{{ empresa }}</td>
+        </tr>
+        <tr>
+            <td style="color: #64748B; padding: 2px 0; vertical-align: top;">Mensaje</td>
+            <td style="color: #FFFFFF;">{{ mensaje }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="text-align: center;">
+    <a href="{{ base_url }}/interno/leads/" class="btn-email-primary" style="display: inline-block; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; padding: 12px 24px; text-decoration: none; border-radius: 6px; letter-spacing: 0.5px;">
+        Abrir CRM
+    </a>
+</div>
+{% endblock %}

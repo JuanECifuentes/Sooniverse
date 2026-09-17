@@ -1,0 +1,184 @@
+{% extends "core/base_internal.html" %}
+{% load static %}
+
+{% block title %}Sooniverse | Agenda{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+
+    <!-- Header -->
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <div class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2">Booking público</div>
+            <h1 class="text-3xl font-bold tracking-[-1px] text-white">Agenda de reuniones</h1>
+            <p class="mt-2 text-sm text-slate">Configura el calendario que verán los visitantes en
+                <a href="{% url 'core:booking_publico' %}" target="_blank" rel="noopener" class="text-cyan hover:underline">/agendar/</a>
+                y revisa las próximas citas. Los horarios se interpretan en hora Colombia
+                <span class="font-mono text-[10px] uppercase tracking-widest text-slate">({{ zona_negocio }})</span>.
+            </p>
+        </div>
+        <a href="{% url 'core:internal_leads' %}" class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Ver Leads</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="px-4 py-3 rounded-lg text-sm font-semibold border
+                {% if message.tags == 'success' %}bg-neon/10 text-neon border border-neon/30
+                {% elif message.tags == 'error' %}text-red-500 border border-red-500 bg-red-500/10
+                {% else %}bg-surface text-slate border border-border{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- ── Card 1: Configuración ── -->
+    <form method="post" action="" class="card p-6 md:p-8 space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <h2 class="text-xl font-bold text-white">Configuración del booking público</h2>
+            <p class="text-sm text-slate mt-1">Parámetros que definen la disponibilidad que se muestra en la página pública de agendamiento.</p>
+        </div>
+
+        <div class="grid-3">
+            <div>
+                <label for="{{ form.dias_apertura.id_for_label }}" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Ventana de apertura (días)</label>
+                {{ form.dias_apertura }}
+                <p class="text-xs text-slate mt-1">Cuántos días hacia adelante permanece abierta la agenda (30, 60, 90…).</p>
+                {% if form.dias_apertura.errors %}<p class="text-xs text-red-500 mt-1">{{ form.dias_apertura.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.duracion_min.id_for_label }}" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Duración de la reunión (min)</label>
+                {{ form.duracion_min }}
+                <p class="text-xs text-slate mt-1">Tamaño de cada slot reservable.</p>
+                {% if form.duracion_min.errors %}<p class="text-xs text-red-500 mt-1">{{ form.duracion_min.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.anticipo_min.id_for_label }}" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Antelación mínima (min)</label>
+                {{ form.anticipo_min }}
+                <p class="text-xs text-slate mt-1">Un slot solo es reservable si falta al menos este tiempo.</p>
+                {% if form.anticipo_min.errors %}<p class="text-xs text-red-500 mt-1">{{ form.anticipo_min.errors.0 }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="border-t border-border pt-6">
+            <h3 class="text-lg font-bold text-white mb-1">Horario semanal</h3>
+            <p class="text-xs text-slate mb-4">Formato 24h. Los días desmarcados quedan sin disponibilidad. Base: <span class="font-mono">America/Bogota</span>.</p>
+            <div class="space-y-2" id="days-container">
+                {% for fila in filas_dias %}
+                <div class="day-row flex flex-wrap items-center gap-3 rounded-lg border border-border bg-deep/60 px-4 py-3"
+                     data-dia="{{ fila.dia }}">
+                    <label class="flex items-center gap-3 cursor-pointer select-none" style="min-width: 150px;">
+                        <input type="checkbox" class="day-toggle" data-dia="{{ fila.dia }}"
+                               name="dia_{{ fila.dia }}_activo" {% if fila.activo %}checked{% endif %}>
+                        <span class="text-sm font-semibold text-white">{{ fila.nombre }}</span>
+                    </label>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <label for="dia_{{ fila.dia }}_inicio" class="font-mono text-[10px] uppercase tracking-widest text-slate">Inicio</label>
+                        <input id="dia_{{ fila.dia }}_inicio"
+                               name="dia_{{ fila.dia }}_inicio"
+                               type="time"
+                               {% if not fila.activo %}disabled{% endif %}
+                               class="time-input rounded-lg bg-surface border border-border px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan transition"
+                               value="{{ fila.inicio }}">
+                        <span class="text-slate">—</span>
+                        <label for="dia_{{ fila.dia }}_fin" class="font-mono text-[10px] uppercase tracking-widest text-slate">Fin</label>
+                        <input id="dia_{{ fila.dia }}_fin"
+                               name="dia_{{ fila.dia }}_fin"
+                               type="time"
+                               {% if not fila.activo %}disabled{% endif %}
+                               class="time-input rounded-lg bg-surface border border-border px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan transition"
+                               value="{{ fila.fin }}">
+                    </div>
+                    <span class="day-status ml-auto font-mono text-[10px] uppercase tracking-widest {% if fila.activo %}text-neon{% else %}text-slate{% endif %}">
+                        {% if fila.activo %}Disponible{% else %}Libre{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary px-7 py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
+            Guardar configuración
+        </button>
+    </form>
+
+    <!-- ── Card 2: Próximas citas ── -->
+    <div class="card p-6 md:p-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Próximas citas</h2>
+            <span class="font-mono text-[10px] uppercase tracking-brand text-neon">{{ citas_json|length }} reservada(s)</span>
+        </div>
+        {% if citas_json %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left font-mono text-[10px] uppercase tracking-widest text-slate border-b border-border">
+                        <th class="py-3 pr-4">Fecha (Bogotá)</th>
+                        <th class="py-3 pr-4">Zona cliente</th>
+                        <th class="py-3 pr-4">Nombre</th>
+                        <th class="py-3 pr-4">Correo</th>
+                        <th class="py-3 pr-4">Teléfono</th>
+                        <th class="py-3 pr-4">Empresa</th>
+                        <th class="py-3">Lead</th>
+                    </tr>
+                </thead>
+                <tbody class="text-slate">
+                    {% for c in citas_json %}
+                    <tr class="border-b border-border/60 hover:bg-surface/50 transition-colors">
+                        <td class="py-3 pr-4 font-mono text-xs text-white">{{ c.bogota }}</td>
+                        <td class="py-3 pr-4 font-mono text-xs">{{ c.visitante }}</td>
+                        <td class="py-3 pr-4 text-white">{{ c.nombre }}</td>
+                        <td class="py-3 pr-4">{{ c.email }}</td>
+                        <td class="py-3 pr-4 font-mono text-xs">{{ c.telefono|default:"—" }}</td>
+                        <td class="py-3 pr-4">{{ c.empresa }}</td>
+                        <td class="py-3 font-mono text-cyan">#{{ c.lead_id }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-sm text-slate">Sin citas confirmadas a futuro todavía. Las reservas de <span class="font-mono text-cyan">/agendar/</span> aparecen aquí al instante.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .day-toggle {
+        appearance: none; -webkit-appearance: none;
+        width: 18px; height: 18px; border-radius: 5px;
+        border: 1.5px solid #475569; background: #070A12; cursor: pointer; position: relative;
+        transition: all .2s ease; flex-shrink: 0;
+    }
+    .day-toggle:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 8px rgba(0,255,135,0.45); }
+    .day-toggle:checked::after {
+        content: ''; position: absolute; left: 5px; top: 2px; width: 4px; height: 9px;
+        border: solid #070A12; border-width: 0 2px 2px 0; transform: rotate(45deg);
+    }
+    input[type="time"] { color-scheme: dark; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.day-toggle').forEach(function (toggle) {
+        toggle.addEventListener('change', function () {
+            var row = toggle.closest('.day-row');
+            var inputs = row.querySelectorAll('.time-input');
+            var estado = row.querySelector('.day-status');
+            inputs.forEach(function (el) { el.disabled = !toggle.checked; });
+            if (toggle.checked) {
+                estado.textContent = 'Disponible';
+                estado.classList.remove('text-slate');
+                estado.classList.add('text-neon');
+            } else {
+                estado.textContent = 'Libre';
+                estado.classList.add('text-slate');
+                estado.classList.remove('text-neon');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

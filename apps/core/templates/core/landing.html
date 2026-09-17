@@ -448,7 +448,6 @@
             html { scroll-behavior: auto; }
         }
     </style>
-    {% if RECAPTCHA_SITE_KEY %}<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}" async defer></script>{% endif %}
 </head>
 <body class="antialiased">
 
@@ -557,7 +556,7 @@
     <section id="privacidad" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-border bg-surface/30">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
             <div class="max-w-3xl mb-8">
-                <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2 block">Privacidad y Soberanía</span>
+                <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2 block">Privacidad y Seguridad</span>
                 <h2 class="text-2xl sm:text-4xl font-bold tracking-[-1px] text-white">Tus datos jamás salen de tu red corporativa.</h2>
                 <p class="mt-2 text-sm sm:text-base text-slate">Compara la exposición de datos hacia nubes públicas frente a una arquitectura privada aislada en tu propio perímetro.</p>
             </div>
@@ -632,7 +631,7 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="bullet-neon-green"></span>
-                            <span class="text-sm font-semibold text-white">Soberanía y cumplimiento normativo absoluto</span>
+                            <span class="text-sm font-semibold text-white">Seguridad y cumplimiento normativo absoluto</span>
                         </div>
                     </div>
                 </div>
@@ -753,163 +752,28 @@
         </div>
     </section>
 
+    <!-- CTA → Booking público (/agendar/). La sección antes alojaba el
+         formulario de contacto; ahora el agendamiento vive en su propia
+         página con selector de fecha, hora y zona horaria. -->
     <section id="contacto" class="py-24 border-b border-border">
         <div class="max-w-4xl mx-auto px-6 lg:px-8">
             <div class="relative rounded-3xl border border-border bg-gradient-to-br from-surface to-deep p-10 sm:p-16 text-center overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-cyan opacity-10 blur-[80px] rounded-full"></div>
                 <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon opacity-10 blur-[80px] rounded-full"></div>
                 <div class="relative">
+                    <div class="inline-flex items-center gap-2 glass-panel px-3 py-1.5 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-neon glow-dot animate-pulse-slow"></span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-widest text-neon">Llamada exploratoria · 30 min</span>
+                    </div>
                     <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Agenda una reunión y te mostramos tu ahorro real.</h2>
-                    <p class="mt-4 text-slate max-w-xl mx-auto">Cuéntanos qué procesos quieres mover a IA y en la reunión te entregamos el cálculo de costos y la arquitectura propuesta para tu caso.</p>
-                    <form id="contact-form" action="{% url 'core:contacto' %}" method="POST" data-recaptcha-site="{{ RECAPTCHA_SITE_KEY|default:'' }}" class="mt-8 space-y-4 max-w-xl mx-auto text-left">
-                        {% csrf_token %}
-                        
-                        <div id="form-message" class="hidden rounded-lg p-4 mb-4 text-sm font-semibold border"></div>
-                        
-
-                        <div>
-                            <label for="id_nombre" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Nombre Completo</label>
-                            <input type="text" name="nombre" id="id_nombre" required placeholder="Ingresa tu nombre completo" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="id_correo" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Correo</label>
-                                <input type="email" name="correo" id="id_correo" required placeholder="tu@empresa.com" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
-                            </div>
-                            <div>
-                                <label for="id_empresa" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Empresa</label>
-                                <input type="text" name="empresa" id="id_empresa" required placeholder="Nombre de tu empresa" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="id_mensaje" class="block text-xs font-mono uppercase tracking-widest text-cyan mb-1.5 font-bold">Mensaje (Opcional)</label>
-                            <textarea name="mensaje" id="id_mensaje" placeholder="Cuéntanos sobre tus necesidades actuales" rows="3" class="w-full rounded-lg bg-deep border border-border px-5 py-3.5 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition resize-none"></textarea>
-                        </div>
-
-                        <!-- Honeypot -->
-                        <div style="display:none !important;">
-                            <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
-                        </div>
-
-                        <input type="hidden" name="g-recaptcha-response" id="id_recaptcha_token">
-
-                        <div class="text-center pt-2">
-                            <button type="submit" class="btn-primary w-full px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
-                                Reservar una reunión
-                            </button>
-                        </div>
-                    </form>
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const form = document.getElementById('contact-form');
-                            const formMessage = document.getElementById('form-message');
-                            const submitBtn = form.querySelector('button[type="submit"]');
-                            const originalBtnText = submitBtn.innerHTML;
-
-                            form.addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                
-                                // Clear message
-                                formMessage.classList.add('hidden');
-                                formMessage.className = 'rounded-lg p-4 mb-4 text-sm font-semibold border';
-                                
-                                // Validate email first
-                                const emailInput = document.getElementById('id_correo');
-                                const emailValue = emailInput.value.trim();
-                                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                                if (!emailRegex.test(emailValue)) {
-                                    formMessage.classList.remove('hidden');
-                                    formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
-                                    formMessage.innerHTML = 'La dirección de correo electrónico ingresada no posee un formato válido para iniciar comunicación.';
-                                    emailInput.focus();
-                                    return;
-                                }
-
-                                // Set loading state
-                                submitBtn.disabled = true;
-                                submitBtn.innerHTML = 'RESERVANDO...';
-                                submitBtn.style.opacity = '0.7';
-
-                                // reCAPTCHA v3 (invisible): el token se acuña en el
-                                // submit (expira en ~120s) y nunca bloquea el envío —
-                                // si Google no responde en 4s, se envía sin token y el
-                                // servidor decide (fail-open si no hay claves).
-                                const siteKey = form.dataset.recaptchaSite || '';
-                                const getRecaptchaToken = () => new Promise((resolve) => {
-                                    if (!siteKey || typeof grecaptcha === 'undefined') { resolve(''); return; }
-                                    const bail = setTimeout(() => resolve(''), 4000);
-                                    try {
-                                        grecaptcha.ready(() => {
-                                            grecaptcha.execute(siteKey, { action: 'contacto_lead' })
-                                                .then((t) => { clearTimeout(bail); resolve(t || ''); })
-                                                .catch(() => { clearTimeout(bail); resolve(''); });
-                                        });
-                                    } catch (err) {
-                                        clearTimeout(bail);
-                                        resolve('');
-                                    }
-                                });
-
-                                getRecaptchaToken().then((token) => {
-                                    document.getElementById('id_recaptcha_token').value = token;
-
-                                    const formData = new FormData(form);
-                                    formData.append('ajax', 'true');
-
-                                    fetch(form.action, {
-                                        method: 'POST',
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest',
-                                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                                        }
-                                    })
-                                    .then(response => {
-                                        return response.json()
-                                            .catch(() => {
-                                                throw new Error('Hubo un error interno. Por favor, intente más tarde.');
-                                            })
-                                            .then(data => {
-                                                if (!response.ok) {
-                                                    throw new Error(data.message || 'Hubo un error interno. Por favor, intente más tarde.');
-                                                }
-                                                return data;
-                                            });
-                                    })
-                                    .then(data => {
-                                        formMessage.classList.remove('hidden');
-                                        formMessage.classList.add('bg-surface', 'text-neon', 'border-neon');
-                                        formMessage.innerHTML = data.message;
-                                        form.reset();
-                                    })
-                                    .catch(error => {
-                                        formMessage.classList.remove('hidden');
-                                        formMessage.classList.add('bg-surface', 'text-red-500', 'border-red-500');
-
-                                        let msg = error.message;
-                                        if (!msg || msg.includes('fetch') || msg.includes('NetworkError') || msg.includes('JSON') || msg.includes('Unexpected token')) {
-                                            msg = 'Hubo un error interno. Por favor, intente más tarde.';
-                                        }
-                                        formMessage.innerHTML = msg;
-                                    })
-                                    .finally(() => {
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = originalBtnText;
-                                        submitBtn.style.opacity = '1';
-                                    });
-                                });
-                            });
-                        });
-                    </script>
-
-                    <p class="mt-4 text-xs text-slate">
+                    <p class="mt-4 text-slate max-w-xl mx-auto">Elige directamente el día y la hora que te convenga en nuestro calendario de reuniones; en la llamada te entregamos el cálculo de costos y la arquitectura propuesta para tu caso.</p>
+                    <div class="mt-8">
+                        <a href="{% url 'core:booking_publico' %}" class="btn-primary inline-block px-10 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
+                            Reservar una reunión
+                        </a>
+                    </div>
+                    <p class="mt-5 text-xs text-slate">
                         Sin compromiso. Cumplimiento RGPD y políticas de privacidad empresariales.
-                        Este sitio está protegido por reCAPTCHA; aplican la
-                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-cyan hover:underline">Política de Privacidad</a> y los
-                        <a href="https://policies.google.com/terms" target="_blank" rel="noopener" class="text-cyan hover:underline">Términos de Servicio</a> de Google.
                     </p>
                 </div>
             </div>

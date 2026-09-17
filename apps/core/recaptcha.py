@@ -12,8 +12,16 @@ from django.conf import settings
 logger = logging.getLogger("django.apps.core.recaptcha")
 
 
-def verify_recaptcha(token: str, remote_ip: str | None = None) -> tuple[bool, str]:
+def verify_recaptcha(
+    token: str,
+    remote_ip: str | None = None,
+    expected_action: str | None = None,
+) -> tuple[bool, str]:
     """Verifica un token de reCAPTCHA v3 contra la API de Google.
+
+    `expected_action`: acción específica de este endpoint (p. ej.
+    "contacto_lead" o "agenda_booking"). Si no se pasa, se usa
+    settings.RECAPTCHA_ACTION (comportamiento legado del formulario).
 
     Devuelve (ok, reason).
 
@@ -38,7 +46,9 @@ def verify_recaptcha(token: str, remote_ip: str | None = None) -> tuple[bool, st
     data = urllib.parse.urlencode(payload).encode()
 
     verify_url = getattr(
-        settings, "RECAPTCHA_VERIFY_URL", "https://www.google.com/recaptcha/api/siteverify"
+        settings,
+        "RECAPTCHA_VERIFY_URL",
+        "https://www.google.com/recaptcha/api/siteverify",
     )
     timeout = getattr(settings, "RECAPTCHA_TIMEOUT", 5)
 
@@ -53,9 +63,9 @@ def verify_recaptcha(token: str, remote_ip: str | None = None) -> tuple[bool, st
     if not result.get("success"):
         return False, ",".join(result.get("error-codes", ["unknown"]))
 
-    expected_action = getattr(settings, "RECAPTCHA_ACTION", "contacto_lead")
+    expected = expected_action or getattr(settings, "RECAPTCHA_ACTION", "contacto_lead")
     action = result.get("action")
-    if action and action != expected_action:
+    if action and action != expected:
         return False, f"action-mismatch:{action}"
 
     score = result.get("score", 0.0)
