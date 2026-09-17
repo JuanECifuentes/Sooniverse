@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 380 75" class="w-full h-auto" role="img" aria-label="Gráfico de costo fijo Sooniverse: el costo se mantiene horizontal y predecible sin importar el volumen de tokens procesados">
+    <defs>
+        <linearGradient id="neonCostAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00FF87" stop-opacity="0.30"/>
+            <stop offset="100%" stop-color="#00FF87" stop-opacity="0.0"/>
+        </linearGradient>
+    </defs>
+    <!-- Ejes y guías -->
+    <line x1="36" y1="8" x2="36" y2="58" stroke="#334155" stroke-width="1"/>
+    <line x1="36" y1="58" x2="365" y2="58" stroke="#334155" stroke-width="1"/>
+    <line x1="36" y1="18" x2="365" y2="18" stroke="#334155" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.4"/>
+    <line x1="36" y1="38" x2="365" y2="38" stroke="#334155" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.4"/>
+    
+    <!-- Etiquetas de eje Y -->
+    <text x="30" y="21" fill="#64748B" font-size="7.5" text-anchor="end" font-family="JetBrains Mono, monospace">$$$</text>
+    <text x="30" y="41" fill="#64748B" font-size="7.5" text-anchor="end" font-family="JetBrains Mono, monospace">$$</text>
+    <text x="30" y="59" fill="#64748B" font-size="7.5" text-anchor="end" font-family="JetBrains Mono, monospace">$</text>
+    
+    <!-- Etiqueta de eje X -->
+    <text x="365" y="70" fill="#64748B" font-size="7.5" text-anchor="end" font-family="JetBrains Mono, monospace">Volumen de tokens / Uso ➔</text>
+    
+    <!-- Línea horizontal fija y plana -->
+    <path id="solCostLine" d="M36,46 L345,46" fill="none" stroke="#00FF87" stroke-width="2"/>
+    <path d="M36,46 L345,46 L345,58 L36,58 Z" fill="url(#neonCostAreaGrad)"/>
+    
+    <!-- Partícula animada sobre la línea fija (suave a 5.5s) -->
+    <circle r="3.5" fill="#00FF87" class="pulse-glow">
+        <animateMotion dur="5.5s" repeatCount="indefinite">
+            <mpath href="#solCostLine" xlink:href="#solCostLine"/>
+        </animateMotion>
+    </circle>
+    
+    <!-- Indicador de costo marginal cero -->
+    <circle cx="345" cy="46" r="3.5" fill="#00FF87"/>
+    <text x="340" y="40" fill="#00FF87" font-size="8" font-weight="700" text-anchor="end" font-family="JetBrains Mono, monospace">● Costo marginal $0</text>
+</svg>
