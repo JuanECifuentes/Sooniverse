@@ -7,11 +7,19 @@ from django.conf import settings
 logger = logging.getLogger("django.apps.core.notifications")
 
 
-def build_url(path: str) -> str:
+def build_url(path: str = "") -> str:
     """Builds an absolute URL from settings.SITE_URL for use in contexts (like
     background tasks) where no `request` is available to call
-    `request.build_absolute_uri`."""
+    `request.build_absolute_uri`.
+
+    Called as build_url("") (the common case, used as `base_url` in email
+    contexts before an appended `{% url %}` tag, which always returns its
+    own leading slash) it returns the bare origin with no trailing slash —
+    e.g. "http://localhost:8000", never "http://localhost:8000/", which
+    would otherwise double up into "...8000//interno/leads/"."""
     base = getattr(settings, "SITE_URL", "http://localhost:8000").rstrip("/")
+    if not path:
+        return base
     if not path.startswith("/"):
         path = f"/{path}"
     return f"{base}{path}"

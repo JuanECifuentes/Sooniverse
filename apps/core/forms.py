@@ -5,7 +5,14 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
-from .models import Lead, Questionnaire, ProcessInventory, QuestionnaireMetricFile
+from .models import (
+    Lead,
+    MaintenanceWindow,
+    Questionnaire,
+    ProcessInventory,
+    QuestionnaireMetricFile,
+    validar_limite_ventanas,
+)
 
 
 # Proveedores soportados por el diagnóstico. Mantener sincronizado con la UI.
@@ -131,6 +138,10 @@ class LeadForm(forms.ModelForm):
 class InternalLeadForm(forms.ModelForm):
     """Form for internal Lead creation. Muted via skip_email_signal in the view."""
 
+    # Crear un lead directamente en, por ejemplo, "Servicio realizado" no
+    # tiene sentido — al crearlo manualmente solo caben estos 3 estados.
+    ESTADOS_CREACION = (Lead.Estado.NUEVO, Lead.Estado.CONTACTADO, Lead.Estado.DESCARTADO)
+
     class Meta:
         model = Lead
         fields = ["nombre", "correo", "empresa", "mensaje", "estado"]
@@ -166,6 +177,92 @@ class InternalLeadForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["estado"].choices = [
+            (v, l) for v, l in Lead.Estado.choices if v in self.ESTADOS_CREACION
+        ]
+
+
+# Formato que produce <input type="datetime-local">. Django's default
+# DATETIME_INPUT_FORMATS no incluye el separador "T" -> sin esto, ambos
+# formularios de fecha/hora fallan siempre con "Enter a valid date/time".
+DATETIME_LOCAL_FORMATS = ["%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M"]
+DATETIME_LOCAL_WIDGET_ATTRS = {
+    "type": "datetime-local",
+    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
+}
+
+
+class LeadMeetingForm(forms.ModelForm):
+    """Carga manual de la fecha/hora y el link de la Reunión Confirmada."""
+
+    meeting_at = forms.DateTimeField(
+        required=True,
+        input_formats=DATETIME_LOCAL_FORMATS,
+        widget=forms.DateTimeInput(attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"),
+        label="Fecha y hora de la reunión",
+    )
+    meeting_link = forms.URLField(
+        required=True,
+        widget=forms.URLInput(
+            attrs={
+                "placeholder": "https://meet.google.com/...",
+                "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition",
+            }
+        ),
+        label="Enlace de la reunión",
+    )
+
+    class Meta:
+        model = Lead
+        fields = ["meeting_at", "meeting_link"]
+
+
+class MaintenanceWindowForm(forms.ModelForm):
+    """Alta/edición de una ventana de mantenimiento (máx. 6 por lead)."""
+
+    scheduled_for = forms.DateTimeField(
+        required=True,
+        input_formats=DATETIME_LOCAL_FORMATS,
+        widget=forms.DateTimeInput(attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"),
+        label="Fecha y hora programada",
+    )
+
+    class Meta:
+        model = MaintenanceWindow
+        fields = ["scheduled_for", "titulo", "notas"]
+        widgets = {
+            "titulo": forms.TextInput(
+                attrs={
+                    "placeholder": "Título (opcional)",
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition",
+                }
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "placeholder": "Notas (opcional)",
+                    "rows": 2,
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition resize-none",
+                }
+            ),
+        }
+
+    def __init__(self, *args, lead=None, **kwargs):
+        self.lead = lead
+        super().__init__(*args, **kwargs)
+        if lead is not None and self.instance.pk is None:
+            self.instance.lead = lead
+
+    def clean(self):
+        cleaned = super().clean()
+        lead_id = self.lead.pk if self.lead is not None else self.instance.lead_id
+        try:
+            validar_limite_ventanas(lead_id, exclude_pk=self.instance.pk)
+        except ValidationError as exc:
+            raise forms.ValidationError(exc.message)
+        return cleaned
 
 
 class QuestionnaireFinanceForm(forms.ModelForm):

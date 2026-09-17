@@ -1,14 +1,30 @@
 from django.contrib import admin
 
-from .models import Lead, Questionnaire, ProcessInventory
+from .models import (
+    Lead,
+    LeadEstadoHistory,
+    MaintenanceWindow,
+    NotificationLog,
+    Questionnaire,
+    ProcessInventory,
+)
 
 
 @admin.register(Lead)
 class LeadAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "correo", "empresa", "estado", "creado_en", "ip_origen")
+    list_display = (
+        "nombre",
+        "correo",
+        "empresa",
+        "estado",
+        "creado_en",
+        "estado_actualizado_en",
+        "meeting_at",
+        "ip_origen",
+    )
     list_filter = ("estado", "creado_en")
     search_fields = ("nombre", "correo", "empresa", "mensaje")
-    readonly_fields = ("creado_en", "ip_origen")
+    readonly_fields = ("creado_en", "actualizado_en", "ip_origen")
     ordering = ("-creado_en",)
 
     def save_model(self, request, obj, form, change):
@@ -16,6 +32,33 @@ class LeadAdmin(admin.ModelAdmin):
         if not change:
             obj.skip_email_signal = True
         super().save_model(request, obj, form, change)
+
+
+@admin.register(LeadEstadoHistory)
+class LeadEstadoHistoryAdmin(admin.ModelAdmin):
+    list_display = ("lead", "estado_anterior", "estado_nuevo", "origen", "cambiado_por", "creado_en")
+    list_filter = ("origen", "estado_nuevo")
+    search_fields = ("lead__nombre", "lead__empresa")
+    readonly_fields = ("creado_en",)
+    ordering = ("-creado_en",)
+
+
+@admin.register(MaintenanceWindow)
+class MaintenanceWindowAdmin(admin.ModelAdmin):
+    list_display = ("lead", "scheduled_for", "titulo", "completed", "completed_at")
+    list_filter = ("completed",)
+    search_fields = ("lead__nombre", "lead__empresa", "titulo")
+    readonly_fields = ("creado_en", "actualizado_en")
+    ordering = ("scheduled_for",)
+
+
+@admin.register(NotificationLog)
+class NotificationLogAdmin(admin.ModelAdmin):
+    list_display = ("kind", "lead", "dedupe_key", "enviado_en")
+    list_filter = ("kind",)
+    search_fields = ("dedupe_key", "lead__nombre", "lead__empresa")
+    readonly_fields = ("enviado_en",)
+    ordering = ("-enviado_en",)
 
 
 class ProcessInventoryInline(admin.TabularInline):

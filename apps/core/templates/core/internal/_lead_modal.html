@@ -1,0 +1,54 @@
+{# Partial for the "Reunión / Mantenimiento" modal body. Loaded via AJAX. #}
+<p class="font-mono text-[10px] uppercase tracking-widest text-slate mb-4">{{ lead.nombre }} · {{ lead.empresa }}</p>
+
+<div class="space-y-8">
+  <div>
+    <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-3">Reunión</h4>
+    <form id="lead-meeting-form" class="card p-4 space-y-3" data-lead-pk="{{ lead.pk }}">
+      {% csrf_token %}
+      <div>
+        <label class="block text-xs font-mono uppercase tracking-widest text-slate mb-1">{{ meeting_form.meeting_at.label }}</label>
+        {{ meeting_form.meeting_at }}
+      </div>
+      <div>
+        <label class="block text-xs font-mono uppercase tracking-widest text-slate mb-1">{{ meeting_form.meeting_link.label }}</label>
+        {{ meeting_form.meeting_link }}
+      </div>
+      <div id="lead-meeting-errors" class="text-xs text-red-400"></div>
+      <div class="flex items-center gap-3 pt-1">
+        <button type="submit" data-transicionar="1"
+                class="btn-primary px-4 py-2 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">
+          Guardar y confirmar reunión
+        </button>
+        <button type="submit" data-transicionar="0"
+                class="btn-secondary px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-wide">
+          Solo guardar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-3">Mantenimientos</h4>
+    <div id="maintenance-rows-host">
+      {% include "core/internal/_maintenance_rows.html" %}
+    </div>
+  </div>
+
+  <div>
+    <h4 class="font-mono text-[10px] uppercase tracking-widest text-cyan mb-3">Historial de estados</h4>
+    {% if historial %}
+      <ul class="space-y-2">
+        {% for h in historial %}
+          <li class="text-xs text-slate flex flex-wrap gap-2 items-center">
+            <span class="font-mono text-[10px] text-slate">{{ h.creado_en|date:"Y-m-d H:i" }}</span>
+            <span>{{ h.estado_anterior|default:"—" }} → <span class="text-white font-semibold">{{ h.get_estado_nuevo_display }}</span></span>
+            <span class="inline-flex px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest bg-surface border border-border text-slate">{{ h.get_origen_display }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-slate text-sm">Sin cambios de estado registrados.</p>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,54 @@
+{% comment %}
+Fragmento de las ventanas de mantenimiento de un lead. Se re-renderiza
+completo tras cada alta/edición/borrado (mismo patrón que
+generateNewQuestionnaire() usa para _questionnaire_modal.html).
+{% endcomment %}
+<div id="maintenance-rows-wrap" data-lead-pk="{{ lead.pk }}">
+  <div class="flex items-center justify-between mb-3">
+    <span class="font-mono text-[10px] uppercase tracking-widest text-slate">Ventanas de mantenimiento</span>
+    <span class="font-mono text-[10px] uppercase tracking-widest {% if ventanas|length >= max_ventanas %}text-red-400{% else %}text-cyan{% endif %}">
+      {{ ventanas|length }}/{{ max_ventanas }}
+    </span>
+  </div>
+
+  {% if ventanas %}
+    <ul class="space-y-2">
+      {% for w in ventanas %}
+        <li class="card p-3 flex flex-col sm:flex-row sm:items-center gap-3 {% if w.completed %}opacity-60{% endif %}">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm text-white font-semibold">
+              {{ w.scheduled_for|date:"Y-m-d H:i" }}
+              {% if w.titulo %}<span class="text-slate font-normal">· {{ w.titulo }}</span>{% endif %}
+            </div>
+            {% if w.notas %}<div class="text-xs text-slate mt-1">{{ w.notas }}</div>{% endif %}
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <form class="mw-move-form flex items-center gap-2" data-window-id="{{ w.pk }}">
+              <input type="datetime-local" name="scheduled_for" value="{{ w.scheduled_for|date:'Y-m-d\TH:i' }}"
+                     class="rounded bg-deep border border-border px-2 py-1.5 text-xs text-white focus:outline-none focus:border-cyan">
+              <button type="submit" class="btn-secondary px-2.5 py-1.5 rounded text-[10px] font-bold text-white uppercase tracking-wide whitespace-nowrap">Mover</button>
+            </form>
+            <button type="button" class="mw-toggle-btn btn-secondary px-2.5 py-1.5 rounded text-[10px] font-bold text-white uppercase tracking-wide whitespace-nowrap"
+                    data-window-id="{{ w.pk }}" data-action="{% if w.completed %}reabrir{% else %}completar{% endif %}">
+              {% if w.completed %}Reabrir{% else %}Completar{% endif %}
+            </button>
+            <button type="button" class="mw-delete-btn text-red-400 hover:text-red-300 text-xs font-bold uppercase tracking-wide"
+                    data-window-id="{{ w.pk }}">Eliminar</button>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-slate text-sm">Este lead aún no tiene ventanas de mantenimiento.</p>
+  {% endif %}
+
+  {% if ventanas|length < max_ventanas %}
+    <form id="mw-create-form" class="mt-4 flex flex-col sm:flex-row gap-2">
+      <input type="datetime-local" name="scheduled_for" required
+             class="flex-1 rounded-lg bg-deep border border-border px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan">
+      <input type="text" name="titulo" placeholder="Título (opcional)"
+             class="flex-1 rounded-lg bg-deep border border-border px-3 py-2 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan">
+      <button type="submit" class="btn-primary px-4 py-2 rounded-lg text-xs font-bold text-deep uppercase tracking-wide whitespace-nowrap">+ Agregar ventana</button>
+    </form>
+  {% endif %}
+</div>

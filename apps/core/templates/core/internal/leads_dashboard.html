@@ -171,13 +171,30 @@
     <div id="a-modal-body" class="overflow-y-auto p-6 space-y-6"><p class="text-slate font-mono text-xs">Cargando…</p></div>
   </div>
 </div>
+
+<!-- ───────────── MODAL: Reunión / Mantenimiento ───────────── -->
+<div id="lead-modal" class="hidden fixed inset-0 z-[65] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeLeadModal()"></div>
+  <div class="relative card w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border bg-surface/80">
+      <h3 class="text-lg font-bold text-white">Reunión y Mantenimiento</h3>
+      <button onclick="closeLeadModal()" class="text-slate hover:text-white transition text-2xl leading-none">&times;</button>
+    </div>
+    <div id="lead-modal-body" class="overflow-y-auto p-6 space-y-4">
+      <p class="text-slate font-mono text-xs">Cargando…</p>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
 {{ leads_json|json_script:"leads-data" }}
+{{ estado_choices_json|json_script:"estado-choices" }}
 <script>
   window.LEADS_DATA = JSON.parse(document.getElementById('leads-data').textContent);
   window.LEAD_UPDATE_URL = "{% url 'core:lead_update_status' %}";
+  window.ESTADO_CHOICES = JSON.parse(document.getElementById('estado-choices').textContent);
+  const ESTADO_ORDEN = Object.fromEntries(window.ESTADO_CHOICES.map(o => [o.value, o.orden]));
 
   function getCsrfToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -189,13 +206,7 @@
     wrap.className = 'flex items-center h-full w-full py-1';
     const select = document.createElement('select');
     select.className = 'w-full rounded bg-deep border border-border px-2 py-1 text-xs text-white focus:outline-none focus:border-cyan cursor-pointer';
-    const options = [
-      { value: 'nuevo', label: 'Nuevo', cls: 'text-neon' },
-      { value: 'contactado', label: 'Contactado', cls: 'text-cyan' },
-      { value: 'en_proceso', label: 'En proceso', cls: 'text-cyan' },
-      { value: 'cerrado', label: 'Cerrado', cls: 'text-violet' },
-    ];
-    options.forEach(opt => {
+    window.ESTADO_CHOICES.forEach(opt => {
       const option = document.createElement('option');
       option.value = opt.value;
       option.textContent = opt.label;
@@ -206,13 +217,14 @@
     select.addEventListener('change', () => {
       const leadId = params.data.id;
       const newState = select.value;
-      updateLeadState(leadId, newState, params.api, params.data);
+      const previousState = params.value;
+      updateLeadState(leadId, newState, params.api, params.data, select, previousState);
     });
     wrap.appendChild(select);
     return wrap;
   }
 
-  function updateLeadState(leadId, newState, api, rowData) {
+  function updateLeadState(leadId, newState, api, rowData, selectEl, previousState) {
     fetch(window.LEAD_UPDATE_URL, {
       method: 'POST',
       headers: {
@@ -224,11 +236,20 @@
     })
     .then(r => r.json().then(data => ({ ok: r.ok, data })))
     .then(({ ok, data }) => {
-      if (!ok) throw new Error(data.message || 'Error al actualizar el estado.');
+      if (!ok) {
+        if (data.requires === 'meeting') {
+          if (selectEl) selectEl.value = previousState;
+          openLeadModal(leadId);
+          return;
+        }
+        throw new Error(data.message || 'Error al actualizar el estado.');
+      }
       rowData.estado = newState;
       rowData.estado_display = data.estado_display;
+      if (data.estado_actualizado_en) rowData.estado_actualizado_en = data.estado_actualizado_en;
       api.applyTransaction({ update: [rowData] });
       api.refreshClientSideRowModel('sort');
+      if (data.warn) alert(data.warn);
     })
     .catch(err => { alert(err.message); });
   }
@@ -236,15 +257,25 @@
   // ── Actions cell renderer ────────────────────────────────────────────────
   function actionsCellRenderer(params) {
     const wrap = document.createElement('div');
-    wrap.className = 'flex items-center justify-center h-full w-full py-1';
+    wrap.className = 'flex items-center justify-center gap-1.5 h-full w-full py-1';
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn-secondary rounded-md text-[9px] font-bold text-white uppercase tracking-wider transition-all flex items-center justify-center';
     btn.style.height = '24px';
     btn.style.padding = '0 10px';
-    btn.textContent = 'Gestionar Cuestionarios';
+    btn.textContent = 'Cuestionarios';
     btn.addEventListener('click', () => openQuestionnairesModal(params.data.id));
+
+    const btn2 = document.createElement('button');
+    btn2.type = 'button';
+    btn2.className = 'btn-secondary rounded-md text-[9px] font-bold text-white uppercase tracking-wider transition-all flex items-center justify-center';
+    btn2.style.height = '24px';
+    btn2.style.padding = '0 10px';
+    btn2.textContent = 'Reunión / Mant.';
+    btn2.addEventListener('click', () => openLeadModal(params.data.id));
+
     wrap.appendChild(btn);
+    wrap.appendChild(btn2);
     return wrap;
   }
 
@@ -264,8 +295,7 @@
   }
 
   function estadoSortComparator(a, b) {
-    const order = { nuevo: 0, contactado: 1, en_proceso: 2, cerrado: 3 };
-    return (order[a] ?? 99) - (order[b] ?? 99);
+    return (ESTADO_ORDEN[a] ?? 99) - (ESTADO_ORDEN[b] ?? 99);
   }
 
   // ── Build Ag-Grid ────────────────────────────────────────────────────────
@@ -275,9 +305,11 @@
       columnDefs: [
         { headerName: 'Lead', valueGetter: p => p.data.nombre + ' ' + p.data.correo, cellRenderer: leadCellRenderer, minWidth: 220, flex: 1, filter: 'agTextColumnFilter', filterParams: { filterOptions: ['contains'] } },
         { headerName: 'Empresa', field: 'empresa', minWidth: 180, flex: 1, filter: 'agTextColumnFilter' },
-        { headerName: 'Estado', field: 'estado', cellRenderer: stateCellRenderer, minWidth: 160, sortable: true, sort: 'asc', comparator: estadoSortComparator, filter: 'agTextColumnFilter' },
+        { headerName: 'Estado', field: 'estado', cellRenderer: stateCellRenderer, minWidth: 210, sortable: true, sort: 'asc', comparator: estadoSortComparator, filter: 'agTextColumnFilter' },
         { headerName: 'Fecha', field: 'creado_en', minWidth: 150, sortable: true, filter: 'agTextColumnFilter' },
-        { headerName: 'Acciones', cellRenderer: actionsCellRenderer, minWidth: 190, sortable: false, filter: false }
+        { headerName: 'Reunión', field: 'meeting_at_display', minWidth: 140, valueFormatter: p => p.value || '—', filter: 'agTextColumnFilter' },
+        { headerName: 'Mantenim.', minWidth: 110, valueGetter: p => `${p.data.ventanas_pendientes}/${p.data.ventanas_total}`, filter: false },
+        { headerName: 'Acciones', cellRenderer: actionsCellRenderer, minWidth: 230, sortable: false, filter: false }
       ],
       rowData: window.LEADS_DATA,
       defaultColDef: {
@@ -339,6 +371,127 @@
     document.getElementById('q-modal').classList.add('hidden');
     currentLeadPk = null;
   }
+
+  // ── Lead modal (Reunión / Mantenimiento) helpers ─────────────────────────
+  let currentLeadModalPk = null;
+
+  function openLeadModal(leadPk) {
+    currentLeadModalPk = leadPk;
+    document.getElementById('lead-modal').classList.remove('hidden');
+    const body = document.getElementById('lead-modal-body');
+    body.innerHTML = '<p class="text-slate font-mono text-xs">Cargando…</p>';
+    fetch(`/interno/leads/${leadPk}/detalle/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(r => r.text())
+      .then(html => { body.innerHTML = html; })
+      .catch(() => { body.innerHTML = '<p class="text-cyan font-mono text-xs">Error al cargar el detalle del lead.</p>'; });
+  }
+
+  function closeLeadModal() {
+    document.getElementById('lead-modal').classList.add('hidden');
+    currentLeadModalPk = null;
+  }
+
+  function refreshMaintenanceRows(html) {
+    const host = document.getElementById('maintenance-rows-host');
+    if (host) host.innerHTML = html;
+  }
+
+  // Delegación de eventos: el contenido del modal se reemplaza por completo
+  // en cada fetch, así que los listeners se enganchan sobre el contenedor
+  // fijo #lead-modal-body en vez de sobre nodos que dejan de existir.
+  document.addEventListener('DOMContentLoaded', function() {
+    const modalBody = document.getElementById('lead-modal-body');
+    if (!modalBody) return;
+
+    modalBody.addEventListener('submit', function(e) {
+      const form = e.target;
+
+      if (form.id === 'lead-meeting-form') {
+        e.preventDefault();
+        const submitter = e.submitter;
+        const transicionar = submitter ? submitter.dataset.transicionar : '1';
+        const formData = new FormData(form);
+        formData.append('transicionar', transicionar);
+        const errorsBox = document.getElementById('lead-meeting-errors');
+        errorsBox.textContent = '';
+        fetch(`/interno/leads/${currentLeadModalPk}/reunion/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+          body: formData
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+          if (!ok) {
+            errorsBox.textContent = data.errors ? JSON.stringify(data.errors) : 'No se pudo guardar la reunión.';
+            return;
+          }
+          // Recarga la página: más simple y confiable que sincronizar a mano
+          // la fila de la grilla con el estado interno de ag-Grid.
+          window.location.reload();
+        })
+        .catch(() => { errorsBox.textContent = 'Error de red al guardar la reunión.'; });
+        return;
+      }
+
+      if (form.id === 'mw-create-form') {
+        e.preventDefault();
+        const formData = new FormData(form);
+        fetch(`/interno/leads/${currentLeadModalPk}/mantenimientos/crear/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+          body: formData
+        })
+        .then(r => r.text())
+        .then(html => refreshMaintenanceRows(html))
+        .catch(() => { alert('No se pudo crear la ventana de mantenimiento.'); });
+        return;
+      }
+
+      if (form.classList.contains('mw-move-form')) {
+        e.preventDefault();
+        const windowId = form.dataset.windowId;
+        const formData = new FormData(form);
+        formData.append('action', 'mover');
+        fetch(`/interno/mantenimientos/${windowId}/actualizar/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+          body: formData
+        })
+        .then(r => r.text())
+        .then(html => refreshMaintenanceRows(html))
+        .catch(() => { alert('No se pudo mover la ventana.'); });
+      }
+    });
+
+    modalBody.addEventListener('click', function(e) {
+      const toggleBtn = e.target.closest('.mw-toggle-btn');
+      if (toggleBtn) {
+        const windowId = toggleBtn.dataset.windowId;
+        const action = toggleBtn.dataset.action;
+        fetch(`/interno/mantenimientos/${windowId}/actualizar/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+          body: new URLSearchParams({ action })
+        })
+        .then(r => r.text())
+        .then(html => refreshMaintenanceRows(html))
+        .catch(() => { alert('No se pudo actualizar la ventana.'); });
+        return;
+      }
+
+      const deleteBtn = e.target.closest('.mw-delete-btn');
+      if (deleteBtn) {
+        const windowId = deleteBtn.dataset.windowId;
+        fetch(`/interno/mantenimientos/${windowId}/eliminar/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.text())
+        .then(html => refreshMaintenanceRows(html))
+        .catch(() => { alert('No se pudo eliminar la ventana.'); });
+      }
+    });
+  });
 
   function generateNewQuestionnaire() {
     const btn = document.getElementById('q-create-btn');

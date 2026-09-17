@@ -1,15 +1,37 @@
 import uuid
 
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
+class LeadQuerySet(models.QuerySet):
+    def notificables(self):
+        """Excluye leads marcados Descartado/Spam, que nunca deben generar
+        ninguna notificación (instantánea, de resumen diario o de reunión)."""
+        return self.exclude(estado=Lead.Estado.DESCARTADO)
+
+
 class Lead(models.Model):
-    ESTADO_CHOICES = [
-        ("nuevo", "Nuevo"),
-        ("contactado", "Contactado"),
-        ("en_proceso", "En proceso"),
-        ("cerrado", "Cerrado"),
-    ]
+    class Estado(models.TextChoices):
+        """El orden de declaración ES el orden del pipeline comercial: se usa
+        para poblar el <select> del CRM y para ordenar la columna Estado en
+        el dashboard (ver internal_leads_dashboard / leads_dashboard.html)."""
+
+        DESCARTADO = "descartado", "Descartado/Spam"
+        NUEVO = "nuevo", "Nuevo"
+        CONTACTADO = "contactado", "Contactado"
+        REUNION_CONFIRMADA = "reunion_confirmada", "Reunión Confirmada"
+        DIAGNOSTICO_ENVIADO = "diagnostico_enviado", "Diagnóstico enviado"
+        DIAGNOSTICO_REALIZADO = "diagnostico_realizado", "Diagnóstico realizado"
+        PRE_IMPLEMENTACION = "pre_implementacion", "Pre-implementación"
+        PENDIENTE_IMPLEMENTACION = "pendiente_implementacion", "Pendiente de Implementación"
+        SERVICIO_REALIZADO = "servicio_realizado", "Servicio realizado"
+        MANTENIMIENTO_PROGRAMADO = "mantenimiento_programado", "Mantenimiento programado"
+
+    # Alias retrocompatible: views.lead_update_status y el admin siguen
+    # leyendo Lead.ESTADO_CHOICES como una lista de tuplas (código, etiqueta).
+    ESTADO_CHOICES = Estado.choices
 
     nombre = models.CharField(max_length=255)
     correo = models.EmailField()
@@ -17,11 +39,30 @@ class Lead(models.Model):
     mensaje = models.TextField(blank=True, null=True)
     creado_en = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(
-        max_length=20,
-        choices=ESTADO_CHOICES,
-        default="nuevo",
+        max_length=32,
+        choices=Estado.choices,
+        default=Estado.NUEVO,
+        db_index=True,
     )
+    # Momento del último cambio de estado (no de creación). Es el ancla del
+    # recordatorio diario de 7 días para leads en estado Nuevo: si el lead
+    # vuelve a Nuevo, este campo se actualiza y el contador se reinicia.
+    estado_actualizado_en = models.DateTimeField(null=True, blank=True, db_index=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
     ip_origen = models.GenericIPAddressField(blank=True, null=True)
+
+    # Reunión confirmada — cargada manualmente en el CRM. Vive en Lead (y no
+    # en un modelo aparte) porque solo existe una reunión vigente por lead y
+    # los tres recordatorios (3d/1d/90min) son todos relativos a este único
+    # instante.
+    meeting_at = models.DateTimeField(
+        null=True, blank=True, verbose_name="Fecha y hora de la reunión"
+    )
+    meeting_link = models.URLField(
+        max_length=500, blank=True, default="", verbose_name="Enlace de la reunión"
+    )
+
+    objects = LeadQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Lead"
@@ -30,6 +71,127 @@ class Lead(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.empresa} ({self.estado})"
+
+
+class LeadEstadoHistory(models.Model):
+    """Auditoría de cada transición de estado de un Lead."""
+
+    class Origen(models.TextChoices):
+        MANUAL = "MANUAL", "Manual"
+        AUTOMATICO = "AUTO", "Automático"
+        MIGRACION = "MIGRACION", "Migración"
+
+    lead = models.ForeignKey(Lead, related_name="estado_history", on_delete=models.CASCADE)
+    estado_anterior = models.CharField(max_length=32, blank=True, default="")
+    estado_nuevo = models.CharField(max_length=32, choices=Lead.Estado.choices)
+    cambiado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    origen = models.CharField(max_length=16, choices=Origen.choices, default=Origen.MANUAL)
+    nota = models.TextField(blank=True, default="")
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Historial de estado del lead"
+        verbose_name_plural = "Historial de estados de leads"
+        ordering = ["-creado_en"]
+        indexes = [models.Index(fields=["lead", "-creado_en"])]
+
+    def __str__(self):
+        return f"{self.lead_id}: {self.estado_anterior} -> {self.estado_nuevo}"
+
+
+def validar_limite_ventanas(lead_id: int, *, exclude_pk: int | None = None) -> None:
+    """Lanza ValidationError si el lead ya tiene MaintenanceWindow.MAX_POR_LEAD
+    ventanas de mantenimiento. Único punto de verdad para el límite de 6 —
+    se llama desde el form y desde MaintenanceWindow.clean()."""
+    qs = MaintenanceWindow.objects.filter(lead_id=lead_id)
+    if exclude_pk is not None:
+        qs = qs.exclude(pk=exclude_pk)
+    if qs.count() >= MaintenanceWindow.MAX_POR_LEAD:
+        raise ValidationError(
+            f"Este lead ya tiene el máximo de {MaintenanceWindow.MAX_POR_LEAD} "
+            "ventanas de mantenimiento."
+        )
+
+
+class MaintenanceWindow(models.Model):
+    """Ventana de mantenimiento programado (hasta 6 por lead)."""
+
+    MAX_POR_LEAD = 6
+
+    lead = models.ForeignKey(
+        Lead, related_name="maintenance_windows", on_delete=models.CASCADE
+    )
+    scheduled_for = models.DateTimeField(
+        db_index=True, verbose_name="Fecha y hora programada"
+    )
+    titulo = models.CharField(max_length=120, blank=True, default="")
+    notas = models.TextField(blank=True, default="")
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Ventana de mantenimiento"
+        verbose_name_plural = "Ventanas de mantenimiento"
+        ordering = ["scheduled_for"]
+        indexes = [models.Index(fields=["completed", "scheduled_for"])]
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(completed=False, completed_at__isnull=True)
+                    | models.Q(completed=True, completed_at__isnull=False)
+                ),
+                name="mw_completed_at_coherente",
+            )
+        ]
+
+    def clean(self):
+        validar_limite_ventanas(self.lead_id, exclude_pk=self.pk)
+
+    def marcar_completada(self, *, completada: bool) -> None:
+        from django.utils import timezone
+
+        self.completed = completada
+        self.completed_at = timezone.now() if completada else None
+        self.save(update_fields=["completed", "completed_at", "actualizado_en"])
+
+    def __str__(self):
+        return f"Mantenimiento {self.lead_id} - {self.scheduled_for:%Y-%m-%d %H:%M}"
+
+
+class NotificationLog(models.Model):
+    """Registro de deduplicación de notificaciones programadas (resumen
+    diario, aviso de reunión inminente, diagnóstico completado). La
+    restricción unique en dedupe_key es lo que garantiza, a nivel de base de
+    datos, que un mismo evento nunca se notifique dos veces aunque compitan
+    varios workers de django-q2."""
+
+    class Kind(models.TextChoices):
+        LEAD_NUEVO_RECORDATORIO = "LEAD_NUEVO_RECORDATORIO", "Recordatorio lead nuevo"
+        REUNION_RECORDATORIO = "REUNION_RECORDATORIO", "Recordatorio de reunión"
+        REUNION_INMINENTE = "REUNION_INMINENTE", "Reunión inminente (90 min)"
+        MANTENIMIENTO_RECORDATORIO = "MANTENIMIENTO_RECORDATORIO", "Recordatorio de mantenimiento"
+        DIAGNOSTICO_COMPLETADO = "DIAGNOSTICO_COMPLETADO", "Diagnóstico completado"
+
+    lead = models.ForeignKey(
+        Lead, related_name="notification_logs", null=True, blank=True, on_delete=models.CASCADE
+    )
+    kind = models.CharField(max_length=40, choices=Kind.choices)
+    dedupe_key = models.CharField(max_length=200, unique=True)
+    detalle = models.JSONField(default=dict, blank=True)
+    enviado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Registro de notificación"
+        verbose_name_plural = "Registros de notificación"
+        ordering = ["-enviado_en"]
+        indexes = [models.Index(fields=["lead", "kind"]), models.Index(fields=["-enviado_en"])]
+
+    def __str__(self):
+        return self.dedupe_key
 
 
 class Questionnaire(models.Model):
