@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.conf import settings
@@ -25,9 +26,15 @@ class Lead(models.Model):
         DIAGNOSTICO_ENVIADO = "diagnostico_enviado", "Diagnóstico enviado"
         DIAGNOSTICO_REALIZADO = "diagnostico_realizado", "Diagnóstico realizado"
         PRE_IMPLEMENTACION = "pre_implementacion", "Pre-implementación"
-        PENDIENTE_IMPLEMENTACION = "pendiente_implementacion", "Pendiente de Implementación"
+        PENDIENTE_IMPLEMENTACION = (
+            "pendiente_implementacion",
+            "Pendiente de Implementación",
+        )
         SERVICIO_REALIZADO = "servicio_realizado", "Servicio realizado"
-        MANTENIMIENTO_PROGRAMADO = "mantenimiento_programado", "Mantenimiento programado"
+        MANTENIMIENTO_PROGRAMADO = (
+            "mantenimiento_programado",
+            "Mantenimiento programado",
+        )
 
     # Alias retrocompatible: views.lead_update_status y el admin siguen
     # leyendo Lead.ESTADO_CHOICES como una lista de tuplas (código, etiqueta).
@@ -36,6 +43,9 @@ class Lead(models.Model):
     nombre = models.CharField(max_length=255)
     correo = models.EmailField()
     empresa = models.CharField(max_length=255)
+    # E.164 completo con prefijo país (ej. "+573001234567"). Solo lo llena el
+    # booking público; el flujo interno puede dejarlo vacío.
+    telefono = models.CharField(max_length=32, blank=True, default="")
     mensaje = models.TextField(blank=True, null=True)
     creado_en = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(
@@ -81,13 +91,17 @@ class LeadEstadoHistory(models.Model):
         AUTOMATICO = "AUTO", "Automático"
         MIGRACION = "MIGRACION", "Migración"
 
-    lead = models.ForeignKey(Lead, related_name="estado_history", on_delete=models.CASCADE)
+    lead = models.ForeignKey(
+        Lead, related_name="estado_history", on_delete=models.CASCADE
+    )
     estado_anterior = models.CharField(max_length=32, blank=True, default="")
     estado_nuevo = models.CharField(max_length=32, choices=Lead.Estado.choices)
     cambiado_por = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
     )
-    origen = models.CharField(max_length=16, choices=Origen.choices, default=Origen.MANUAL)
+    origen = models.CharField(
+        max_length=16, choices=Origen.choices, default=Origen.MANUAL
+    )
     nota = models.TextField(blank=True, default="")
     creado_en = models.DateTimeField(auto_now_add=True)
 
@@ -173,11 +187,23 @@ class NotificationLog(models.Model):
         LEAD_NUEVO_RECORDATORIO = "LEAD_NUEVO_RECORDATORIO", "Recordatorio lead nuevo"
         REUNION_RECORDATORIO = "REUNION_RECORDATORIO", "Recordatorio de reunión"
         REUNION_INMINENTE = "REUNION_INMINENTE", "Reunión inminente (90 min)"
-        MANTENIMIENTO_RECORDATORIO = "MANTENIMIENTO_RECORDATORIO", "Recordatorio de mantenimiento"
+        MANTENIMIENTO_RECORDATORIO = (
+            "MANTENIMIENTO_RECORDATORIO",
+            "Recordatorio de mantenimiento",
+        )
         DIAGNOSTICO_COMPLETADO = "DIAGNOSTICO_COMPLETADO", "Diagnóstico completado"
+        AGENDAMIENTO_CLIENTE = (
+            "AGENDAMIENTO_CLIENTE",
+            "Confirmación al cliente (booking)",
+        )
+        AGENDAMIENTO_INTERNO = "AGENDAMIENTO_INTERNO", "Aviso interno (booking)"
 
     lead = models.ForeignKey(
-        Lead, related_name="notification_logs", null=True, blank=True, on_delete=models.CASCADE
+        Lead,
+        related_name="notification_logs",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     kind = models.CharField(max_length=40, choices=Kind.choices)
     dedupe_key = models.CharField(max_length=200, unique=True)
@@ -188,7 +214,10 @@ class NotificationLog(models.Model):
         verbose_name = "Registro de notificación"
         verbose_name_plural = "Registros de notificación"
         ordering = ["-enviado_en"]
-        indexes = [models.Index(fields=["lead", "kind"]), models.Index(fields=["-enviado_en"])]
+        indexes = [
+            models.Index(fields=["lead", "kind"]),
+            models.Index(fields=["-enviado_en"]),
+        ]
 
     def __str__(self):
         return self.dedupe_key
@@ -363,3 +392,138 @@ class QuestionnaireMetricFile(models.Model):
 
     def __str__(self):
         return f"{self.original_name} ({self.questionnaire_id})"
+
+
+# ──────────────────────────────────────────────
+# Booking público (/agendar/)
+# ──────────────────────────────────────────────
+
+
+class BookingConfig(models.Model):
+    """Configuración singleton del booking público. pk fijo en 1 — se crea
+    (junto a los DiaHorario) en la migración de datos 0007 y get_solo() lo
+    recupera sin sorpresas. Los horarios de referencia SIEMPRE se interpretan
+    en America/Bogota (settings.TIME_ZONE): el usuario elige su zona horaria
+    solo para ver/comparar horas, nunca para redefinir la disponibilidad."""
+
+    dias_apertura = models.PositiveIntegerField(
+        default=30,
+        help_text="Días que la agenda permanece abierta hacia el futuro.",
+    )
+    duracion_min = models.PositiveIntegerField(
+        default=30,
+        help_text="Duración de la reunión y del intervalo entre slots (min).",
+    )
+    anticipo_min = models.PositiveIntegerField(
+        default=60,
+        help_text="Antelación mínima (min) que debe tener un slot reservable.",
+    )
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Configuración del booking"
+        verbose_name_plural = "Configuración del booking"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        obj = cls.objects.filter(pk=1).first()
+        if obj is None:
+            obj = cls(pk=1)
+            obj.save()
+        return obj
+
+    def __str__(self):
+        return f"BookingConfig (apertura {self.dias_apertura}d, {self.duracion_min}min)"
+
+
+class DiaHorario(models.Model):
+    """Horario semanal del booking, un row por día (0=Lunes ... 6=Domingo).
+    Las horas son HORA COLOMBIA (America/Bogota) — la zona de referencia del
+    negocio; el frontend las convierte a la zona horaria del visitante."""
+
+    DIAS = (
+        (0, "Lunes"),
+        (1, "Martes"),
+        (2, "Miércoles"),
+        (3, "Jueves"),
+        (4, "Viernes"),
+        (5, "Sábado"),
+        (6, "Domingo"),
+    )
+
+    dia = models.PositiveSmallIntegerField(choices=DIAS, unique=True)
+    activo = models.BooleanField(default=True)
+    hora_inicio = models.TimeField(default=datetime.time(9, 0))
+    hora_fin = models.TimeField(default=datetime.time(18, 0))
+
+    class Meta:
+        verbose_name = "Día de horario"
+        verbose_name_plural = "Días de horario"
+        ordering = ["dia"]
+
+    def clean(self):
+        if self.activo and self.hora_inicio >= self.hora_fin:
+            raise ValidationError("La hora de inicio debe ser menor a la hora de fin.")
+
+    def __str__(self):
+        return (
+            f"{self.get_dia_display()} {self.hora_inicio:%H:%M}-{self.hora_fin:%H:%M}"
+        )
+
+
+class Appointment(models.Model):
+    """Reserva hecha desde el booking público (/agendar/). Varios
+    Appointments pueden colgar del mismo Lead (máx. 2 futuras por correo,
+    validado en la vista); Lead.meeting_at se sincroniza con la próxima."""
+
+    class Estado(models.TextChoices):
+        CONFIRMADA = "confirmada", "Confirmada"
+        CANCELADA = "cancelada", "Cancelada"
+
+    lead = models.ForeignKey(
+        Lead, related_name="appointments", on_delete=models.CASCADE
+    )
+    # SIEMPRE en UTC (USE_TZ=True); la zona_horaria es solo display.
+    inicio = models.DateTimeField(db_index=True, verbose_name="Inicio (UTC)")
+    fin = models.DateTimeField(verbose_name="Fin (UTC)")
+    duracion_min = models.PositiveIntegerField(default=30)
+    zona_horaria = models.CharField(max_length=64, default="America/Bogota")
+    consentimiento = models.BooleanField(
+        default=False,
+        verbose_name="Consentimiento de contacto otorgado",
+    )
+    estado = models.CharField(
+        max_length=16,
+        choices=Estado.choices,
+        default=Estado.CONFIRMADA,
+        db_index=True,
+    )
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Agendamiento"
+        verbose_name_plural = "Agendamientos"
+        ordering = ["inicio"]
+        constraints = [
+            # Un solo host: no pueden competir dos reservas por el mismo
+            # instante. Partial index — las canceladas liberan su slot.
+            models.UniqueConstraint(
+                fields=["inicio"],
+                condition=models.Q(estado="confirmada"),
+                name="appointment_slot_confirmado_unico",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["estado", "inicio"]),
+        ]
+
+    def clean(self):
+        if self.fin and self.inicio and self.fin <= self.inicio:
+            raise ValidationError("El fin debe ser posterior al inicio.")
+
+    def __str__(self):
+        return f"Agendamiento {self.lead_id} — {self.inicio:%Y-%m-%d %H:%M} ({self.estado})"

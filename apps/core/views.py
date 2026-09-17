@@ -3,22 +3,21 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django_q.tasks import async_task
-from django.http import JsonResponse, Http404, FileResponse
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib import messages
-from django.core.cache import cache
+from django.http import FileResponse, Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods
-
-from django.templatetags.static import static
+from django_q.tasks import async_task
 
 from .forms import (
+    AgendaDiaHorarioForm,
+    BookingConfigForm,
     InternalLeadForm,
-    LeadForm,
     LeadMeetingForm,
     MaintenanceWindowForm,
     ProcessInventoryFormSet,
@@ -26,13 +25,15 @@ from .forms import (
     QuestionnaireMetricFileForm,
 )
 from .models import (
+    Appointment,
+    BookingConfig,
+    DiaHorario,
     Lead,
     MaintenanceWindow,
     Questionnaire,
-    ProcessInventory,
     QuestionnaireMetricFile,
 )
-from .recaptcha import verify_recaptcha
+from .services import booking as booking_svc
 from .services.pipeline import transicionar_lead
 
 logger = logging.getLogger("django.apps.core.views")
@@ -53,80 +54,11 @@ def get_client_ip(request):
 
 
 def landing(request):
-    form = LeadForm()
     return render(
         request,
         "core/landing.html",
-        {
-            "trm_contractual": getattr(settings, "TRM_CONTRACTUAL", 4100.0),
-            "form": form,
-        },
+        {"trm_contractual": getattr(settings, "TRM_CONTRACTUAL", 4100.0)},
     )
-
-
-def contacto_lead(request):
-    """POST handler for public contact. Email dispatch is centralized in the
-    post_save signal (see apps.core.signals), so no manual async_task here."""
-    if request.method != "POST":
-        return redirect("core:landing")
-
-    is_ajax = (
-        request.headers.get("x-requested-with") == "XMLHttpRequest"
-        or request.POST.get("ajax") == "true"
-    )
-    ip = get_client_ip(request)
-
-    limit = getattr(settings, "RATE_LIMIT_LIMIT", 3)
-    window = getattr(settings, "RATE_LIMIT_WINDOW", 600)
-    cache_key = f"rate_limit_lead_{ip}"
-
-    current_requests = cache.get(cache_key, 0)
-    if current_requests >= limit:
-        msg = "Límite de solicitudes excedido. Por motivos de ciberseguridad, intente de nuevo más tarde."
-        logger.warning(f"Rate limit exceeded for IP: {ip}")
-        if is_ajax:
-            return JsonResponse({"success": False, "message": msg}, status=429)
-        return redirect("/#contacto")
-
-    # Verificación de reCAPTCHA v3, después del rate limit (para que no sea un
-    # amplificador de peticiones salientes) y antes de validar el formulario
-    # (para que los bots no lleguen a tocar la BD vía clean_correo).
-    captcha_ok, captcha_reason = verify_recaptcha(
-        request.POST.get("g-recaptcha-response", ""), remote_ip=ip
-    )
-    if not captcha_ok:
-        cache.set(cache_key, current_requests + 1, timeout=window)
-        logger.warning(f"reCAPTCHA rechazado para IP {ip} ({captcha_reason}).")
-        msg = "No fue posible validar la seguridad de la solicitud. Recargue la página e intente nuevamente."
-        if is_ajax:
-            return JsonResponse({"success": False, "message": msg}, status=400)
-        return redirect("/#contacto")
-
-    form = LeadForm(request.POST)
-    if form.is_valid():
-        lead = form.save(commit=False)
-        lead.ip_origen = ip
-        lead.save()  # post_save signal enqueues notifications automatically
-
-        cache.set(cache_key, current_requests + 1, timeout=window)
-
-        logger.info(f"Lead {lead.pk} created (captcha={captcha_reason}); notifications dispatched via signal.")
-
-        msg = "Tu solicitud de reunión ha sido registrada con éxito. Nos comunicaremos en menos de 48 horas para confirmar el horario."
-        if is_ajax:
-            return JsonResponse({"success": True, "message": msg})
-        return redirect("/#contacto")
-
-    error_msgs = []
-    for field, errors in form.errors.items():
-        for error in errors:
-            error_msgs.append(error)
-    msg_str = " ".join(error_msgs) or "Verifique los datos ingresados."
-    logger.warning(f"Validation failed for lead submission from IP {ip}: {form.errors}")
-
-    if is_ajax:
-        return JsonResponse({"success": False, "message": msg_str}, status=400)
-    return redirect("/#contacto")
 
 
 @require_GET
@@ -236,7 +168,9 @@ def internal_leads_dashboard(request):
                 "creado_en": lead.creado_en.strftime("%Y-%m-%d %H:%M"),
                 "estado_actualizado_en": entro_en.strftime("%Y-%m-%d %H:%M"),
                 "dias_en_estado": (timezone.now() - entro_en).days,
-                "meeting_at_iso": lead.meeting_at.isoformat() if lead.meeting_at else None,
+                "meeting_at_iso": lead.meeting_at.isoformat()
+                if lead.meeting_at
+                else None,
                 "meeting_at_display": (
                     timezone.localtime(lead.meeting_at).strftime("%Y-%m-%d %H:%M")
                     if lead.meeting_at
@@ -308,7 +242,9 @@ def lead_update_status(request):
         estado == Lead.Estado.MANTENIMIENTO_PROGRAMADO
         and not lead.maintenance_windows.exists()
     ):
-        warn = "El lead quedó en Mantenimiento programado sin ninguna ventana registrada."
+        warn = (
+            "El lead quedó en Mantenimiento programado sin ninguna ventana registrada."
+        )
 
     response = {
         "success": True,
@@ -364,7 +300,9 @@ def lead_meeting_update(request, lead_pk):
     return JsonResponse(
         {
             "success": True,
-            "meeting_at": timezone.localtime(lead.meeting_at).strftime("%Y-%m-%d %H:%M"),
+            "meeting_at": timezone.localtime(lead.meeting_at).strftime(
+                "%Y-%m-%d %H:%M"
+            ),
             "meeting_link": lead.meeting_link,
             "estado": lead.estado,
             "estado_display": lead.get_estado_display(),
@@ -377,7 +315,11 @@ def _maintenance_rows_response(request, lead):
     return render(
         request,
         "core/internal/_maintenance_rows.html",
-        {"lead": lead, "ventanas": ventanas, "max_ventanas": MaintenanceWindow.MAX_POR_LEAD},
+        {
+            "lead": lead,
+            "ventanas": ventanas,
+            "max_ventanas": MaintenanceWindow.MAX_POR_LEAD,
+        },
     )
 
 
@@ -414,7 +356,9 @@ def maintenance_window_update(request, window_pk):
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
         form.save()
     else:
-        return JsonResponse({"success": False, "message": "Acción inválida."}, status=400)
+        return JsonResponse(
+            {"success": False, "message": "Acción inválida."}, status=400
+        )
 
     return _maintenance_rows_response(request, window.lead)
 
@@ -506,7 +450,7 @@ def questionnaire_answers_partial(request, questionnaire_id):
         }
         for p in processes
     ]
-    from apps.core.forms import PROVIDER_CHOICES, AI_TASK_CHOICES
+    from apps.core.forms import AI_TASK_CHOICES, PROVIDER_CHOICES
 
     provider_map = dict(PROVIDER_CHOICES)
     task_map = dict(AI_TASK_CHOICES)
@@ -529,6 +473,102 @@ def questionnaire_answers_partial(request, questionnaire_id):
             "processes_json": processes_json,
             "display_providers": display_providers,
             "display_tasks": display_tasks,
+        },
+    )
+
+
+# ──────────────────────────────────────────────
+# Internal: módulo Agenda (/interno/agenda/)
+# ──────────────────────────────────────────────
+
+
+@login_required
+def internal_agenda(request):
+    """Configuración del booking público + lista de próximas citas. Solo
+    lectura de citas: la gestión del Lead vive en el dashboard de Leads."""
+    config = BookingConfig.get_solo()
+
+    if request.method == "POST":
+        form = BookingConfigForm(request.POST, instance=config)
+        filas = []
+        valido_dias = True
+        for dia in range(7):
+            f = AgendaDiaHorarioForm(
+                {
+                    "dia": dia,
+                    "activo": request.POST.get(f"dia_{dia}_activo", ""),
+                    "hora_inicio": request.POST.get(f"dia_{dia}_inicio", ""),
+                    "hora_fin": request.POST.get(f"dia_{dia}_fin", ""),
+                }
+            )
+            if not f.is_valid():
+                valido_dias = False
+                for errs in f.errors.get("__all__", []):
+                    messages.error(request, errs)
+            filas.append(f)
+
+        if valido_dias and form.is_valid():
+            form.save()
+            for f in filas:
+                f.guardar()
+            messages.success(request, "Configuración de la agenda guardada.")
+            return redirect("core:internal_agenda")
+        messages.error(request, "Revisa los campos marcados como inválidos.")
+    else:
+        form = BookingConfigForm(instance=config)
+        filas = []
+        for d in DiaHorario.objects.all().order_by("dia"):
+            f = AgendaDiaHorarioForm(
+                initial={
+                    "dia": d.dia,
+                    "activo": d.activo,
+                    "hora_inicio": d.hora_inicio,
+                    "hora_fin": d.hora_fin,
+                }
+            )
+            filas.append(
+                {
+                    "form": f,
+                    "nombre": d.get_dia_display(),
+                    "dia": d.dia,
+                    "activo": d.activo,
+                    "inicio": d.hora_inicio.strftime("%H:%M"),
+                    "fin": d.hora_fin.strftime("%H:%M"),
+                }
+            )
+
+    citas_json = []
+    for cita in (
+        Appointment.objects.filter(
+            estado=Appointment.Estado.CONFIRMADA, inicio__gte=timezone.now()
+        )
+        .select_related("lead")
+        .order_by("inicio")[:50]
+    ):
+        p = booking_svc.presentar(cita.inicio, cita.zona_horaria)
+        citas_json.append(
+            {
+                "id": cita.pk,
+                "nombre": cita.lead.nombre,
+                "email": cita.lead.correo,
+                "empresa": cita.lead.empresa,
+                "telefono": cita.lead.telefono,
+                "bogota": p["bogota"],
+                "visitante": f"{p['visitante']} ({cita.zona_horaria})",
+                "creado_en": cita.creado_en.strftime("%Y-%m-%d %H:%M"),
+                "lead_id": cita.lead_id,
+            }
+        )
+
+    return render(
+        request,
+        "core/internal/agenda_dashboard.html",
+        {
+            "form": form,
+            "filas_dias": filas,
+            "config": config,
+            "citas_json": citas_json,
+            "zona_negocio": settings.TIME_ZONE,
         },
     )
 
@@ -701,6 +741,7 @@ def download_metric_file(request, file_id):
         raise Http404("El archivo no existe.")
 
     response = FileResponse(file_handle, content_type="application/octet-stream")
-    response["Content-Disposition"] = f'attachment; filename="{metric_file.original_name}"'
+    response["Content-Disposition"] = (
+        f'attachment; filename="{metric_file.original_name}"'
+    )
     return response
-

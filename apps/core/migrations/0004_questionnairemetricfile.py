@@ -1,8 +1,9 @@
 # Generated manually for QuestionnaireMetricFile upload support.
 
 import django.db.models.deletion
-import apps.core.models
 from django.db import migrations, models
+
+import apps.core.models
 
 
 class Migration(migrations.Migration):

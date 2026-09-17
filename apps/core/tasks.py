@@ -5,13 +5,15 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Lead, LeadEstadoHistory, NotificationLog, Questionnaire
+from .models import Appointment, Lead, LeadEstadoHistory, NotificationLog, Questionnaire
+from .services.booking import presentar
 from .services.dedupe import reclamar
 from .services.digest import construir_digest
 from .services.notifications import build_url, enviar_notificacion
 from .services.pipeline import transicionar_lead
 
 logger = logging.getLogger("django.apps.core.tasks")
+
 
 def procesar_nuevo_lead(lead_id: int) -> None:
     """
@@ -40,11 +42,15 @@ def procesar_nuevo_lead(lead_id: int) -> None:
     }
 
     # 1. Send Internal Notification
-    destinatario_interno = getattr(settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com")
+    destinatario_interno = getattr(
+        settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"
+    )
     asunto_interno = f"[Nuevo Lead] Registro de contacto: {lead.empresa}"
     plantilla_interna = "core/emails/notificacion_interna.html"
-    
-    logger.info(f"Sending internal notification for lead {lead_id} to {destinatario_interno}.")
+
+    logger.info(
+        f"Sending internal notification for lead {lead_id} to {destinatario_interno}."
+    )
     enviar_notificacion(
         destinatario=destinatario_interno,
         plantilla=plantilla_interna,
@@ -66,6 +72,76 @@ def procesar_nuevo_lead(lead_id: int) -> None:
         asunto=asunto_cliente,
         contexto=context,
     )
+
+
+def procesar_nuevo_agendamiento(appointment_id: int) -> None:
+    """Task encolada (transaction.on_commit) al crear un Appointment por el
+    booking público. Envía, cada una con dedupe propia:
+    1. Confirmación instantánea al cliente: reunión agendada + aviso de que
+       la invitación de Google Meet llegará en máx. 24h.
+    2. Aviso interno inmediato al equipo (los recordatorios posteriores —
+       3d/1d del digest y el aviso de 90 min — ya los cubren los Schedule
+       existentes porque el lead queda en REUNION_CONFIRMADA con meeting_at).
+    """
+    try:
+        appointment = Appointment.objects.select_related("lead").get(pk=appointment_id)
+    except Appointment.DoesNotExist:
+        logger.error(
+            f"Appointment {appointment_id} does not exist. Aborting notifications."
+        )
+        return
+
+    lead = appointment.lead
+    horario = presentar(appointment.inicio, appointment.zona_horaria)
+    context = {
+        "lead": lead,
+        "appointment": appointment,
+        "nombre": lead.nombre,
+        "correo": lead.correo,
+        "empresa": lead.empresa,
+        "telefono": lead.telefono,
+        "mensaje": lead.mensaje or "Sin mensaje adicional.",
+        "fecha_hora_visitante": horario["visitante"],
+        "zona_horaria": appointment.zona_horaria,
+        "fecha_hora_bogota": f"{horario['bogota']} (hora Colombia)",
+        "base_url": build_url(""),
+    }
+
+    # 1. Confirmación al cliente (instantánea).
+    orden_dedupe = f"appointment:{appointment.pk}:confirmacion"
+    if reclamar(NotificationLog.Kind.AGENDAMIENTO_CLIENTE, orden_dedupe, lead=lead):
+        logger.info(
+            "Enviando confirmación de agendamiento %s a %s.",
+            appointment.pk,
+            lead.correo,
+        )
+        enviar_notificacion(
+            destinatario=lead.correo,
+            plantilla="core/emails/agendamiento_confirmado.html",
+            asunto="Tu reunión con Sooniverse está agendada",
+            contexto=context,
+        )
+
+    # 2. Aviso interno inmediato.
+    dedupe_interno = f"appointment:{appointment.pk}:aviso-interno"
+    if reclamar(NotificationLog.Kind.AGENDAMIENTO_INTERNO, dedupe_interno, lead=lead):
+        destinatario_interno = getattr(
+            settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"
+        )
+        logger.info(
+            "Enviando aviso interno de agendamiento %s a %s.",
+            appointment.pk,
+            destinatario_interno,
+        )
+        enviar_notificacion(
+            destinatario=destinatario_interno,
+            plantilla="core/emails/agendamiento_aviso_interno.html",
+            asunto=(
+                f"[Nueva Agenda] {lead.nombre} ({lead.correo}) — "
+                f"reunión el {horario['bogota']} hora Colombia"
+            ),
+            contexto=context,
+        )
 
 
 def notificar_diagnostico_completado(questionnaire_id: str) -> None:
@@ -102,10 +178,16 @@ def notificar_diagnostico_completado(questionnaire_id: str) -> None:
         return
 
     enviar_notificacion(
-        destinatario=getattr(settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"),
+        destinatario=getattr(
+            settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"
+        ),
         plantilla="core/emails/diagnostico_completado.html",
         asunto=f"[Diagnóstico realizado] {lead.empresa}",
-        contexto={"lead": lead, "questionnaire": questionnaire, "base_url": build_url("")},
+        contexto={
+            "lead": lead,
+            "questionnaire": questionnaire,
+            "base_url": build_url(""),
+        },
     )
 
 
@@ -124,7 +206,9 @@ def enviar_digest_diario() -> None:
             nombre: [
                 item
                 for item in items
-                if reclamar(item.kind, item.dedupe_key, lead=item.lead, detalle=item.detalle)
+                if reclamar(
+                    item.kind, item.dedupe_key, lead=item.lead, detalle=item.detalle
+                )
             ]
             for nombre, items in bloques.items()
         }
@@ -134,7 +218,9 @@ def enviar_digest_diario() -> None:
             return
 
         ok = enviar_notificacion(
-            destinatario=getattr(settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"),
+            destinatario=getattr(
+                settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"
+            ),
             plantilla="core/emails/digest_diario.html",
             asunto=f"[Sooniverse] Resumen diario · {hoy_local:%d/%m/%Y} · {total} pendientes",
             contexto={
@@ -169,10 +255,14 @@ def notificar_reuniones_inminentes() -> None:
     for lead in qs:
         dedupe_key = f"lead:{lead.pk}:reunion:{lead.meeting_at.isoformat()}:90m"
         with transaction.atomic():
-            if not reclamar(NotificationLog.Kind.REUNION_INMINENTE, dedupe_key, lead=lead):
+            if not reclamar(
+                NotificationLog.Kind.REUNION_INMINENTE, dedupe_key, lead=lead
+            ):
                 continue
             enviar_notificacion(
-                destinatario=getattr(settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"),
+                destinatario=getattr(
+                    settings, "NOTIFICACION_INTERNA_EMAIL", "soporte@sooniverse.com"
+                ),
                 plantilla="core/emails/reunion_inminente.html",
                 asunto=f"[Reunión en 90 min] {lead.empresa}",
                 contexto={

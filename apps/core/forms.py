@@ -1,19 +1,19 @@
 from pathlib import Path
 
 from django import forms
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.forms import inlineformset_factory
 
 from .models import (
+    BookingConfig,
+    DiaHorario,
     Lead,
     MaintenanceWindow,
-    Questionnaire,
     ProcessInventory,
-    QuestionnaireMetricFile,
+    Questionnaire,
     validar_limite_ventanas,
 )
-
 
 # Proveedores soportados por el diagnóstico. Mantener sincronizado con la UI.
 PROVIDER_CHOICES = (
@@ -116,8 +116,9 @@ class LeadForm(forms.ModelForm):
                 "El correo electrónico ingresado no posee un formato válido para iniciar comunicación."
             )
 
-        from django.utils import timezone
         from datetime import timedelta
+
+        from django.utils import timezone
 
         time_threshold = timezone.now() - timedelta(hours=24)
         if Lead.objects.filter(
@@ -140,7 +141,11 @@ class InternalLeadForm(forms.ModelForm):
 
     # Crear un lead directamente en, por ejemplo, "Servicio realizado" no
     # tiene sentido — al crearlo manualmente solo caben estos 3 estados.
-    ESTADOS_CREACION = (Lead.Estado.NUEVO, Lead.Estado.CONTACTADO, Lead.Estado.DESCARTADO)
+    ESTADOS_CREACION = (
+        Lead.Estado.NUEVO,
+        Lead.Estado.CONTACTADO,
+        Lead.Estado.DESCARTADO,
+    )
 
     class Meta:
         model = Lead
@@ -201,7 +206,9 @@ class LeadMeetingForm(forms.ModelForm):
     meeting_at = forms.DateTimeField(
         required=True,
         input_formats=DATETIME_LOCAL_FORMATS,
-        widget=forms.DateTimeInput(attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"),
+        widget=forms.DateTimeInput(
+            attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"
+        ),
         label="Fecha y hora de la reunión",
     )
     meeting_link = forms.URLField(
@@ -226,7 +233,9 @@ class MaintenanceWindowForm(forms.ModelForm):
     scheduled_for = forms.DateTimeField(
         required=True,
         input_formats=DATETIME_LOCAL_FORMATS,
-        widget=forms.DateTimeInput(attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"),
+        widget=forms.DateTimeInput(
+            attrs=DATETIME_LOCAL_WIDGET_ATTRS, format="%Y-%m-%dT%H:%M"
+        ),
         label="Fecha y hora programada",
     )
 
@@ -495,3 +504,103 @@ ProcessInventoryFormSet = inlineformset_factory(
     min_num=1,
     validate_min=False,
 )
+
+
+# ──────────────────────────────────────────────
+# Módulo interno Agenda (/interno/agenda/)
+# ──────────────────────────────────────────────
+
+
+class BookingConfigForm(forms.ModelForm):
+    """Parámetros globales del booking público. El horario semanal (7
+    DiaHorario) se procesa aparte en la vista, campo a campo, porque son
+    inputs por día sin modelo anclado al form (patrón del modal de horarios
+    de referencia)."""
+
+    class Meta:
+        model = BookingConfig
+        fields = ["dias_apertura", "duracion_min", "anticipo_min"]
+        widgets = {
+            "dias_apertura": forms.NumberInput(
+                attrs={
+                    "type": "number",
+                    "min": 1,
+                    "max": 365,
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
+                }
+            ),
+            "duracion_min": forms.NumberInput(
+                attrs={
+                    "type": "number",
+                    "min": 15,
+                    "max": 240,
+                    "step": 15,
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
+                }
+            ),
+            "anticipo_min": forms.NumberInput(
+                attrs={
+                    "type": "number",
+                    "min": 0,
+                    "max": 10080,
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
+                }
+            ),
+        }
+
+    def clean_dias_apertura(self):
+        dias = self.cleaned_data["dias_apertura"]
+        if not 1 <= dias <= 365:
+            raise ValidationError(
+                "La ventana de apertura debe estar entre 1 y 365 días."
+            )
+        return dias
+
+    def clean_duracion_min(self):
+        dur = self.cleaned_data["duracion_min"]
+        if not 15 <= dur <= 240:
+            raise ValidationError("La duración debe estar entre 15 y 240 minutos.")
+        return dur
+
+
+class AgendaDiaHorarioForm(forms.Form):
+    """Una fila del horario semanal: día + activo + inicio + fin (24h)."""
+
+    dia = forms.IntegerField(widget=forms.HiddenInput)
+    activo = forms.BooleanField(required=False)
+    hora_inicio = forms.TimeField(
+        required=False,
+        widget=forms.TimeInput(attrs={"type": "time"}),
+    )
+    hora_fin = forms.TimeField(
+        required=False,
+        widget=forms.TimeInput(attrs={"type": "time"}),
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("activo"):
+            inicio, fin = cleaned.get("hora_inicio"), cleaned.get("hora_fin")
+            if not inicio or not fin:
+                raise ValidationError(
+                    "Los días activos requieren hora de inicio y de fin."
+                )
+            if inicio >= fin:
+                raise ValidationError(
+                    "La hora de inicio debe ser menor a la hora de fin."
+                )
+        return cleaned
+
+    def guardar(self) -> "DiaHorario":
+        dia_horario = DiaHorario.objects.filter(dia=self.cleaned_data["dia"]).first()
+        if dia_horario is None:
+            dia_horario = DiaHorario(dia=self.cleaned_data["dia"])
+        dia_horario.activo = self.cleaned_data["activo"]
+        if self.cleaned_data["activo"]:
+            dia_horario.hora_inicio = self.cleaned_data["hora_inicio"]
+            dia_horario.hora_fin = self.cleaned_data["hora_fin"]
+        dia_horario.save()
+        return dia_horario
+
+
+NOMBRES_DIAS = {v: lbl for v, lbl in DiaHorario.DIAS}

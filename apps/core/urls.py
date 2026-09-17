@@ -4,14 +4,25 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic import TemplateView
 
-from . import views
+from . import views, views_booking
 
 app_name = "core"
 
 urlpatterns = [
     # Public landing / contact
     path("", views.landing, name="landing"),
-    path("contacto/", views.contacto_lead, name="contacto"),
+    # Public booking (/agendar/)
+    path("agendar/", views_booking.booking_publico, name="booking_publico"),
+    path(
+        "agendar/api/disponibilidad/",
+        views_booking.booking_disponibilidad,
+        name="booking_disponibilidad",
+    ),
+    path(
+        "agendar/api/reservar/",
+        views_booking.booking_reservar,
+        name="booking_reservar",
+    ),
     path(
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
@@ -43,6 +54,8 @@ urlpatterns = [
     ),
     # Internal Lead CRUD + questionnaire management (staff only)
     path("interno/leads/", views.internal_leads_dashboard, name="internal_leads"),
+    # Internal module: Agenda (config del booking público + próximas citas)
+    path("interno/agenda/", views.internal_agenda, name="internal_agenda"),
     path(
         "interno/leads/estado/actualizar/",
         views.lead_update_status,
