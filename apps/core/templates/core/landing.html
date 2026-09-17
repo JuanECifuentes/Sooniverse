@@ -277,9 +277,9 @@
         .spotlight-card { position: relative; background-color: #0F172A; border: 1px solid #1E293B; border-radius: 12px; overflow: hidden; transition: border-color 0.3s ease; }
         .spotlight-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 135, 0.08), transparent 40%); }
         .spotlight-card:hover::before { opacity: 1; }
-        .spotlight-card:hover { border-color: #60EFFF; }
         .glow-card { position: relative; background-color: #0F172A; border: 1px solid #1E293B; border-radius: 12px; overflow: hidden; isolation: isolate; }
         .glow-card > * { position: relative; z-index: 1; }
+        .glow-card > .glow-ambient { position: absolute !important; pointer-events: none; z-index: 0; }
         .glow-card::before { content: ''; position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 135, 0.22), rgba(96, 239, 255, 0.14) 35%, transparent 55%); }
         .glow-card:hover::before { opacity: 1; }
         .glow-card::after { content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit; padding: 1px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; background: radial-gradient(300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(96, 239, 255, 0.95), rgba(0, 255, 135, 0.55) 22%, transparent 42%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; }
@@ -564,77 +564,75 @@
 
             <div class="grid lg:grid-cols-2 gap-8 items-stretch">
                 <!-- TARJETA: EL PROBLEMA (PRIVACIDAD) -->
-                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col justify-between bg-surface/40">
-                    <div>
-                        <!-- Header de la tarjeta -->
-                        <div class="flex items-center justify-between gap-3 mb-2">
-                            <span class="tag-pill tag-pill-danger">
-                                <span class="bullet-neon-red animate-pulse mr-2"></span>
-                                EL PROBLEMA · APIS PÚBLICAS
-                            </span>
-                            <span class="text-[11px] font-mono text-red-400 font-medium">Sin perímetro seguro</span>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-2">Datos expuestos a servidores de terceros</h3>
+                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col bg-surface/40 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-red-500/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
-                        <!-- Diagrama SVG: El Problema (Privacidad) -->
-                        <div class="mt-5 mb-6">
-                            {% include "core/includes/svg_problema_privacidad.html" %}
-                        </div>
+                    <!-- Header de la tarjeta -->
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <span class="tag-pill tag-pill-danger">
+                            <span class="bullet-neon-red animate-pulse mr-2"></span>
+                            EL PROBLEMA · APIS PÚBLICAS
+                        </span>
+                        <span class="text-[11px] font-mono text-red-400 font-medium">Sin perímetro seguro</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Datos expuestos a servidores de terceros</h3>
 
-                        <!-- Viñetas simplificadas (sólo título con bullet rojo neón) -->
-                        <div class="space-y-3 pt-2">
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Datos expuestos a servidores de terceros</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Replicación en nubes públicas y telemetría</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Uso de tu información para reentrenar modelos ajenos</span>
-                            </div>
+                    <!-- Diagrama SVG: El Problema (Privacidad) -->
+                    <div class="my-5">
+                        {% include "core/includes/svg_problema_privacidad.html" %}
+                    </div>
+
+                    <!-- Viñetas simplificadas (sólo título con bullet rojo neón) -->
+                    <div class="mt-auto pt-2 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Datos expuestos a servidores de terceros</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Replicación en nubes públicas y telemetría</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Uso de tu información para reentrenar modelos ajenos</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- TARJETA: LA SOLUCIÓN SOONIVERSE (PRIVACIDAD) -->
-                <div class="glow-card card-success p-6 sm:p-7 flex flex-col justify-between bg-surface/40 relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-60 h-60 bg-neon/10 blur-[90px] rounded-full pointer-events-none"></div>
+                <div class="glow-card card-success p-6 sm:p-7 flex flex-col bg-surface/40 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-neon/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
-                    <div>
-                        <!-- Header de la tarjeta -->
-                        <div class="flex items-center justify-between gap-3 mb-2">
-                            <span class="tag-pill tag-pill-success">
-                                <span class="bullet-neon-green animate-pulse mr-2"></span>
-                                LA SOLUCIÓN SOONIVERSE · 100% AISLADA
-                            </span>
-                            <span class="tag-pill tag-pill-success">
-                                Red Privada
-                            </span>
+                    <!-- Header de la tarjeta -->
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <span class="tag-pill tag-pill-success">
+                            <span class="bullet-neon-green animate-pulse mr-2"></span>
+                            LA SOLUCIÓN SOONIVERSE · 100% AISLADA
+                        </span>
+                        <span class="tag-pill tag-pill-success">
+                            Red Privada
+                        </span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Toda tu información dentro de tu perímetro</h3>
+
+                    <!-- Diagrama SVG: La Solución (Privacidad) -->
+                    <div class="my-5">
+                        {% include "core/includes/svg_solucion_privacidad.html" %}
+                    </div>
+
+                    <!-- Viñetas simplificadas (sólo título con bullet verde neón) -->
+                    <div class="mt-auto pt-2 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Perímetro restringido en tu propia red privada</span>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-2">Toda tu información dentro de tu perímetro</h3>
-
-                        <!-- Diagrama SVG: La Solución (Privacidad) -->
-                        <div class="mt-5 mb-6">
-                            {% include "core/includes/svg_solucion_privacidad.html" %}
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Cero conexión con nubes públicas ni telemetría externa</span>
                         </div>
-
-                        <!-- Viñetas simplificadas (sólo título con bullet verde neón) -->
-                        <div class="space-y-3 pt-2">
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Perímetro restringido en tu propia red privada</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Cero conexión con nubes públicas ni telemetría externa</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Soberanía y cumplimiento normativo absoluto</span>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Soberanía y cumplimiento normativo absoluto</span>
                         </div>
                     </div>
                 </div>
@@ -653,103 +651,101 @@
 
             <div class="grid lg:grid-cols-2 gap-8 items-stretch">
                 <!-- TARJETA: EL PROBLEMA (COSTO VARIABLE) -->
-                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col justify-between bg-surface/40">
-                    <div>
-                        <!-- Header de la tarjeta -->
-                        <div class="flex items-center justify-between gap-3 mb-2">
-                            <span class="tag-pill tag-pill-danger">
-                                <span class="bullet-neon-red animate-pulse mr-2"></span>
-                                EL PROBLEMA · PAGO POR CONSUMO
-                            </span>
-                            <span class="text-[11px] font-mono text-red-400 font-medium">APIs de terceros</span>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-2">Factura impredecible sin techo de gasto</h3>
+                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col bg-surface/40 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-red-500/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
-                        <!-- Bloque de Costo y Gráfico con Ejes -->
-                        <div class="mt-5 p-5 rounded-2xl mb-6 box-danger">
-                            <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
-                                <div>
-                                    <div class="text-[10px] font-mono uppercase tracking-wider text-slate font-semibold">COSTO VARIABLE POR TOKEN</div>
-                                    <div class="mt-1 flex items-baseline gap-2">
-                                        <span class="text-3xl font-extrabold text-white">US$ 2,250</span>
-                                        <span class="text-xs text-slate font-mono font-normal">/ mes (estimado)</span>
-                                    </div>
+                    <!-- Header de la tarjeta -->
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <span class="tag-pill tag-pill-danger">
+                            <span class="bullet-neon-red animate-pulse mr-2"></span>
+                            EL PROBLEMA · PAGO POR CONSUMO
+                        </span>
+                        <span class="text-[11px] font-mono text-red-400 font-medium">APIs de terceros</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Factura impredecible sin techo de gasto</h3>
+
+                    <!-- Bloque de Costo y Gráfico con Ejes -->
+                    <div class="my-5 p-5 rounded-2xl box-danger">
+                        <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
+                            <div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-slate font-semibold">COSTO VARIABLE POR TOKEN</div>
+                                <div class="mt-1 flex items-baseline gap-2">
+                                    <span class="text-3xl font-extrabold text-white">US$ 2,250</span>
+                                    <span class="text-xs text-slate font-mono font-normal">/ mes (estimado)</span>
                                 </div>
-                                <span class="tag-pill tag-pill-danger">
-                                    ▲ Sin techo de gasto
-                                </span>
                             </div>
-
-                            {% include "core/includes/svg_problema_costo.html" %}
+                            <span class="tag-pill tag-pill-danger">
+                                ▲ Sin techo de gasto
+                            </span>
                         </div>
 
-                        <!-- Viñetas simplificadas (sólo título con bullet rojo neón) -->
-                        <div class="space-y-3 pt-2">
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Factura variable y creciente con cada token</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Cobros sorpresa ante picos de consultas o nuevos usuarios</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-red"></span>
-                                <span class="text-sm font-semibold text-white">Coste marginal continuo que castiga la escala</span>
-                            </div>
+                        {% include "core/includes/svg_problema_costo.html" %}
+                    </div>
+
+                    <!-- Viñetas simplificadas (sólo título con bullet rojo neón) -->
+                    <div class="mt-auto pt-2 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Factura variable y creciente con cada token</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Cobros sorpresa ante picos de consultas o nuevos usuarios</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-red"></span>
+                            <span class="text-sm font-semibold text-white">Coste marginal continuo que castiga la escala</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- TARJETA: LA SOLUCIÓN SOONIVERSE (COSTO FIJO) -->
-                <div class="glow-card card-success p-6 sm:p-7 flex flex-col justify-between bg-surface/40 relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-60 h-60 bg-neon/10 blur-[90px] rounded-full pointer-events-none"></div>
+                <div class="glow-card card-success p-6 sm:p-7 flex flex-col bg-surface/40 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-neon/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
-                    <div>
-                        <!-- Header de la tarjeta con Tag Transparentoso 74% de Ahorro -->
-                        <div class="flex items-center justify-between gap-3 mb-2">
-                            <span class="tag-pill tag-pill-success">
-                                <span class="bullet-neon-green animate-pulse mr-2"></span>
-                                LA SOLUCIÓN SOONIVERSE · DEDICADA
-                            </span>
-                            <span class="tag-pill tag-pill-success">
-                                74% de Ahorro
-                            </span>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-2">Tarifa plana fija mensual sin sorpresas</h3>
+                    <!-- Header de la tarjeta con Tag Transparentoso 74% de Ahorro -->
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <span class="tag-pill tag-pill-success">
+                            <span class="bullet-neon-green animate-pulse mr-2"></span>
+                            LA SOLUCIÓN SOONIVERSE · DEDICADA
+                        </span>
+                        <span class="tag-pill tag-pill-success">
+                            74% de Ahorro
+                        </span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Tarifa plana fija mensual sin sorpresas</h3>
 
-                        <!-- Bloque de Costo Fijo y Gráfico con Ejes -->
-                        <div class="mt-5 p-5 rounded-2xl mb-6 box-success">
-                            <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
-                                <div>
-                                    <div class="text-[10px] font-mono uppercase tracking-wider text-slate font-semibold">COSTO FIJO MENSUAL</div>
-                                    <div class="mt-1 flex items-baseline gap-2">
-                                        <span class="text-3xl font-extrabold text-neon">US$ 579</span>
-                                        <span class="text-xs text-slate font-mono font-normal">/ mes (fijo)</span>
-                                    </div>
+                    <!-- Bloque de Costo Fijo y Gráfico con Ejes -->
+                    <div class="my-5 p-5 rounded-2xl box-success">
+                        <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
+                            <div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-slate font-semibold">COSTO FIJO MENSUAL</div>
+                                <div class="mt-1 flex items-baseline gap-2">
+                                    <span class="text-3xl font-extrabold text-neon">US$ 579</span>
+                                    <span class="text-xs text-slate font-mono font-normal">/ mes (fijo)</span>
                                 </div>
-                                <span class="tag-pill tag-pill-success">
-                                    ● Tarifa plana ilimitada
-                                </span>
                             </div>
-
-                            {% include "core/includes/svg_solucion_costo.html" %}
+                            <span class="tag-pill tag-pill-success">
+                                ● Tarifa plana ilimitada
+                            </span>
                         </div>
 
-                        <!-- Viñetas simplificadas (sólo título con bullet verde neón) -->
-                        <div class="space-y-3 pt-2">
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Costo fijo mensual predecible hasta 74% menor</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Consultas y tokens ilimitados a coste marginal cero</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="bullet-neon-green"></span>
-                                <span class="text-sm font-semibold text-white">Capacidad dedicada reutilizable para múltiples procesos</span>
-                            </div>
+                        {% include "core/includes/svg_solucion_costo.html" %}
+                    </div>
+
+                    <!-- Viñetas simplificadas (sólo título con bullet verde neón) -->
+                    <div class="mt-auto pt-2 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Costo fijo mensual predecible hasta 74% menor</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Consultas y tokens ilimitados a coste marginal cero</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bullet-neon-green"></span>
+                            <span class="text-sm font-semibold text-white">Capacidad dedicada reutilizable para múltiples procesos</span>
                         </div>
                     </div>
                 </div>
