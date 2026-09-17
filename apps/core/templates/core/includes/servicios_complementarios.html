@@ -1,0 +1,46 @@
+{% comment %}
+Bloque "Desarrollos Complementarios". Diseñado para renderizarse como hijo
+directo de <div class="max-w-7xl mx-auto px-6 lg:px-8"> dentro de
+<section id="servicios"> en core/landing.html, inmediatamente después del
+bloque .mb-16 del Servicio Principal. No agrega margen superior propio:
+el ritmo vertical lo da el mb-16 del bloque anterior.
+{% endcomment %}
+<div>
+    <div class="flex items-center gap-3 mb-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-cyan glow-dot"></span>
+        <span class="font-mono text-[11px] font-bold uppercase tracking-widest text-cyan">Desarrollos Complementarios</span>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glow-card p-6">
+            <div class="w-10 h-10 rounded-lg bg-deep border border-border flex items-center justify-center text-cyan mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h4 class="text-base font-semibold text-white mb-2">Automatizaciones Avanzadas con y sin IA</h4>
+            <p class="text-sm text-slate leading-relaxed">Flujos de trabajo inteligentes que eliminan tareas repetitivas y conectan tus sistemas.</p>
+        </div>
+
+        <div class="glow-card p-6">
+            <div class="w-10 h-10 rounded-lg bg-deep border border-border flex items-center justify-center text-cyan mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <h4 class="text-base font-semibold text-white mb-2">Soluciones de Scraping y Extracción de Datos Personalizada</h4>
+            <p class="text-sm text-slate leading-relaxed">Captura y estructura información de diferentes fuentes según las necesidades de tu negocio.</p>
+        </div>
+
+        <div class="glow-card p-6">
+            <div class="w-10 h-10 rounded-lg bg-deep border border-border flex items-center justify-center text-cyan mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <h4 class="text-base font-semibold text-white mb-2">Desarrollo de Aplicaciones a la Medida</h4>
+            <p class="text-sm text-slate leading-relaxed">Software construido específicamente para resolver los retos operativos de tu empresa.</p>
+        </div>
+
+        <div class="glow-card p-6">
+            <div class="w-10 h-10 rounded-lg bg-deep border border-border flex items-center justify-center text-cyan mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h4 class="text-base font-semibold text-white mb-2">Sistemas de Analítica de Datos &amp; Machine Learning</h4>
+            <p class="text-sm text-slate leading-relaxed">Transforma tus datos en predicciones y decisiones claras con modelos adaptados a tu contexto.</p>
+        </div>
+    </div>
+</div>

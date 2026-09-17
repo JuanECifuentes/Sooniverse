@@ -8,6 +8,7 @@ automated emails.
 
 import logging
 
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
@@ -31,4 +32,8 @@ def lead_post_save_dispatcher(sender, instance, created, **kwargs):
         )
         return
 
-    async_task("apps.core.tasks.procesar_nuevo_lead", instance.pk)
+    # Deferred to on_commit: a Q2 worker (separate connection) could otherwise
+    # pick up the task and query for this row before the transaction commits.
+    transaction.on_commit(
+        lambda: async_task("apps.core.tasks.procesar_nuevo_lead", instance.pk)
+    )

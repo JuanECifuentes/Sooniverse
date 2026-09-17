@@ -1,0 +1,49 @@
+{% extends "core/emails/base_email.html" %}
+
+{% block title %}Reunión en camino - Sooniverse{% endblock %}
+
+{% block content %}
+<h2 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">
+    Hola {{ nombre }},
+</h2>
+
+<p style="font-size: 16px; line-height: 1.6; color: #94A3B8; margin-bottom: 20px;">
+    Hemos recibido tu solicitud para <strong style="color: #FFFFFF;">{{ empresa }}</strong>. En un plazo menor a
+    <strong style="color: #00FF87;">48 horas</strong>, un asesor se comunicará contigo por correo electrónico para
+    agendar una reunión.
+</p>
+
+<p style="font-size: 15px; line-height: 1.6; color: #94A3B8; margin-bottom: 25px;">
+    La reunión no dura más de <strong style="color: #FFFFFF;">30 minutos</strong> y es directa: sin rodeos técnicos
+    ni presentaciones largas.
+</p>
+
+<!-- Benefit card matching brand style -->
+<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 22px;">
+    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;">
+        Lo que te vas a llevar de esos 30 minutos
+    </h3>
+    <ul style="margin: 0; padding-left: 20px; color: #94A3B8; font-size: 13.5px; line-height: 1.6;">
+        <li style="margin-bottom: 8px;"><strong style="color: #FFFFFF;">Cuánto estás pagando hoy</strong> por tus procesos de IA, en un solo número.</li>
+        <li style="margin-bottom: 8px;"><strong style="color: #FFFFFF;">Cuánto pagarías</strong> con una plataforma privada dedicada a tu operación.</li>
+        <li><strong style="color: #FFFFFF;">Qué capacidad necesita</strong> tu operación para dejar de depender del cobro por token.</li>
+    </ul>
+</div>
+
+<div style="background: linear-gradient(135deg, rgba(0,255,135,0.08) 0%, rgba(96,239,255,0.08) 50%, rgba(138,43,226,0.08) 100%); border: 1px solid #1E293B; border-radius: 8px; padding: 18px 20px; margin-bottom: 25px;">
+    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #FFFFFF;">
+        En nuestro caso de referencia, este cambio significó <strong style="color: #00FF87;">74.2% menos costo mensual</strong>.
+        En la reunión calculamos el número equivalente para tu caso — con tus propios volúmenes, no con un promedio genérico.
+    </p>
+</div>
+
+<p style="font-size: 14px; line-height: 1.6; color: #64748B; margin-bottom: 25px; font-style: italic;">
+    Este canal de comunicación está protegido y es operado bajo estrictos lineamientos de privacidad corporativa. Si no realizaste esta solicitud, puedes ignorar este correo.
+</p>
+
+<div style="text-align: center;">
+    <a href="https://sooniverse.co" class="btn-email-secondary" style="display: inline-block; background-color: transparent; border: 1.5px solid #60EFFF; color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; text-transform: uppercase; padding: 11px 22px; text-decoration: none; border-radius: 6px; letter-spacing: 0.5px;">
+        Explorar Sooniverse
+    </a>
+</div>
+{% endblock %}

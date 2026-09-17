@@ -179,8 +179,9 @@ class ContactViewTestCase(TestCase):
     def setUp(self):
         cache.clear()
 
+    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
     @patch("apps.core.signals.async_task")
-    def test_submit_lead_success(self, mock_async_task):
+    def test_submit_lead_success(self, mock_async_task, mock_recaptcha):
         url = reverse("core:contacto")
         data = {
             "nombre": "Jane Doe",
@@ -189,7 +190,11 @@ class ContactViewTestCase(TestCase):
             "mensaje": "Test message.",
             "website_verification": "",
         }
-        response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        # The dispatch is now wrapped in transaction.on_commit(); TestCase
+        # wraps each test in a non-committing transaction, so on_commit
+        # callbacks never fire unless captured explicitly like this.
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["success"])
 
@@ -205,8 +210,9 @@ class ContactViewTestCase(TestCase):
             "apps.core.tasks.procesar_nuevo_lead", lead.pk
         )
 
+    @patch("apps.core.views.verify_recaptcha", return_value=(True, "ok:1.00"))
     @patch("apps.core.signals.async_task")
-    def test_rate_limiting(self, mock_async_task):
+    def test_rate_limiting(self, mock_async_task, mock_recaptcha):
         url = reverse("core:contacto")
         data = {
             "nombre": "Jane Doe",
@@ -217,13 +223,14 @@ class ContactViewTestCase(TestCase):
         }
 
         # Submit 3 times (limit is 3)
-        for i in range(3):
-            test_data = data.copy()
-            test_data["correo"] = f"jane{i}@company.com"
-            response = self.client.post(
-                url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
-            )
-            self.assertEqual(response.status_code, 200)
+        with self.captureOnCommitCallbacks(execute=True):
+            for i in range(3):
+                test_data = data.copy()
+                test_data["correo"] = f"jane{i}@company.com"
+                response = self.client.post(
+                    url, test_data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+                )
+                self.assertEqual(response.status_code, 200)
 
         # 4th submission must be blocked with 429
         test_data = data.copy()
@@ -275,7 +282,7 @@ class NotificationsTaskTestCase(TestCase):
 
         second_call = call_args_list[1]
         self.assertEqual(second_call[1]["to"], ["alice@wonderland.com"])
-        self.assertIn("Diagnóstico Tecnológico", second_call[1]["subject"])
+        self.assertIn("reunión", second_call[1]["subject"])
 
 
 class ManifestTestCase(TestCase):
@@ -306,7 +313,8 @@ class QuestionnaireFlowTestCase(TestCase):
         resp = self.client.get("/diagnostico/cuestionario/not-a-uuid/")
         self.assertEqual(resp.status_code, 404)
 
-    def test_pending_questionnaire_renders_form_and_completes_on_post(self):
+    @patch("apps.core.views.async_task")
+    def test_pending_questionnaire_renders_form_and_completes_on_post(self, mock_async_task):
         from .models import Questionnaire
 
         lead = self._make_lead()
@@ -335,7 +343,8 @@ class QuestionnaireFlowTestCase(TestCase):
             f"{prefix}-0-peak_concurrency": "",
             f"{prefix}-0-monthly_executions": "5000",
         }
-        post = self.client.post(url, post_data)
+        with self.captureOnCommitCallbacks(execute=True):
+            post = self.client.post(url, post_data)
         self.assertEqual(post.status_code, 200)
         q.refresh_from_db()
         self.assertEqual(q.status, Questionnaire.Status.COMPLETED)
@@ -347,6 +356,12 @@ class QuestionnaireFlowTestCase(TestCase):
         self.assertEqual(proc.name, "Resumen de tickets")
         self.assertEqual(proc.monthly_executions, 5000)
         self.assertIsNone(proc.peak_concurrency)
+
+        # La finalización del cuestionario debe encolar la tarea de
+        # notificación (via transaction.on_commit) con este questionnaire.id.
+        mock_async_task.assert_called_once_with(
+            "apps.core.tasks.notificar_diagnostico_completado", str(q.id)
+        )
 
     def test_completed_questionnaire_is_immutable(self):
         from .models import Questionnaire
@@ -477,7 +492,9 @@ class SecureDownloadViewTests(TestCase):
         self.user = self.User.objects.create_user("testuser", "test@sooniverse.com", "password123")
 
         # Create lead, questionnaire, and metric file
-        lead = Lead.objects.create(nombre="Test", correo="t@t.com", empresa="Emp")
+        lead = Lead(nombre="Test", correo="t@t.com", empresa="Emp")
+        lead.skip_email_signal = True  # avoid enqueuing a real notification task
+        lead.save()
         self.q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.COMPLETED)
 
         self.uploaded_file = SimpleUploadedFile("metrics.csv", b"date,requests\n2024-01-01,100\n", content_type="text/csv")
@@ -508,4 +525,212 @@ class SecureDownloadViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Disposition"], 'attachment; filename="metrics.csv"')
         self.assertEqual(b"".join(response.streaming_content), b"date,requests\n2024-01-01,100\n")
+
+
+# ──────────────────────────────────────────────────────────────
+# Pipeline de 10 estados: transiciones, dedup y resumen diario
+# ──────────────────────────────────────────────────────────────
+from datetime import timedelta
+
+from django.core.exceptions import ValidationError
+from django.db import transaction as db_transaction
+from django.utils import timezone
+
+from .models import LeadEstadoHistory, MaintenanceWindow, NotificationLog, validar_limite_ventanas
+from .services.dedupe import reclamar
+from .services.digest import construir_digest
+from .services.pipeline import transicionar_lead
+from .tasks import notificar_diagnostico_completado
+
+
+def _lead_sin_email(**kwargs):
+    lead = Lead(**kwargs)
+    lead.skip_email_signal = True
+    lead.save()
+    return lead
+
+
+class TransicionarLeadTestCase(TestCase):
+    def test_transicion_escribe_historial_y_timestamp(self):
+        lead = _lead_sin_email(nombre="A", correo="a@a.com", empresa="A", estado=Lead.Estado.NUEVO)
+        antes = lead.estado_actualizado_en
+
+        ok = transicionar_lead(lead, Lead.Estado.CONTACTADO, nota="test")
+        self.assertTrue(ok)
+        lead.refresh_from_db()
+        self.assertEqual(lead.estado, Lead.Estado.CONTACTADO)
+        self.assertNotEqual(lead.estado_actualizado_en, antes)
+
+        hist = LeadEstadoHistory.objects.get(lead=lead)
+        self.assertEqual(hist.estado_anterior, Lead.Estado.NUEVO)
+        self.assertEqual(hist.estado_nuevo, Lead.Estado.CONTACTADO)
+        self.assertEqual(hist.nota, "test")
+
+    def test_transicion_no_op_devuelve_false(self):
+        lead = _lead_sin_email(nombre="B", correo="b@b.com", empresa="B", estado=Lead.Estado.NUEVO)
+        ok = transicionar_lead(lead, Lead.Estado.NUEVO)
+        self.assertFalse(ok)
+        self.assertEqual(LeadEstadoHistory.objects.filter(lead=lead).count(), 0)
+
+
+class DedupeTestCase(TestCase):
+    def test_reclamar_solo_la_primera_vez(self):
+        primero = reclamar(NotificationLog.Kind.REUNION_INMINENTE, "clave-unica-1")
+        segundo = reclamar(NotificationLog.Kind.REUNION_INMINENTE, "clave-unica-1")
+        self.assertTrue(primero)
+        self.assertFalse(segundo)
+        self.assertEqual(NotificationLog.objects.filter(dedupe_key="clave-unica-1").count(), 1)
+
+    def test_reclamar_no_envenena_transaccion_exterior(self):
+        # reclamar() usa un savepoint anidado; un IntegrityError capturado
+        # ahí no debe abortar un bloque atomic() exterior.
+        with db_transaction.atomic():
+            reclamar(NotificationLog.Kind.REUNION_INMINENTE, "clave-unica-2")
+            reclamar(NotificationLog.Kind.REUNION_INMINENTE, "clave-unica-2")
+            lead = Lead(nombre="C", correo="c@c.com", empresa="C")
+            lead.skip_email_signal = True
+            lead.save()
+        self.assertEqual(Lead.objects.filter(correo="c@c.com").count(), 1)
+
+
+class MaintenanceWindowLimitTestCase(TestCase):
+    def test_septima_ventana_es_rechazada(self):
+        lead = _lead_sin_email(nombre="D", correo="d@d.com", empresa="D")
+        ahora = timezone.now()
+        for i in range(MaintenanceWindow.MAX_POR_LEAD):
+            MaintenanceWindow.objects.create(lead=lead, scheduled_for=ahora + timedelta(days=i + 1))
+        self.assertEqual(lead.maintenance_windows.count(), 6)
+        with self.assertRaises(ValidationError):
+            validar_limite_ventanas(lead.pk)
+
+    def test_excluir_pk_permite_editar_una_existente(self):
+        lead = _lead_sin_email(nombre="E", correo="e@e.com", empresa="E")
+        ahora = timezone.now()
+        windows = [
+            MaintenanceWindow.objects.create(lead=lead, scheduled_for=ahora + timedelta(days=i + 1))
+            for i in range(MaintenanceWindow.MAX_POR_LEAD)
+        ]
+        # Editar una ventana existente (excluyéndola del conteo) no debe fallar.
+        validar_limite_ventanas(lead.pk, exclude_pk=windows[0].pk)
+
+
+class DigestBoundaryTestCase(TestCase):
+    def test_lead_nuevo_dia_7_incluido_dia_8_excluido(self):
+        # timezone.now() se fija con patch para evitar una carrera de
+        # milisegundos entre el "ahora" de este test y el que calcula
+        # construir_digest() -> _leads_nuevos_sin_atender() al reconstruir
+        # su propio "limite" (now - 7 días) en un instante ligeramente
+        # posterior.
+        ahora_fija = timezone.now()
+        hoy = timezone.localdate()
+
+        lead_dia7 = _lead_sin_email(nombre="F7", correo="f7@f.com", empresa="F7")
+        Lead.objects.filter(pk=lead_dia7.pk).update(
+            estado_actualizado_en=ahora_fija - timedelta(days=7)
+        )
+
+        lead_dia8 = _lead_sin_email(nombre="F8", correo="f8@f.com", empresa="F8")
+        Lead.objects.filter(pk=lead_dia8.pk).update(
+            estado_actualizado_en=ahora_fija - timedelta(days=8)
+        )
+
+        with patch("apps.core.services.digest.timezone.now", return_value=ahora_fija):
+            bloques = construir_digest(hoy)
+        pks_incluidos = {item.lead.pk for item in bloques["leads_nuevos"]}
+        self.assertIn(lead_dia7.pk, pks_incluidos)
+        self.assertNotIn(lead_dia8.pk, pks_incluidos)
+
+    def test_lead_descartado_nunca_aparece(self):
+        hoy = timezone.localdate()
+        lead = _lead_sin_email(
+            nombre="G", correo="g@g.com", empresa="G", estado=Lead.Estado.DESCARTADO
+        )
+        Lead.objects.filter(pk=lead.pk).update(
+            estado_actualizado_en=timezone.now() - timedelta(days=2)
+        )
+        bloques = construir_digest(hoy)
+        pks = {item.lead.pk for item in bloques["leads_nuevos"]}
+        self.assertNotIn(lead.pk, pks)
+
+    def test_reprogramar_reunion_rearma_recordatorios(self):
+        hoy = timezone.localdate()
+        lead = _lead_sin_email(
+            nombre="H", correo="h@h.com", empresa="H", estado=Lead.Estado.REUNION_CONFIRMADA
+        )
+        primera_fecha = timezone.now() + timedelta(days=3)
+        lead.meeting_at = primera_fecha
+        lead.save(update_fields=["meeting_at"])
+
+        bloques = construir_digest(hoy)
+        claves_antes = {item.dedupe_key for item in bloques["reuniones"]}
+        self.assertTrue(any(str(lead.pk) in k for k in claves_antes))
+
+        # Reclamar el recordatorio (simula que el digest ya se envió).
+        for item in bloques["reuniones"]:
+            reclamar(item.kind, item.dedupe_key, lead=item.lead)
+
+        # Reprogramar la reunión a otra fecha (misma distancia en días) debe
+        # generar una dedupe_key nueva porque incrusta meeting_at.isoformat().
+        nueva_fecha = timezone.now() + timedelta(days=3, hours=5)
+        lead.meeting_at = nueva_fecha
+        lead.save(update_fields=["meeting_at"])
+
+        bloques2 = construir_digest(hoy)
+        claves_despues = {item.dedupe_key for item in bloques2["reuniones"]}
+        self.assertTrue(claves_despues.isdisjoint(claves_antes))
+
+
+class NotificarDiagnosticoCompletadoTestCase(TestCase):
+    @patch("apps.core.services.notifications.EmailMultiAlternatives")
+    def test_transiciona_lead_y_notifica_una_sola_vez(self, mock_email_class):
+        from .models import Questionnaire
+
+        lead = _lead_sin_email(
+            nombre="I", correo="i@i.com", empresa="I", estado=Lead.Estado.DIAGNOSTICO_ENVIADO
+        )
+        q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.COMPLETED)
+
+        notificar_diagnostico_completado(str(q.id))
+        lead.refresh_from_db()
+        self.assertEqual(lead.estado, Lead.Estado.DIAGNOSTICO_REALIZADO)
+        self.assertEqual(mock_email_class.return_value.send.call_count, 1)
+
+        # Segunda llamada (p.ej. reintento de la tarea): no debe reenviar.
+        notificar_diagnostico_completado(str(q.id))
+        self.assertEqual(mock_email_class.return_value.send.call_count, 1)
+
+    def test_lead_descartado_no_se_notifica(self):
+        from .models import Questionnaire
+
+        lead = _lead_sin_email(
+            nombre="J", correo="j@j.com", empresa="J", estado=Lead.Estado.DESCARTADO
+        )
+        q = Questionnaire.objects.create(lead=lead, status=Questionnaire.Status.COMPLETED)
+        notificar_diagnostico_completado(str(q.id))
+        lead.refresh_from_db()
+        self.assertEqual(lead.estado, Lead.Estado.DESCARTADO)
+        self.assertEqual(NotificationLog.objects.filter(lead=lead).count(), 0)
+
+
+class SyncSchedulesCommandTestCase(TestCase):
+    def test_correr_dos_veces_deja_exactamente_dos_filas(self):
+        from io import StringIO
+
+        from django.core.management import call_command
+        from django_q.models import Schedule
+
+        call_command("sync_schedules", stdout=StringIO())
+        call_command("sync_schedules", stdout=StringIO())
+
+        nombres = {"sooniverse-digest-diario", "sooniverse-reuniones-inminentes"}
+        self.assertEqual(Schedule.objects.filter(name__in=nombres).count(), 2)
+
+    def test_dry_run_no_escribe_en_bd(self):
+        from io import StringIO
+
+        from django.core.management import call_command
+        from django_q.models import Schedule
+
+        call_command("sync_schedules", "--dry-run", stdout=StringIO())
+        self.assertEqual(Schedule.objects.count(), 0)
 

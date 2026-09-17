@@ -5,6 +5,7 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django_q.tasks import async_task
 from django.http import JsonResponse, Http404, FileResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
@@ -18,11 +19,21 @@ from django.templatetags.static import static
 from .forms import (
     InternalLeadForm,
     LeadForm,
+    LeadMeetingForm,
+    MaintenanceWindowForm,
     ProcessInventoryFormSet,
     QuestionnaireFinanceForm,
     QuestionnaireMetricFileForm,
 )
-from .models import Lead, Questionnaire, ProcessInventory, QuestionnaireMetricFile
+from .models import (
+    Lead,
+    MaintenanceWindow,
+    Questionnaire,
+    ProcessInventory,
+    QuestionnaireMetricFile,
+)
+from .recaptcha import verify_recaptcha
+from .services.pipeline import transicionar_lead
 
 logger = logging.getLogger("django.apps.core.views")
 
@@ -77,6 +88,20 @@ def contacto_lead(request):
             return JsonResponse({"success": False, "message": msg}, status=429)
         return redirect("/#contacto")
 
+    # Verificación de reCAPTCHA v3, después del rate limit (para que no sea un
+    # amplificador de peticiones salientes) y antes de validar el formulario
+    # (para que los bots no lleguen a tocar la BD vía clean_correo).
+    captcha_ok, captcha_reason = verify_recaptcha(
+        request.POST.get("g-recaptcha-response", ""), remote_ip=ip
+    )
+    if not captcha_ok:
+        cache.set(cache_key, current_requests + 1, timeout=window)
+        logger.warning(f"reCAPTCHA rechazado para IP {ip} ({captcha_reason}).")
+        msg = "No fue posible validar la seguridad de la solicitud. Recargue la página e intente nuevamente."
+        if is_ajax:
+            return JsonResponse({"success": False, "message": msg}, status=400)
+        return redirect("/#contacto")
+
     form = LeadForm(request.POST)
     if form.is_valid():
         lead = form.save(commit=False)
@@ -85,9 +110,9 @@ def contacto_lead(request):
 
         cache.set(cache_key, current_requests + 1, timeout=window)
 
-        logger.info(f"Lead {lead.pk} created; notifications dispatched via signal.")
+        logger.info(f"Lead {lead.pk} created (captcha={captcha_reason}); notifications dispatched via signal.")
 
-        msg = "Su solicitud de diagnóstico ha sido registrada con éxito. Nos comunicaremos en menos de 24 horas."
+        msg = "Tu solicitud de reunión ha sido registrada con éxito. Nos comunicaremos en menos de 48 horas para confirmar el horario."
         if is_ajax:
             return JsonResponse({"success": True, "message": msg})
         return redirect("/#contacto")
@@ -159,6 +184,22 @@ def manifest(request):
 # ──────────────────────────────────────────────
 
 
+# Clase Tailwind de color por estado, usada por el renderer del <select> de
+# estado en el dashboard (ver estado_choices_json más abajo).
+ESTADO_CLASES = {
+    Lead.Estado.DESCARTADO: "text-slate",
+    Lead.Estado.NUEVO: "text-neon",
+    Lead.Estado.CONTACTADO: "text-cyan",
+    Lead.Estado.REUNION_CONFIRMADA: "text-cyan",
+    Lead.Estado.DIAGNOSTICO_ENVIADO: "text-cyan",
+    Lead.Estado.DIAGNOSTICO_REALIZADO: "text-cyan",
+    Lead.Estado.PRE_IMPLEMENTACION: "text-violet",
+    Lead.Estado.PENDIENTE_IMPLEMENTACION: "text-violet",
+    Lead.Estado.SERVICIO_REALIZADO: "text-neon",
+    Lead.Estado.MANTENIMIENTO_PROGRAMADO: "text-neon",
+}
+
+
 @login_required
 def internal_leads_dashboard(request):
     """Internal Leads dashboard. Renders a list + create form + modal host."""
@@ -169,6 +210,7 @@ def internal_leads_dashboard(request):
             # Mute automated email notifications — internally created lead.
             lead.skip_email_signal = True
             lead.ip_origen = get_client_ip(request)
+            lead.estado_actualizado_en = timezone.now()
             lead.save()
             messages.success(request, f"Lead interno creado: {lead.nombre}.")
             return redirect("core:internal_leads")
@@ -176,23 +218,55 @@ def internal_leads_dashboard(request):
     else:
         form = InternalLeadForm()
 
-    leads = Lead.objects.all().prefetch_related("questionnaires")
-    leads_json = [
-        {
-            "id": lead.pk,
-            "nombre": lead.nombre,
-            "correo": lead.correo,
-            "empresa": lead.empresa,
-            "estado": lead.estado,
-            "estado_display": lead.get_estado_display(),
-            "creado_en": lead.creado_en.strftime("%Y-%m-%d %H:%M"),
-        }
-        for lead in leads
+    leads = Lead.objects.all().prefetch_related("questionnaires", "maintenance_windows")
+    leads_json = []
+    for lead in leads:
+        ventanas = list(lead.maintenance_windows.all())
+        pendientes = [w for w in ventanas if not w.completed]
+        proxima = min(pendientes, key=lambda w: w.scheduled_for) if pendientes else None
+        entro_en = lead.estado_actualizado_en or lead.creado_en
+        leads_json.append(
+            {
+                "id": lead.pk,
+                "nombre": lead.nombre,
+                "correo": lead.correo,
+                "empresa": lead.empresa,
+                "estado": lead.estado,
+                "estado_display": lead.get_estado_display(),
+                "creado_en": lead.creado_en.strftime("%Y-%m-%d %H:%M"),
+                "estado_actualizado_en": entro_en.strftime("%Y-%m-%d %H:%M"),
+                "dias_en_estado": (timezone.now() - entro_en).days,
+                "meeting_at_iso": lead.meeting_at.isoformat() if lead.meeting_at else None,
+                "meeting_at_display": (
+                    timezone.localtime(lead.meeting_at).strftime("%Y-%m-%d %H:%M")
+                    if lead.meeting_at
+                    else None
+                ),
+                "meeting_link": lead.meeting_link,
+                "ventanas_total": len(ventanas),
+                "ventanas_pendientes": len(pendientes),
+                "proxima_ventana": (
+                    timezone.localtime(proxima.scheduled_for).strftime("%Y-%m-%d %H:%M")
+                    if proxima
+                    else None
+                ),
+            }
+        )
+
+    estado_choices_json = [
+        {"value": v, "label": l, "cls": ESTADO_CLASES.get(v, "text-slate"), "orden": i}
+        for i, (v, l) in enumerate(Lead.Estado.choices)
     ]
+
     return render(
         request,
         "core/internal/leads_dashboard.html",
-        {"leads": leads, "leads_json": leads_json, "form": form},
+        {
+            "leads": leads,
+            "leads_json": leads_json,
+            "form": form,
+            "estado_choices_json": estado_choices_json,
+        },
     )
 
 
@@ -210,17 +284,148 @@ def lead_update_status(request):
         )
 
     lead = get_object_or_404(Lead, pk=lead_id)
-    lead.estado = estado
-    lead.save(update_fields=["estado"])
+
+    # Una reunión no puede confirmarse sin fecha: sin este guard, un lead
+    # quedaría en "Reunión Confirmada" sin poder generar nunca recordatorios.
+    if estado == Lead.Estado.REUNION_CONFIRMADA and lead.meeting_at is None:
+        return JsonResponse(
+            {
+                "success": False,
+                "requires": "meeting",
+                "message": "Registra la fecha y el enlace de la reunión primero.",
+            },
+            status=400,
+        )
+
+    cambio = transicionar_lead(lead, estado, usuario=request.user)
+    if not cambio:
+        # No-op (ya estaba en ese estado): igual se responde success para
+        # que el <select> no revierta visualmente.
+        pass
+
+    warn = None
+    if (
+        estado == Lead.Estado.MANTENIMIENTO_PROGRAMADO
+        and not lead.maintenance_windows.exists()
+    ):
+        warn = "El lead quedó en Mantenimiento programado sin ninguna ventana registrada."
+
+    response = {
+        "success": True,
+        "lead_id": lead.pk,
+        "estado": lead.estado,
+        "estado_display": lead.get_estado_display(),
+        "estado_actualizado_en": lead.estado_actualizado_en.strftime("%Y-%m-%d %H:%M")
+        if lead.estado_actualizado_en
+        else None,
+    }
+    if warn:
+        response["warn"] = warn
+    return JsonResponse(response)
+
+
+@login_required
+@require_http_methods(["GET"])
+def lead_detail_modal(request, lead_pk):
+    """AJAX partial: modal 'Reunión / Mantenimiento' del lead (formulario de
+    reunión, ventanas de mantenimiento e historial de estados)."""
+    lead = get_object_or_404(Lead, pk=lead_pk)
+    meeting_form = LeadMeetingForm(instance=lead)
+    ventanas = lead.maintenance_windows.all()
+    historial = lead.estado_history.all()[:20]
+    return render(
+        request,
+        "core/internal/_lead_modal.html",
+        {
+            "lead": lead,
+            "meeting_form": meeting_form,
+            "ventanas": ventanas,
+            "historial": historial,
+            "max_ventanas": MaintenanceWindow.MAX_POR_LEAD,
+        },
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def lead_meeting_update(request, lead_pk):
+    """Guarda fecha/hora + enlace de la reunión de un lead. Si se envía
+    transicionar=1, también mueve el lead a Reunión Confirmada en el mismo
+    round-trip (caso de uso normal desde el modal)."""
+    lead = get_object_or_404(Lead, pk=lead_pk)
+    form = LeadMeetingForm(request.POST, instance=lead)
+    if not form.is_valid():
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
+    form.save()
+    if request.POST.get("transicionar") == "1":
+        transicionar_lead(lead, Lead.Estado.REUNION_CONFIRMADA, usuario=request.user)
 
     return JsonResponse(
         {
             "success": True,
-            "lead_id": lead.pk,
+            "meeting_at": timezone.localtime(lead.meeting_at).strftime("%Y-%m-%d %H:%M"),
+            "meeting_link": lead.meeting_link,
             "estado": lead.estado,
             "estado_display": lead.get_estado_display(),
         }
     )
+
+
+def _maintenance_rows_response(request, lead):
+    ventanas = lead.maintenance_windows.all()
+    return render(
+        request,
+        "core/internal/_maintenance_rows.html",
+        {"lead": lead, "ventanas": ventanas, "max_ventanas": MaintenanceWindow.MAX_POR_LEAD},
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def maintenance_window_create(request, lead_pk):
+    """Crea una ventana de mantenimiento (máx. 6 por lead, verificado bajo
+    select_for_update para que dos altas concurrentes no pasen ambas el
+    conteo)."""
+    with transaction.atomic():
+        lead = get_object_or_404(Lead.objects.select_for_update(), pk=lead_pk)
+        form = MaintenanceWindowForm(request.POST, lead=lead)
+        if not form.is_valid():
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        form.save()
+
+    return _maintenance_rows_response(request, lead)
+
+
+@login_required
+@require_http_methods(["POST"])
+def maintenance_window_update(request, window_pk):
+    """action=completar|reabrir|mover sobre una ventana existente."""
+    window = get_object_or_404(MaintenanceWindow, pk=window_pk)
+    action = request.POST.get("action")
+
+    if action == "completar":
+        window.marcar_completada(completada=True)
+    elif action == "reabrir":
+        window.marcar_completada(completada=False)
+    elif action == "mover":
+        form = MaintenanceWindowForm(request.POST, instance=window, lead=window.lead)
+        if not form.is_valid():
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        form.save()
+    else:
+        return JsonResponse({"success": False, "message": "Acción inválida."}, status=400)
+
+    return _maintenance_rows_response(request, window.lead)
+
+
+@login_required
+@require_http_methods(["POST"])
+def maintenance_window_delete(request, window_pk):
+    window = get_object_or_404(MaintenanceWindow, pk=window_pk)
+    lead = window.lead
+    window.delete()
+    return _maintenance_rows_response(request, lead)
 
 
 @login_required
@@ -402,6 +607,16 @@ def public_questionnaire(request, questionnaire_id):
                         "ai_tasks",
                     ]
                 )
+
+            # Notifica y transiciona el lead a "Diagnóstico realizado" en
+            # segundo plano (no via post_save de Questionnaire, que dispararía
+            # en cada guardado y el modelo tiene auto_now churn).
+            transaction.on_commit(
+                lambda: async_task(
+                    "apps.core.tasks.notificar_diagnostico_completado",
+                    str(questionnaire.id),
+                )
+            )
 
             # Re-render read-only confirmation view (immutable).
             finance_form = QuestionnaireFinanceForm(instance=questionnaire)

@@ -137,7 +137,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # ──────────────────────────────────────────────
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+# Colombia no observa horario de verano, así que un Schedule DAILY queda
+# clavado a la misma hora local para siempre (ver apps/core/tasks.py).
+TIME_ZONE = "America/Bogota"
 USE_I18N = True
 USE_TZ = True
 
@@ -181,6 +183,9 @@ Q_CLUSTER = {
     "workers": env.int("Q_CLUSTER_WORKERS", default=2),
     "timeout": env.int("Q_CLUSTER_TIMEOUT", default=90),
     "recycle": env.int("Q_CLUSTER_RECYCLER", default=300),
+    # Sin esto, tras una caída prolongada el cluster reproduce cada Schedule
+    # perdido en ráfaga al arrancar (ver Schedule diario / sweeper de reuniones).
+    "catch_up": False,
     "orm": "default",
 }
 
@@ -191,8 +196,6 @@ if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     EMAIL_BACKEND = "django_ses.SESBackend"
-
-EMAIL_BACKEND = "django_ses.SESBackend"
 
 AWS_SES_REGION_NAME = env("AWS_SES_REGION_NAME", default="us-east-1")
 AWS_SES_REGION_ENDPOINT = env(
@@ -225,6 +228,23 @@ TRM_CONTRACTUAL = env("TRM_CONTRACTUAL")
 NOTIFICACION_INTERNA_EMAIL = env("NOTIFICACION_INTERNA_EMAIL", default="admin@sooniverse.com")
 RATE_LIMIT_LIMIT = env.int("RATE_LIMIT_LIMIT", default=3)
 RATE_LIMIT_WINDOW = env.int("RATE_LIMIT_WINDOW", default=600)  # default 10 minutes
+
+# URL base pública, usada para construir enlaces absolutos dentro de tareas en
+# segundo plano (sin `request` disponible), p. ej. notificaciones y el digest diario.
+SITE_URL = env("SITE_URL", default="http://localhost:8000")
+
+# Hora local (America/Bogota) a la que se dispara el resumen diario del CRM.
+DIGEST_HORA_LOCAL = env.int("DIGEST_HORA_LOCAL", default=8)
+
+# ──────────────────────────────────────────────
+# reCAPTCHA v3 (invisible) — vacío = desactivado
+# ──────────────────────────────────────────────
+RECAPTCHA_SITE_KEY = env("RECAPTCHA_SITE_KEY", default="")
+RECAPTCHA_SECRET_KEY = env("RECAPTCHA_SECRET_KEY", default="")
+RECAPTCHA_MIN_SCORE = env.float("RECAPTCHA_MIN_SCORE", default=0.5)
+RECAPTCHA_ACTION = env("RECAPTCHA_ACTION", default="contacto_lead")
+RECAPTCHA_TIMEOUT = env.int("RECAPTCHA_TIMEOUT", default=5)
+RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
 
 # ──────────────────────────────────────────────
