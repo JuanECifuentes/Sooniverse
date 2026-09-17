@@ -177,7 +177,7 @@
     }
     </script>
 
-    <link href="{% static 'css/dist/tailwind.css' %}" rel="stylesheet">
+    <link href="{% static 'css/dist/tailwind.css' %}?v=1.1" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -470,7 +470,7 @@
 
             <div class="flex items-center justify-end gap-4 md:justify-self-end">
                 <a href="{% url 'core:internal_leads' %}" class="hidden md:inline nav-link text-sm font-medium text-slate">Login</a>
-                <a href="#contacto" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
+                <a href="{% url 'core:booking_publico' %}" class="hidden md:inline btn-primary px-5 py-2.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                 <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
@@ -483,7 +483,7 @@
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
-                <a href="#contacto" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
+                <a href="{% url 'core:booking_publico' %}" class="btn-primary mt-2 px-5 py-3 rounded-lg text-center text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
             </div>
         </div>
     </header>
@@ -503,7 +503,7 @@
                         Obtén más capacidad de IA por cada dólar que inviertes. Sin sorpresas en la facturación y con privacidad absoluta de tu información.
                     </p>
                     <div class="mt-8 flex flex-wrap gap-4">
-                        <a href="#contacto" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
+                        <a href="{% url 'core:booking_publico' %}" class="btn-primary px-7 py-3.5 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                         <a href="#calculadora" class="btn-secondary px-7 py-3.5 rounded-lg text-sm font-bold text-white uppercase tracking-wide flex items-center gap-2">Calcular ahorro
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </a>
@@ -1023,7 +1023,7 @@
                             <div class="text-xs text-slate/70 mt-1 font-mono" id="savings-cop">~ $0 COP</div>
                         </div>
                     </div>
-                    <a href="#contacto" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
+                    <a href="{% url 'core:booking_publico' %}" class="btn-primary block text-center px-6 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Reservar una reunión</a>
                 </div>
 
                 <div class="lg:col-span-3 glass-panel p-6 sm:p-8">
@@ -1091,25 +1091,25 @@
         </div>
     </section>
 
-    <section id="glosario-faq" class="py-24 border-t border-border bg-surface/10 relative">
+    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-border bg-surface/10 relative overflow-hidden">
         <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-violet opacity-5 blur-[120px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-12 items-start">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
                 
                 <!-- FAQ Section (7 cols) -->
                 <!-- FAQ:SYNC — mantener 1:1 con el bloque "FAQPage" del JSON-LD (~L106). -->
-                <div class="lg:col-span-7 space-y-8" id="faq">
+                <div class="lg:col-span-7" id="faq">
                     <div>
                         <span class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-3 block">Preguntas Frecuentes</span>
                         <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Preguntas Frecuentes sobre nuestros servicios</h2>
-                        <p class="mt-4 text-slate text-sm">Respuestas directas estructuradas para resolver tus inquietudes sobre costos, rendimiento y seguridad de datos.</p>
+                        <p class="mt-4 text-slate text-sm sm:text-base leading-relaxed">Respuestas directas estructuradas para resolver tus inquietudes sobre costos, rendimiento y seguridad de datos.</p>
                     </div>
 
-                    <div class="space-y-6 mt-8">
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Cómo puede una empresa reducir el gasto en tokens de IA?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                    <div class="space-y-3 mt-8">
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Cómo puede una empresa reducir el gasto en tokens de IA?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1118,10 +1118,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Es más barato tener infraestructura propia de IA que pagar por API?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Es más barato tener infraestructura propia de IA que pagar por API?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1130,10 +1130,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1142,10 +1142,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1154,10 +1154,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Cuánto tiempo dura la implementación?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Cuánto tiempo dura la implementación?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1166,10 +1166,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Qué pasa si los ahorros no justifican la implementación?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Qué pasa si los ahorros no justifican la implementación?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1178,10 +1178,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Necesito ajustar el código de la aplicación?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Necesito ajustar el código de la aplicación?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1190,10 +1190,10 @@
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel p-6 border-border hover:border-neon/30 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h2 class="text-base font-bold text-white pr-4">¿Qué es un LLM privado y en qué se diferencia de ChatGPT?</h2>
-                                <span class="accordion-icon text-neon text-xl font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-neon/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-neon transition-colors pr-4 leading-snug">¿Qué es un LLM privado y en qué se diferencia de ChatGPT?</h3>
+                                <span class="accordion-icon text-neon text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
                                 <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">
@@ -1205,61 +1205,61 @@
                 </div>
 
                 <!-- Glossary Section (5 cols) -->
-                <div class="lg:col-span-5 space-y-8" id="glosario">
+                <div class="lg:col-span-5" id="glosario">
                     <div>
                         <span class="font-mono text-xs font-bold uppercase tracking-brand text-cyan mb-3 block">Glosario Técnico</span>
-                        <h2 class="text-2xl font-bold tracking-[-1px] text-white">Conceptos Clave de IA</h2>
-                        <p class="mt-4 text-slate text-sm">Definiciones de los términos esenciales en infraestructura y desarrollo de inteligencia artificial.</p>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-[-1px] text-white">Conceptos Clave de IA</h2>
+                        <p class="mt-4 text-slate text-sm sm:text-base leading-relaxed">Definiciones de los términos esenciales en infraestructura y desarrollo de inteligencia artificial.</p>
                     </div>
 
-                    <div class="space-y-4 mt-8">
-                        <div class="accordion-item p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">RAG (Generación Aumentada por Recuperación)</h4>
-                                <span class="accordion-icon text-cyan text-base font-bold transition-transform duration-300 shrink-0">+</span>
+                    <div class="space-y-3 mt-8">
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-cyan/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h4 class="text-xs sm:text-sm font-bold text-cyan font-mono uppercase tracking-wider group-hover:text-white transition-colors">RAG (Generación Aumentada por Recuperación)</h4>
+                                <span class="accordion-icon text-cyan text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-slate text-xs mt-3 pt-3 border-t border-border/30 leading-relaxed">Técnica que conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas precisas y actuales sin entrenar el modelo desde cero.</p>
+                                <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">Técnica que conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas precisas y actuales sin entrenar el modelo desde cero.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Inferencia</h4>
-                                <span class="accordion-icon text-cyan text-base font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-cyan/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h4 class="text-xs sm:text-sm font-bold text-cyan font-mono uppercase tracking-wider group-hover:text-white transition-colors">Inferencia</h4>
+                                <span class="accordion-icon text-cyan text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-slate text-xs mt-3 pt-3 border-t border-border/30 leading-relaxed">El proceso por el cual un modelo de inteligencia artificial entrenado procesa datos de entrada y genera una predicción o respuesta (por ejemplo, resúmenes o clasificaciones).</p>
+                                <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">El proceso por el cual un modelo de inteligencia artificial entrenado procesa datos de entrada y genera una predicción o respuesta (por ejemplo, resúmenes o clasificaciones).</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">GPU Dedicada</h4>
-                                <span class="accordion-icon text-cyan text-base font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-cyan/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h4 class="text-xs sm:text-sm font-bold text-cyan font-mono uppercase tracking-wider group-hover:text-white transition-colors">GPU Dedicada</h4>
+                                <span class="accordion-icon text-cyan text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-slate text-xs mt-3 pt-3 border-t border-border/30 leading-relaxed">Unidad de procesamiento gráfico asignada exclusivamente a una empresa para ejecutar tareas de IA en tiempo real 24/7 sin compartir recursos con terceros.</p>
+                                <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">Unidad de procesamiento gráfico asignada exclusivamente a una empresa para ejecutar tareas de IA en tiempo real 24/7 sin compartir recursos con terceros.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">Tokens</h4>
-                                <span class="accordion-icon text-cyan text-base font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-cyan/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h4 class="text-xs sm:text-sm font-bold text-cyan font-mono uppercase tracking-wider group-hover:text-white transition-colors">Tokens</h4>
+                                <span class="accordion-icon text-cyan text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-slate text-xs mt-3 pt-3 border-t border-border/30 leading-relaxed">La unidad básica de procesamiento en los modelos de lenguaje (aproximadamente 4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.</p>
+                                <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">La unidad básica de procesamiento en los modelos de lenguaje (aproximadamente 4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item p-5 rounded-xl bg-surface/50 border border-border hover:border-cyan/20 transition">
-                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
-                                <h4 class="text-sm font-bold text-white font-mono uppercase tracking-wider text-cyan">LLM Privado</h4>
-                                <span class="accordion-icon text-cyan text-base font-bold transition-transform duration-300 shrink-0">+</span>
+                        <div class="accordion-item glass-panel px-5 py-3 sm:px-6 sm:py-3.5 border-border hover:border-cyan/40 transition">
+                            <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
+                                <h4 class="text-xs sm:text-sm font-bold text-cyan font-mono uppercase tracking-wider group-hover:text-white transition-colors">LLM Privado</h4>
+                                <span class="accordion-icon text-cyan text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-slate text-xs mt-3 pt-3 border-t border-border/30 leading-relaxed">Modelo de lenguaje desplegado en exclusiva sobre la infraestructura de tu empresa. Se construye sobre arquitecturas de pesos abiertos (open source, como Llama o Mistral), por lo que no paga licencia por token y ningún dato sale de tu red.</p>
+                                <p class="text-slate text-sm leading-relaxed mt-3 pt-3 border-t border-border/30">Modelo de lenguaje desplegado en exclusiva sobre la infraestructura de tu empresa. Se construye sobre arquitecturas de pesos abiertos (open source, como Llama o Mistral), por lo que no paga licencia por token y ningún dato sale de tu red.</p>
                             </div>
                         </div>
                     </div>
@@ -1269,46 +1269,7 @@
         </div>
     </section>
 
-    <footer class="border-t border-border py-12">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="flex flex-col items-center md:items-start gap-2">
-                    <a href="#" class="flex flex-col gap-0.5">
-                        <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto" loading="lazy">
-                    </a>
-                </div>
-                
-                <!-- Redes Sociales -->
-                <div class="flex items-center gap-3">
-                    <!-- <a href="https://www.linkedin.com/in/juan-esteban-cifuentes-ospina-086853314/" target="_blank" rel="noopener noreferrer" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-neon/40" aria-label="LinkedIn">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
-                    <a href="#" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-neon/40" aria-label="Twitter">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    </a> -->
-                    <a href="https://www.instagram.com/sooniverse.co/" target="_blank" rel="noopener noreferrer" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-violet/40" aria-label="Instagram">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                    </a>
-                    <a href="https://www.facebook.com/share/1XyhSDr97c/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="text-slate hover:text-white transition p-2 rounded-lg bg-surface border border-border hover:border-cyan/40" aria-label="Facebook">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
-                    </a>
-                </div>
-                
-                <div class="flex items-center gap-6 text-sm text-slate">
-                    <a href="mailto:contacto@sooniverse.co" class="text-xs font-mono text-slate hover:text-cyan transition-colors duration-300 flex items-center gap-1.5 mt-1">
-                        <svg class="w-3.5 h-3.5 text-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        <span>contacto@sooniverse.co</span>
-                    </a>
-                    <!-- <a href="#" class="hover:text-white transition">Privacidad</a>
-                    <a href="#" class="hover:text-white transition">Terminos</a>
-                    <a href="#" class="hover:text-white transition">Status</a> -->
-                </div>
-                <p class="text-xs text-slate">&copy; {% now "Y" %} Sooniverse. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
+    {% include 'core/includes/footer.html' %}
 
     <script>
         (function() {
