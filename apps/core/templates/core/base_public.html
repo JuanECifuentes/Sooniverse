@@ -75,15 +75,15 @@
     <div class="noise-overlay"></div>
 
     <header class="border-b border-border bg-surface/80 backdrop-blur-xl sticky top-0 z-30">
-        <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-6 py-4 lg:px-8 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2">
-                <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-8 w-auto">
+                <img src="{% static 'logos_v1/animado.svg' %}" alt="Sooniverse" class="h-8 w-auto">
             </a>
             <span class="font-mono text-[10px] uppercase tracking-brand text-neon">{% block header_label %}Diagnóstico Técnico{% endblock %}</span>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-6 py-12">
+    <main class="max-w-7xl mx-auto px-6 lg:px-8">
         {% block content %}{% endblock %}
     </main>
 

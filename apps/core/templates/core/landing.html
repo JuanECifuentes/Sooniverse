@@ -458,7 +458,7 @@
     <header id="main-header">
         <nav class="flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
             <a href="#" class="flex flex-col gap-0.5 group md:justify-self-start">
-                <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="logo-img w-auto">
+                <img src="{% static 'logos_v1/animado.svg' %}" alt="Sooniverse" class="logo-img w-auto">
             </a>
 
             <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-slate">
@@ -752,29 +752,25 @@
         </div>
     </section>
 
-    <!-- CTA → Booking público (/agendar/). La sección antes alojaba el
-         formulario de contacto; ahora el agendamiento vive en su propia
-         página con selector de fecha, hora y zona horaria. -->
-    <section id="contacto" class="py-24 border-b border-border">
-        <div class="max-w-4xl mx-auto px-6 lg:px-8">
-            <div class="relative rounded-3xl border border-border bg-gradient-to-br from-surface to-deep p-10 sm:p-16 text-center overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan opacity-10 blur-[80px] rounded-full"></div>
-                <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon opacity-10 blur-[80px] rounded-full"></div>
-                <div class="relative">
-                    <div class="inline-flex items-center gap-2 glass-panel px-3 py-1.5 mb-6">
+    <!-- CTA → Banda transversal hacia el booking público (/agendar/) -->
+    <section id="contacto" class="relative py-24 sm:py-28 border-y border-border bg-gradient-to-r from-surface via-deep to-surface overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(0,255,135,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(96,239,255,0.08),transparent_50%)] pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-4">
                         <span class="w-2 h-2 rounded-full bg-neon glow-dot animate-pulse-slow"></span>
                         <span class="font-mono text-[11px] font-bold uppercase tracking-widest text-neon">Llamada exploratoria · 30 min</span>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Agenda una reunión y te mostramos tu ahorro real.</h2>
-                    <p class="mt-4 text-slate max-w-xl mx-auto">Elige directamente el día y la hora que te convenga en nuestro calendario de reuniones; en la llamada te entregamos el cálculo de costos y la arquitectura propuesta para tu caso.</p>
-                    <div class="mt-8">
-                        <a href="{% url 'core:booking_publico' %}" class="btn-primary inline-block px-10 py-4 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
-                            Reservar una reunión
-                        </a>
-                    </div>
-                    <p class="mt-5 text-xs text-slate">
-                        Sin compromiso. Cumplimiento RGPD y políticas de privacidad empresariales.
-                    </p>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-[-1px] text-white">¿Listo para tener tu propia plataforma de IA ?</h2>
+                    <p class="mt-3 text-base sm:text-lg text-slate leading-relaxed">Hable sobre su caso de uso con un especialista en IA de nuestro equipo.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-3 shrink-0">
+                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold text-deep uppercase tracking-wide transition-all shadow-[0_0_20px_rgba(0,255,135,0.3)] hover:shadow-[0_0_30px_rgba(0,255,135,0.5)]">
+                        <span>Reservar una reunión</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                    <span class="text-xs text-slate font-mono tracking-wide">Sin compromiso · 30 min</span>
                 </div>
             </div>
         </div>

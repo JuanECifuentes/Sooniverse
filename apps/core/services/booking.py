@@ -152,9 +152,14 @@ def slots_para_fecha(fecha_iso: str, tz_name: str | None) -> dict:
     }
 
 
-def fechas_disponibles(tz_name: str | None) -> list[str]:
-    """Próximas fechas (en la zona horaria del visitante) con al menos un
-    slot reservable dentro de la ventana de apertura. Orden cronológico."""
+def disponibilidad_completa_ventana(tz_name: str | None) -> dict:
+    """Calcula y devuelve las fechas disponibles y los slots libres de cada una en
+    la zona horaria del visitante para toda la ventana de agenda abierta.
+
+    Permite al frontend cargar toda la disponibilidad en una única petición inicial,
+    de modo que el usuario pueda cambiar de fecha instantáneamente sin nuevas
+    llamadas al backend.
+    """
     config = BookingConfig.get_solo()
     tz_valida = zona_segura(tz_name)
     tz_visitante = ZoneInfo(tz_valida)
@@ -181,7 +186,11 @@ def fechas_disponibles(tz_name: str | None) -> list[str]:
             )
 
     if not catalogo:
-        return []
+        return {
+            "zona_horaria": tz_valida,
+            "fechas_disponibles": [],
+            "slots_por_fecha": {},
+        }
 
     todas = sorted(s for slots in catalogo.values() for s in slots)
     ocupados = _inicios_confirmados(
@@ -191,19 +200,31 @@ def fechas_disponibles(tz_name: str | None) -> list[str]:
     pasos = timedelta(minutes=config.duracion_min).total_seconds()
 
     fechas = []
+    slots_por_fecha = {}
     for delta in range(config.dias_apertura + 1):
         fecha = hoy_visitante + timedelta(days=delta)
         slots = catalogo.get(fecha, [])
-        # Ojo: un slot "libre" aquí es referencial (rápido, para decidir qué
-        # fechas mostrar); la validez exacta se re-ejecuta en validar_slot().
         libres = [
             s
             for s in slots
             if not any(abs((o - s).total_seconds()) < pasos for o in ocupados)
         ]
         if libres:
-            fechas.append(fecha.isoformat())
-    return fechas
+            fecha_iso = fecha.isoformat()
+            fechas.append(fecha_iso)
+            slots_por_fecha[fecha_iso] = [s.isoformat() for s in sorted(libres)]
+
+    return {
+        "zona_horaria": tz_valida,
+        "fechas_disponibles": fechas,
+        "slots_por_fecha": slots_por_fecha,
+    }
+
+
+def fechas_disponibles(tz_name: str | None) -> list[str]:
+    """Próximas fechas (en la zona horaria del visitante) con al menos un
+    slot reservable dentro de la ventana de apertura. Orden cronológico."""
+    return disponibilidad_completa_ventana(tz_name)["fechas_disponibles"]
 
 
 def validar_slot(inicio_utc: datetime) -> tuple[bool, str]:

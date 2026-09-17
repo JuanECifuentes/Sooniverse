@@ -671,14 +671,14 @@ class SyncSchedulesCommandTestCase(TestCase):
 # Booking público (/agendar/)
 # ──────────────────────────────────────────────
 
-from datetime import datetime
+from datetime import datetime, time, timedelta
 from datetime import timezone as dt_timezone
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.utils import timezone as dj_tz
 
-from .models import Appointment, DiaHorario
+from .models import Appointment, BookingConfig, DiaHorario
 from .services import booking as booking_svc
 
 
@@ -1012,3 +1012,145 @@ class ProcesoNuevoAgendamientoTestCase(TestCase):
         # fueron reclamados, no debe enviarse nada más.
         procesar_nuevo_agendamiento(appointment.pk)
         self.assertEqual(mock_envio.call_count, 2)
+
+
+class InmutabilidadCitasYSeguridadTestCase(TestCase):
+    """Pruebas de inmutabilidad de citas existentes ante cambios de configuración
+    interna y seguridad de agendamiento via API con reCAPTCHA."""
+
+    def setUp(self):
+        BookingConfig.objects.all().delete()
+        DiaHorario.objects.all().delete()
+        self.config = BookingConfig.objects.create(
+            duracion_min=30,
+            anticipo_min=120,
+            dias_apertura=14,
+        )
+        for d in range(7):
+            DiaHorario.objects.create(
+                dia=d,
+                activo=(d < 5),
+                hora_inicio=time(9, 0),
+                hora_fin=time(18, 0),
+            )
+
+    def test_cambio_configuracion_no_modifica_citas_existentes(self):
+        """Un cambio interno en la duración de slots, antelación, días de apertura
+        o días de horario laboral no altera las citas ya creadas ni las fechas
+        comprometidas con los clientes."""
+        lead = Lead.objects.create(
+            nombre="Carlos Mendoza",
+            correo="carlos@empresa.com",
+            telefono="+573001234567",
+            estado=Lead.Estado.REUNION_CONFIRMADA,
+        )
+        inicio_original = datetime(2026, 10, 15, 15, 0, tzinfo=dt_timezone.utc)
+        fin_original = inicio_original + timedelta(minutes=30)
+        lead.meeting_at = inicio_original
+        lead.save()
+
+        cita = Appointment.objects.create(
+            lead=lead,
+            inicio=inicio_original,
+            fin=fin_original,
+            duracion_min=30,
+            zona_horaria="America/Bogota",
+            consentimiento=True,
+            estado=Appointment.Estado.CONFIRMADA,
+        )
+
+        # Se modifica drásticamente la configuración del sistema
+        self.config.duracion_min = 60
+        self.config.anticipo_min = 360
+        self.config.dias_apertura = 3
+        self.config.save()
+
+        # Se modifica el horario del día y se desactiva
+        dia_semana = inicio_original.astimezone(ZoneInfo("America/Bogota")).weekday()
+        horario = DiaHorario.objects.get(dia=dia_semana)
+        horario.activo = False
+        horario.hora_inicio = time(14, 0)
+        horario.hora_fin = time(16, 0)
+        horario.save()
+
+        # Verificar que la cita existente en BD permanece 100% intacta
+        cita.refresh_from_db()
+        lead.refresh_from_db()
+
+        self.assertEqual(cita.inicio, inicio_original)
+        self.assertEqual(cita.fin, fin_original)
+        self.assertEqual(cita.duracion_min, 30)  # Mantiene su duración persistida
+        self.assertEqual(cita.estado, Appointment.Estado.CONFIRMADA)
+        self.assertEqual(lead.meeting_at, inicio_original)
+
+        # La cita existente sigue ocupando su rango e impidiendo colisiones
+        ocupado = Appointment.objects.filter(
+            estado=Appointment.Estado.CONFIRMADA,
+            inicio=inicio_original,
+        ).exists()
+        self.assertTrue(ocupado)
+
+    @patch("apps.core.views_booking.verify_recaptcha")
+    def test_api_reservar_sin_recaptcha_o_invalido_es_rechazada(self, mock_recaptcha):
+        """La API de reservar debe rechazar sin excepción cualquier petición que
+        no pase la verificación de reCAPTCHA."""
+        import json
+
+        url = reverse("core:booking_reservar")
+        slot_inicio = datetime.now(dt_timezone.utc) + timedelta(days=2)
+        slot_iso = slot_inicio.replace(microsecond=0).isoformat()
+
+        # Caso 1: reCAPTCHA falla por token faltante o rechazado
+        mock_recaptcha.return_value = (False, "missing-token")
+        payload = {
+            "inicio": slot_iso,
+            "zona_horaria": "America/Bogota",
+            "nombre": "Test Bot",
+            "correo": "bot@spam.com",
+            "telefono_prefijo": "+57",
+            "telefono_numero": "3001234567",
+            "consentimiento": True,
+            "g-recaptcha-response": "",
+        }
+        res = self.client.post(
+            url, data=json.dumps(payload), content_type="application/json"
+        )
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+        # Caso 2: reCAPTCHA falla por acción incorrecta
+        mock_recaptcha.return_value = (False, "action-mismatch:otra_accion")
+        payload["g-recaptcha-response"] = "fake-token"
+        res = self.client.post(
+            url, data=json.dumps(payload), content_type="application/json"
+        )
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+        # Caso 3: reCAPTCHA falla por score muy bajo (bot detectado)
+        mock_recaptcha.return_value = (False, "low-score:0.10")
+        res = self.client.post(
+            url, data=json.dumps(payload), content_type="application/json"
+        )
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+    @patch("apps.core.views_booking.verify_recaptcha", return_value=(True, "ok:1.00"))
+    def test_api_disponibilidad_retorna_mapa_en_lote(self, mock_recaptcha):
+        """La API de disponibilidad debe devolver 'slots_por_fecha' y 'fechas_disponibles'
+        para permitir carga en una sola petición."""
+        url = reverse("core:booking_disponibilidad")
+        res = self.client.get(
+            url, {"tz": "America/Bogota", "g-recaptcha-response": "valid-token"}
+        )
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertTrue(data["success"])
+        self.assertIn("fechas_disponibles", data)
+        self.assertIn("slots_por_fecha", data)
+        self.assertIsInstance(data["fechas_disponibles"], list)
+        self.assertIsInstance(data["slots_por_fecha"], dict)
+        if data["fechas_disponibles"]:
+            primera = data["fechas_disponibles"][0]
+            self.assertIn(primera, data["slots_por_fecha"])
+

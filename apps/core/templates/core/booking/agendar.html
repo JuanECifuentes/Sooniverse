@@ -8,192 +8,369 @@
 {% block extra_head %}
 {% if RECAPTCHA_SITE_KEY %}<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}" async defer></script>{% endif %}
 <style>
-    /* ── Layout del booking (CSS propio: el dist Tailwind no incluye
-       variantes responsive compiladas) ───────────────────────────── */
-    .booking-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 90px; }
-    .booking-grid { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
-    @media (min-width: 900px) {
-        .booking-grid { grid-template-columns: 5fr 7fr; gap: 40px; }
+    /* ── Contenedor principal y Grid responsivo ───────────────────────── */
+    .booking-wrap {
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 14px 12px 20px;
+        box-sizing: border-box;
+    }
+    .booking-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        align-items: start;
+        width: 100%;
+    }
+    .booking-grid > * {
+        min-width: 0; /* Evita que los hijos con scroll horizontal desborden el grid */
+    }
+    @media (min-width: 960px) {
+        .booking-grid {
+            grid-template-columns: 310px minmax(0, 1fr);
+            gap: 24px;
+        }
+    }
+    @media (min-width: 1200px) {
+        .booking-grid {
+            grid-template-columns: 330px minmax(0, 1fr);
+            gap: 28px;
+        }
     }
 
-    /* ── Panel izquierdo: logo + mensaje ─────────────────────────────── */
+    /* ── Panel izquierdo: logo + mensaje Sooniverse compacto ─────────── */
     .booking-side {
-        background: rgba(15, 23, 42, 0.8);
+        background: rgba(15, 23, 42, 0.85);
         border: 1px solid #1E293B;
-        border-radius: 12px;
-        padding: 32px 28px;
+        border-radius: 14px;
+        padding: 18px 18px;
         backdrop-filter: blur(12px);
         position: relative;
         overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
     }
     .booking-side .glow-neon, .booking-side .glow-cyan2 {
-        position: absolute; width: 220px; height: 220px; border-radius: 50%; filter: blur(70px); pointer-events: none;
+        position: absolute; width: 200px; height: 200px; border-radius: 50%; filter: blur(75px); pointer-events: none;
     }
-    .booking-side .glow-neon { top: -90px; right: -70px; background: rgba(0, 255, 135, 0.12); }
-    .booking-side .glow-cyan2 { bottom: -90px; left: -70px; background: rgba(96, 239, 255, 0.10); }
-    .booking-side-logo { height: 38px; width: auto; margin-bottom: 22px; }
+    .booking-side .glow-neon { top: -80px; right: -60px; background: rgba(0, 255, 135, 0.12); }
+    .booking-side .glow-cyan2 { bottom: -80px; left: -60px; background: rgba(96, 239, 255, 0.10); }
+    .booking-side-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .booking-side-logo { height: 27px; width: auto; margin-bottom: 0; }
+    .side-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+        letter-spacing: 1.5px; text-transform: uppercase; color: #00FF87;
+        padding: 4px 8px; border: 1px solid rgba(0, 255, 135, 0.25); border-radius: 6px;
+        background: rgba(0, 255, 135, 0.06); margin-bottom: 0;
+        white-space: nowrap;
+    }
     .booking-side-title {
-        font-family: 'Inter', system-ui, sans-serif; font-size: 22px; font-weight: 600;
-        letter-spacing: -0.4px; color: #FFFFFF; line-height: 1.3; margin: 0 0 16px;
+        font-family: 'Inter', system-ui, sans-serif; font-size: 14.5px; font-weight: 600;
+        letter-spacing: -0.2px; color: #FFFFFF; line-height: 1.45; margin: 0 0 10px;
     }
-    .booking-side p { color: #94A3B8; font-size: 15px; line-height: 1.65; margin: 0 0 14px; }
+    .booking-side p { color: #94A3B8; font-size: 13px; line-height: 1.5; margin: 0 0 9px; }
     .booking-side strong { color: #FFFFFF; font-weight: 600; }
-    .booking-side ul { margin: 18px 0; padding: 0; list-style: none; }
+    .booking-side-list {
+        margin: 9px 0; padding: 0 4px 0 0; list-style: none;
+        max-height: 165px; overflow-y: auto;
+        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+    }
+    .booking-side-list::-webkit-scrollbar { width: 4px; }
+    .booking-side-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     .booking-side li {
-        position: relative; padding-left: 20px; color: #94A3B8; font-size: 14.5px;
-        line-height: 1.6; margin-bottom: 10px;
+        position: relative; padding-left: 16px; color: #94A3B8; font-size: 12.5px;
+        line-height: 1.45; margin-bottom: 8px;
     }
     .booking-side li::before {
-        content: ''; position: absolute; left: 0; top: 0.55em;
-        width: 6px; height: 6px; border-radius: 50%; background: #00FF87;
-        box-shadow: 0 0 8px rgba(0, 255, 135, 0.6);
+        content: ''; position: absolute; left: 0; top: 0.45em;
+        width: 4.5px; height: 4.5px; border-radius: 50%; background: #00FF87;
+        box-shadow: 0 0 5px rgba(0, 255, 135, 0.6);
     }
-    .booking-side .closing { color: #FFFFFF; font-weight: 600; }
-    .side-badge {
-        display: inline-flex; align-items: center; gap: 8px;
-        font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
-        letter-spacing: 3px; text-transform: uppercase; color: #00FF87;
-        padding: 6px 12px; border: 1px solid rgba(0, 255, 135, 0.25); border-radius: 6px;
-        background: rgba(0, 255, 135, 0.06); margin-bottom: 18px;
-    }
+    .booking-side .closing { color: #FFFFFF; font-weight: 600; margin-top: 10px; font-size: 13px; }
 
-    /* ── Wizard derecha ─────────────────────────────────────────────── */
+    /* ── Wizard y contenedor derecho ─────────────────────────────────── */
+    .booking-main {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid #1E293B;
+        border-radius: 14px;
+        padding: 18px 20px;
+        backdrop-filter: blur(12px);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    @media (min-width: 640px) {
+        .booking-main { padding: 22px 26px; }
+    }
     .progress-row {
         display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace;
-        font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #94A3B8; margin-bottom: 7px;
+        font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px;
     }
-    .progress-track { height: 8px; background: #1E293B; border-radius: 999px; overflow: hidden; }
-    .progress-fill { height: 100%; width: 50%; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); border-radius: 999px; transition: width 0.5s ease; filter: drop-shadow(0 0 6px rgba(0,255,135,.5)); }
-    .step-panel { display: none; margin-top: 26px; }
+    .progress-track { height: 6px; background: #1E293B; border-radius: 999px; overflow: hidden; width: 100%; }
+    .progress-fill {
+        height: 100%; width: 50%;
+        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+        border-radius: 999px; transition: width 0.45s ease; filter: drop-shadow(0 0 6px rgba(0,255,135,.5));
+    }
+    .step-panel { display: none; margin-top: 16px; width: 100%; box-sizing: border-box; }
     .step-panel.active { display: block; }
     .field-label {
-        display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
-        font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px;
-        color: #60EFFF; margin-bottom: 7px;
+        display: block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+        color: #60EFFF; margin-bottom: 5px;
     }
     .input-brand {
-        width: 100%; background: #070A12; border: 1px solid #1E293B; border-radius: 8px;
-        padding: 13px 16px; color: #FFFFFF; font-size: 14px; font-family: 'Inter', system-ui, sans-serif;
+        width: 100%; box-sizing: border-box; background: #070A12; border: 1px solid #1E293B; border-radius: 8px;
+        padding: 9px 13px; color: #FFFFFF; font-size: 13.5px; font-family: 'Inter', system-ui, sans-serif;
         transition: border-color .2s ease, box-shadow .2s ease;
     }
     .input-brand:focus { outline: none; border-color: #60EFFF; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.12); }
-    .textarea-brand { resize: none; }
+    .input-brand.input-err {
+        border-color: #EF4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+    }
+    .field-error-text {
+        color: #EF4444; font-size: 11px; margin-top: 4px; display: none; font-weight: 500;
+    }
+    .field-error-text.show { display: block; }
+    .textarea-brand { resize: vertical; min-height: 52px; }
 
-    /* Selector de zona horaria / país */
-    .select-wrap { position: relative; }
+    /* Fila de 2 columnas para campos combinados */
+    .form-row-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    @media (max-width: 640px) {
+        .form-row-2col {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+    }
+
+    /* Selector de zona horaria descriptivo */
+    .select-wrap { position: relative; width: 100%; }
     .select-wrap::after {
         content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
         color: #94A3B8; pointer-events: none; font-size: 12px;
     }
-    .select-brand { appearance: none; -webkit-appearance: none; padding-right: 38px !important; }
-
-    /* Teléfono con prefijo + bandera */
-    .phone-row { display: flex; gap: 10px; }
-    .phone-prefix {
-        display: flex; align-items: center; gap: 8px; background: #070A12;
-        border: 1px solid #1E293B; border-radius: 8px; padding: 0 10px 0 12px;
-        position: relative; flex-shrink: 0;
+    .select-brand { appearance: none; -webkit-appearance: none; padding-right: 38px !important; cursor: pointer; }
+    .select-brand option { background: #070A12; color: #FFFFFF; padding: 6px; }
+    .tz-preview {
+        display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        color: #60EFFF; background: rgba(96, 239, 255, 0.06); border: 1px solid rgba(96, 239, 255, 0.2);
+        border-radius: 6px; padding: 5px 10px; margin-top: 5px; line-height: 1.4;
     }
-    /* select prefijo transparente encima */
-    .phone-prefix select {
-        appearance: none; -webkit-appearance: none; background: transparent; border: 0; color: #FFFFFF;
-        font-size: 14px; font-family: 'JetBrains Mono', monospace; padding: 13px 6px 13px 0; cursor: pointer; outline: none;
-        text-align: center;
-    }
-    .phone-flag { width: 22px; height: 15px; border-radius: 2px; object-fit: cover; flex-shrink: 0; filter: drop-shadow(0 0 3px rgba(0,0,0,.6)); }
 
-    /* Tira de fechas */
-    .dates-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 20px; }
-    .dates-strip::-webkit-scrollbar { height: 6px; }
+    /* Teléfono con selector de prefijo con bandera gráfica y dropdown */
+    .phone-row { display: flex; gap: 8px; width: 100%; box-sizing: border-box; align-items: stretch; position: relative; }
+    .phone-prefix-wrap {
+        position: relative; flex: 0 0 106px; min-width: 98px; max-width: 114px;
+        box-sizing: border-box;
+    }
+    .phone-prefix-btn {
+        display: flex; align-items: center; justify-content: space-between;
+        width: 100%; height: 100%; min-height: 38px;
+        background: #070A12; border: 1px solid #1E293B; border-radius: 8px;
+        padding: 0 8px 0 10px; cursor: pointer; color: #FFFFFF;
+        box-sizing: border-box; transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .phone-prefix-btn:focus, .phone-prefix-btn.open {
+        outline: none; border-color: #60EFFF; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.12);
+    }
+    .phone-flag {
+        width: 20px; height: 14px; border-radius: 2px; object-fit: cover;
+        flex-shrink: 0; filter: drop-shadow(0 0 2px rgba(0,0,0,.6));
+    }
+    .phone-dial-val {
+        font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+        color: #FFFFFF; margin-left: 6px; margin-right: auto;
+    }
+    .phone-caret {
+        color: #94A3B8; font-size: 11px; margin-left: 4px; pointer-events: none;
+    }
+    .phone-dropdown-menu {
+        position: absolute; top: calc(100% + 4px); left: 0;
+        width: 240px; max-height: 210px; overflow-y: auto;
+        background: #0B1120; border: 1px solid #1E293B; border-radius: 8px;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75); z-index: 60;
+        padding: 4px 0; margin: 0; list-style: none;
+        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+    }
+    .phone-dropdown-menu::-webkit-scrollbar { width: 4px; }
+    .phone-dropdown-menu::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .phone-dropdown-item {
+        display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+        cursor: pointer; transition: background .15s ease;
+        font-size: 12px; color: #E2E8F0; text-align: left; width: 100%;
+        box-sizing: border-box; background: transparent; border: 0;
+    }
+    .phone-dropdown-item:hover, .phone-dropdown-item:focus {
+        background: rgba(96, 239, 255, 0.12); outline: none;
+    }
+    .phone-dropdown-item.selected {
+        background: rgba(0, 255, 135, 0.12); color: #00FF87; font-weight: 600;
+    }
+    .phone-dropdown-item .item-flag {
+        width: 18px; height: 13px; border-radius: 2px; object-fit: cover; flex-shrink: 0;
+    }
+    .phone-dropdown-item .item-name {
+        flex: 1 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .phone-dropdown-item .item-dial {
+        font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #60EFFF; font-weight: 600;
+    }
+    .phone-number-wrap { flex: 1 1 auto; min-width: 0; }
+
+    /* Tira de fechas horizontal con scroll suave y sin recorte de animación */
+    .dates-strip {
+        display: flex; gap: 8px; overflow-x: auto;
+        padding: 6px 4px 8px 4px;
+        margin: -4px -4px 12px -4px;
+        width: calc(100% + 8px); box-sizing: border-box; -webkit-overflow-scrolling: touch;
+    }
+    .dates-strip::-webkit-scrollbar { height: 5px; }
+    .dates-strip::-webkit-scrollbar-track { background: #0B1120; border-radius: 999px; }
+    .dates-strip::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    .dates-strip::-webkit-scrollbar-thumb:hover { background: #475569; }
+
     .date-chip {
-        flex-shrink: 0; min-width: 74px; padding: 12px 10px; border-radius: 10px; cursor: pointer;
+        flex-shrink: 0; min-width: 66px; padding: 7px 5px; border-radius: 8px; cursor: pointer;
         background: #0F172A; border: 1px solid #1E293B; text-align: center; color: #94A3B8;
-        transition: all .25s ease; display: flex; flex-direction: column; align-items: center; gap: 2px;
+        transition: all .22s ease; display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
     .date-chip:hover { border-color: rgba(96, 239, 255, 0.5); transform: translateY(-2px); }
     .date-chip.selected {
         background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
         border-color: transparent; color: #070A12; font-weight: 700;
-        filter: drop-shadow(0 0 12px rgba(0, 255, 135, 0.45));
+        filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.45));
     }
-    .date-chip .dow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
-    .date-chip .dnum { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; line-height: 1.1; }
-    .date-chip .mon { font-size: 11px; }
+    .date-chip .dow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+    .date-chip .dnum { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; line-height: 1.1; }
+    .date-chip .mon { font-size: 10px; }
 
-    /* Grid de slots */
-    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 10px; }
+    /* Grid de slots de horario */
+    .slots-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+        gap: 7px; width: 100%; box-sizing: border-box;
+        max-height: 180px; overflow-y: auto; padding: 2px 2px 2px 0;
+        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+    }
+    .slots-grid::-webkit-scrollbar { width: 4px; }
+    .slots-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     .slot-btn {
-        padding: 11px 8px; border-radius: 8px; border: 1px solid #1E293B; background: #0F172A;
-        color: #94A3B8; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
-        cursor: pointer; transition: all .22s ease; text-align: center; letter-spacing: 0.5px;
+        padding: 7px 4px; border-radius: 6px; border: 1px solid #1E293B; background: #0F172A;
+        color: #94A3B8; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+        cursor: pointer; transition: all .2s ease; text-align: center; letter-spacing: 0.3px;
     }
     .slot-btn:hover { border-color: rgba(96, 239, 255, 0.55); color: #FFFFFF; transform: translateY(-2px); }
     .slot-btn.selected {
         background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
         border-color: transparent; color: #070A12; font-weight: 700;
-        filter: drop-shadow(0 0 10px rgba(0, 255, 135, 0.5));
+        filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.5));
     }
-    .empty-state { color: #94A3B8; font-size: 14px; text-align: center; padding: 30px 10px; }
+    .empty-state { color: #94A3B8; font-size: 13px; text-align: center; padding: 20px 10px; }
 
-    /* Checkbox de consentimiento */
+    /* Checkbox de consentimiento compacto */
     .consent-box {
-        display: flex; gap: 12px; align-items: flex-start; padding: 16px;
-        background: rgba(15, 23, 42, 0.8); border: 1px solid #1E293B; border-radius: 10px;
-        cursor: pointer; transition: border-color .2s ease;
+        display: flex; gap: 9px; align-items: flex-start; padding: 7px 10px;
+        background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(30, 41, 59, 0.7); border-radius: 6px;
+        cursor: pointer; transition: border-color .2s ease; width: 100%; box-sizing: border-box;
     }
     .consent-box:hover { border-color: rgba(0, 255, 135, 0.4); }
     .consent-box input[type="checkbox"] {
-        appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px;
-        border: 1.5px solid #475569; border-radius: 5px; background: #070A12; cursor: pointer; position: relative;
+        appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 15px; height: 15px; margin-top: 1px;
+        border: 1.5px solid #475569; border-radius: 3.5px; background: #070A12; cursor: pointer; position: relative;
         transition: all .2s ease;
     }
-    .consent-box input[type="checkbox"]:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 10px rgba(0,255,135,0.45); }
+    .consent-box input[type="checkbox"]:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 6px rgba(0,255,135,0.4); }
     .consent-box input[type="checkbox"]:checked::after {
-        content: ''; position: absolute; left: 6px; top: 2.5px; width: 5px; height: 10px;
-        border: solid #070A12; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+        content: ''; position: absolute; left: 4px; top: 1.5px; width: 4px; height: 7.5px;
+        border: solid #070A12; border-width: 0 2px 2px 0; transform: rotate(45deg);
     }
-    .consent-box span { color: #94A3B8; font-size: 13.5px; line-height: 1.6; }
-    .consent-box.err { border-color: #EF4444; box-shadow: 0 0 12px rgba(239,68,68,0.35); }
+    .consent-box span { color: #94A3B8; font-size: 11.5px; line-height: 1.35; }
+    .consent-box.err { border-color: #EF4444; box-shadow: 0 0 8px rgba(239,68,68,0.3); }
 
-    /* Mensaje de feedback */
-    .form-message { display: none; border-radius: 8px; padding: 12px 16px; margin-top: 4px; font-size: 13.5px; font-weight: 600; }
+    /* Mensajes de feedback */
+    .form-message { display: none; border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 12.5px; font-weight: 500; line-height: 1.4; }
     .form-message.ok { display: block; background: rgba(0,255,135,.08); color: #00FF87; border: 1px solid rgba(0,255,135,.35); }
     .form-message.err { display: block; background: rgba(239,68,68,.08); color: #EF4444; border: 1px solid rgba(239,68,68,.35); }
+    .form-message.info { display: block; background: rgba(96,239,255,.08); color: #60EFFF; border: 1px solid rgba(96,239,255,.35); }
 
-    /* Botones */
+    /* Botones de acción compactos */
     .btn-next {
-        width: 100%; margin-top: 22px; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+        width: 100%; margin-top: 14px; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
         color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 1px; font-size: 13px; border: 0; border-radius: 10px; padding: 15px 22px;
-        cursor: pointer; transition: all .3s ease;
+        letter-spacing: 0.8px; font-size: 12.5px; border: 0; border-radius: 8px; padding: 11px 18px;
+        cursor: pointer; transition: all .3s ease; display: inline-flex; align-items: center; justify-content: center;
+        box-sizing: border-box;
     }
-    .btn-next:hover:not(:disabled) { transform: translateY(-2px); filter: drop-shadow(0 0 12px rgba(0,255,135,0.6)); }
+    .btn-next:hover:not(:disabled) { transform: translateY(-2px); filter: drop-shadow(0 0 10px rgba(0,255,135,0.6)); }
     .btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-back { margin-top: 14px; width: 100%; background: transparent; border: 1.5px solid #60EFFF; color: #FFFFFF; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; border-radius: 10px; padding: 13px 20px; cursor: pointer; transition: all .3s ease; }
-    .btn-back:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(96,239,255,0.35); }
-    .btn-row { display: flex; gap: 12px; margin-top: 22px; }
-    .btn-row .btn-back, .btn-row .btn-next { margin-top: 0; }
+    .btn-back {
+        flex: 0 0 auto; width: auto; background: transparent; border: 1.5px solid #60EFFF;
+        color: #FFFFFF; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; font-size: 11px;
+        border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all .25s ease;
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;
+        margin: 0;
+    }
+    .btn-back:hover { transform: translateY(-2px); box-shadow: 0 0 14px rgba(96,239,255,0.35); }
+    .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; width: 100%; box-sizing: border-box; }
+    .btn-row .btn-back { margin-top: 0; }
+    .btn-row .btn-next { flex: 1 1 auto; width: 100%; min-width: 0; margin-top: 0; padding: 11px 18px; font-size: 12.5px; }
 
-    /* Resumen y éxito */
-    .summary-card { background: #0F172A; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; margin-bottom: 4px; }
-    .summary-card .row { display: flex; justify-content: space-between; gap: 14px; font-size: 14px; padding: 6px 0; }
-    .summary-card .row + .row { border-top: 1px solid #1E293B; }
+    /* Resumen compacto y éxito */
+    .summary-card {
+        background: rgba(15, 23, 42, 0.7); border: 1px solid #1E293B; border-radius: 8px;
+        padding: 8px 14px; margin-bottom: 10px;
+    }
+    .summary-card .row { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; padding: 2.5px 0; }
+    .summary-card .row + .row { border-top: 1px solid rgba(30, 41, 59, 0.7); }
     .summary-card .lbl { color: #94A3B8; }
     .summary-card .val { color: #FFFFFF; font-weight: 600; text-align: right; }
-    .success-panel { text-align: center; padding: 40px 10px 20px; }
+    .success-panel { text-align: center; padding: 30px 10px 16px; }
     .success-panel .check {
-        width: 76px; height: 76px; margin: 0 auto 22px; border-radius: 50%;
+        width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%;
         background: rgba(0,255,135,0.1); border: 1px solid rgba(0,255,135,0.4);
         display: flex; align-items: center; justify-content: center;
-        filter: drop-shadow(0 0 16px rgba(0,255,135,0.4));
+        filter: drop-shadow(0 0 14px rgba(0,255,135,0.4));
     }
-    .success-panel h2 { color: #FFFFFF; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 12px; }
-    .success-panel p { color: #94A3B8; font-size: 15px; line-height: 1.65; margin: 0 0 14px; }
-    .success-panel .dt { font-family: 'JetBrains Mono', monospace; color: #00FF87; font-size: 18px; font-weight: 700; }
+    .success-panel h2 { color: #FFFFFF; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 10px; }
+    .success-panel p { color: #94A3B8; font-size: 13.5px; line-height: 1.5; margin: 0 0 10px; }
+    .success-panel .dt { font-family: 'JetBrains Mono', monospace; color: #00FF87; font-size: 16px; font-weight: 700; }
 
-    .spinner { width: 20px; height: 20px; border: 2.5px solid rgba(7,10,18,0.35); border-top-color: #070A12; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: -4px; margin-right: 8px; }
-    .slots-loading { text-align: center; padding: 26px; color: #94A3B8; }
-    .tz-note { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: #64748B; margin-top: 8px; }
+    /* Spinners de carga */
+    .spinner-ring {
+        width: 28px; height: 28px; border: 3px solid rgba(0, 255, 135, 0.18);
+        border-top-color: #00FF87; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block;
+    }
+    .spinner {
+        width: 16px; height: 16px; border: 2.5px solid rgba(7,10,18,0.35);
+        border-top-color: #070A12; border-radius: 50%; animation: spin .7s linear infinite;
+        display: inline-block; vertical-align: -3px; margin-right: 8px;
+    }
+    .spinner-cyan {
+        width: 16px; height: 16px; border: 2.5px solid rgba(96,239,255,0.25);
+        border-top-color: #60EFFF; border-radius: 50%; animation: spin .7s linear infinite;
+        display: inline-block; vertical-align: -3px; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .booking-init-loader {
+        text-align: center; padding: 48px 20px; background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #1E293B; border-radius: 14px;
+    }
+    .slots-loading { text-align: center; padding: 20px; color: #94A3B8; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
     .grecaptcha-badge { visibility: hidden; }
 </style>
 {% endblock %}
@@ -204,124 +381,157 @@
 <div class="booking-wrap">
     <div class="booking-grid">
 
-        <!-- ── Izquierda: logo + mensaje ─────────────────────────── -->
+        <!-- ── Izquierda: logo + mensaje (Marca Sooniverse) ─────────── -->
         <aside class="booking-side">
             <div class="glow-neon"></div>
             <div class="glow-cyan2"></div>
-            <img src="{% static 'logos_v1/logo_sin_fondo.svg' %}" alt="Sooniverse" class="booking-side-logo">
-            <div class="side-badge">Llamada exploratoria · 30 min</div>
-            <p class="booking-side-title">Únase a nosotros para una llamada exploratoria de 30 minutos donde analizaremos las necesidades de su proyecto y cómo nuestro equipo puede ayudarle.</p>
+            <div class="booking-side-header">
+                <img src="{% static 'logos_v1/logo_sin_fondo.svg' %}" alt="Sooniverse" class="booking-side-logo">
+                <div class="side-badge">Llamada exploratoria · 30 min</div>
+            </div>
+            <p class="booking-side-title">Únase a nosotros para una llamada exploratoria de 30 minutos donde analizaremos las necesidades de su empresa y cómo nuestro equipo puede ayudarle.</p>
             <p>En esta llamada:</p>
-            <ul>
-                <li>Comprenderemos claramente sus objetivos, desafíos y plazos.</li>
-                <li>Le explicaremos cómo <strong>DEV.co</strong> (desarrollo web y de software a medida) y <strong>LLM.co</strong> (soluciones personalizadas de IA/LLM) pueden serle útiles.</li>
-                <li>Responderemos a sus preguntas y le presentaremos los posibles próximos pasos.</li>
+            <ul class="booking-side-list">
+                <li>Comprenderemos a fondo los desafíos, casos de uso y objetivos de Inteligencia Artificial de su organización.</li>
+                <li>Le presentaremos la arquitectura de <strong>Sooniverse</strong> (plataformas privadas de IA y modelos dedicados) y le explicamos que beneficios le trae a usted especificamente.</li>
+                <li>Le entregaremos una estimación de ahorro de costos frente a APIs de terceros y una hoja de ruta técnica personalizada para su infraestructura.</li>
             </ul>
-            <p>Esta es una conversación abierta y sin compromiso, diseñada para descubrir oportunidades y determinar si somos la opción adecuada para respaldar su visión.</p>
+            <p>Esta es una conversación técnica y estratégica, sin compromiso de contratación, para evaluar la viabilidad y el retorno de inversión de su proyecto.</p>
             <p class="closing">¡Esperamos conectar con usted!</p>
         </aside>
 
-        <!-- ── Derecha: wizard ───────────────────────────────────── -->
-        <section>
-            <div class="progress-row">
-                <span id="progress-label">Paso 1 de 2 · Fecha y hora</span>
-                <span id="progress-pct">50%</span>
-            </div>
-            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-
-            <!-- Paso 1: fecha y hora -->
-            <div class="step-panel active" id="step-1">
-                <div style="margin-bottom: 20px;">
-                    <label class="field-label" for="id_tz">Zona horaria</label>
-                    <div class="select-wrap">
-                        <select id="id_tz" class="input-brand select-brand"></select>
-                    </div>
-                    <p class="tz-note">Los horarios se muestran 24h en tu zona · La disponibilidad se calcula en hora Colombia ({{ zona_negocio }})</p>
-                </div>
-
-                <label class="field-label">Elige el día</label>
-                <div id="dates-strip" class="dates-strip"></div>
-
-                <label class="field-label">Elige la hora</label>
-                <div id="slots-loading" class="slots-loading" style="display:none">Cargando horarios disponibles…</div>
-                <div id="slots-grid" class="slots-grid"></div>
-                <div id="slots-empty" class="empty-state" style="display:none">No hay horarios disponibles para esta fecha. Intenta con otro día.</div>
-
-                <button type="button" id="btn-step2" class="btn-next" disabled>Continuar</button>
-            </div>
-
-            <!-- Paso 2: datos -->
-            <div class="step-panel" id="step-2">
-                <div style="display:flex; flex-direction:column; gap:16px;">
-                    <div>
-                        <label class="field-label" for="id_nombre">Nombre Completo *</label>
-                        <input class="input-brand" id="id_nombre" name="nombre" type="text" required placeholder="Ingresa tu nombre completo" autocomplete="name">
-                    </div>
-
-                    <div style="display:grid; grid-template-columns:1fr; gap:16px;">
-                        <div style="grid-column:1 / -1;">
-                            <label class="field-label" for="id_correo">Correo electrónico *</label>
-                            <input class="input-brand" id="id_correo" name="correo" type="email" required placeholder="tu@empresa.com" autocomplete="email">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="id_telefono">Teléfono *</label>
-                        <div class="phone-row">
-                            <div class="phone-prefix">
-                                <img id="phone-flag" src="https://flagcdn.com/w40/co.png" alt="Bandera" class="phone-flag">
-                                <select id="id_telefono_prefijo" aria-label="Prefijo del país"></select>
-                            </div>
-                            <input class="input-brand" id="id_telefono_numero" name="telefono" type="tel" required placeholder="300 123 4567" inputmode="numeric" autocomplete="tel-national">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="id_empresa">Nombre de la Empresa (Opcional)</label>
-                        <input class="input-brand" id="id_empresa" name="empresa" type="text" placeholder="Nombre de tu empresa" autocomplete="organization">
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="id_mensaje">Mensaje (Opcional)</label>
-                        <textarea class="input-brand textarea-brand" id="id_mensaje" name="mensaje" rows="3" placeholder="Cuéntanos sobre tus necesidades actuales"></textarea>
-                    </div>
-
-                    <!-- Honeypot -->
-                    <div style="display:none !important;">
-                        <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
-                    </div>
-
-                    <label class="consent-box" id="consent-box">
-                        <input type="checkbox" id="id_consentimiento">
-                        <span>Confirmo que deseo recibir contenido de esta empresa utilizando la información de contacto que proporciono.</span>
-                    </label>
-                </div>
-
-                <div id="form-message" class="form-message"></div>
-
-                <div class="btn-row">
-                    <button type="button" id="btn-back" class="btn-back" style="flex:0 0 auto; padding: 15px 22px;">Atrás</button>
-                    <button type="button" id="btn-confirm" class="btn-next" disabled>Confirmar reunión</button>
-                </div>
-
-                <p style="margin-top:14px; font-size:11.5px; color:#64748B; text-align:center;">
-                    Este sitio está protegido por reCAPTCHA; aplican la
-                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:#60EFFF;">Política de Privacidad</a> y los
-                    <a href="https://policies.google.com/terms" target="_blank" rel="noopener" style="color:#60EFFF;">Términos de Servicio</a> de Google.
+        <!-- ── Derecha: wizard y reserva ─────────────────────────── -->
+        <section class="booking-main">
+            <!-- Spinner de carga inicial de datos -->
+            <div id="booking-init-loader" class="booking-init-loader">
+                <div class="spinner-ring" style="margin-bottom: 12px;"></div>
+                <p style="font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; color:#60EFFF; margin:0;">
+                    Consultando disponibilidad en tiempo real…
                 </p>
             </div>
 
-            <!-- Éxito -->
-            <div class="step-panel" id="step-done">
-                <div class="success-panel">
-                    <div class="check">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            <!-- Contenido del wizard (se muestra una vez cargados los datos) -->
+            <div id="booking-wizard" style="display:none;">
+                <div class="progress-row">
+                    <span id="progress-label">Paso 1 de 2 · Fecha y hora</span>
+                    <span id="progress-pct">50%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+                <!-- Paso 1: fecha y hora -->
+                <div class="step-panel active" id="step-1">
+                    <div style="margin-bottom: 14px;">
+                        <label class="field-label" for="id_tz">Zona horaria</label>
+                        <div class="select-wrap">
+                            <select id="id_tz" class="input-brand select-brand"></select>
+                        </div>
+                        <div id="tz-preview" class="tz-preview">
+                            <span id="tz-preview-text"></span>
+                        </div>
                     </div>
-                    <h2>¡Reunión agendada con éxito!</h2>
-                    <p>Tu llamada exploratoria quedó agendada para:</p>
-                    <p class="dt" id="done-datetime"></p>
-                    <p id="done-msg">En un lapso máximo de <strong style="color:#00FF87">24 horas</strong> recibirás por correo la invitación con el enlace de la reunión (Google Meet).</p>
-                    <a href="/" style="display:inline-block; margin-top:10px; border:1.5px solid #60EFFF; color:#FFFFFF; text-transform:uppercase; font-weight:700; font-size:12px; padding:12px 22px; border-radius:10px; text-decoration:none; letter-spacing:1px;">Volver al inicio</a>
+
+                    <label class="field-label">Elige el día</label>
+                    <div id="dates-strip" class="dates-strip"></div>
+
+                    <label class="field-label">Elige la hora</label>
+                    <div id="slots-loading" class="slots-loading" style="display:none">
+                        <span class="spinner-cyan"></span> Actualizando horarios…
+                    </div>
+                    <div id="slots-grid" class="slots-grid"></div>
+                    <div id="slots-empty" class="empty-state" style="display:none">No hay horarios disponibles para esta fecha. Intenta con otro día.</div>
+
+                    <button type="button" id="btn-step2" class="btn-next" disabled>Continuar</button>
+                </div>
+
+                <!-- Paso 2: datos del visitante -->
+                <div class="step-panel" id="step-2">
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="form-row-2col">
+                            <div>
+                                <label class="field-label" for="id_nombre">Nombre Completo *</label>
+                                <input class="input-brand" id="id_nombre" name="nombre" type="text" required placeholder="Ingresa tu nombre completo" autocomplete="name">
+                                <div class="field-error-text" id="err-nombre">Por favor ingresa tu nombre completo (mínimo 3 caracteres).</div>
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="id_empresa">Nombre de la Empresa (Opcional)</label>
+                                <input class="input-brand" id="id_empresa" name="empresa" type="text" placeholder="Nombre de tu empresa u organización" autocomplete="organization">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="id_correo">Correo corporativo o profesional *</label>
+                            <input class="input-brand" id="id_correo" name="correo" type="email" required placeholder="tu@empresa.com" autocomplete="email">
+                            <div class="field-error-text" id="err-correo">Ingresa una dirección de correo electrónico válida (ej: nombre@empresa.com).</div>
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="id_telefono_numero">Teléfono móvil *</label>
+                            <div class="phone-row">
+                                <div class="phone-prefix-wrap" id="phone-prefix-wrap">
+                                    <button type="button" class="phone-prefix-btn" id="phone-prefix-btn" aria-haspopup="listbox" aria-expanded="false" title="Seleccionar país">
+                                        <img id="phone-flag" src="https://flagcdn.com/w40/co.png" alt="Bandera" class="phone-flag">
+                                        <span id="phone-dial-val" class="phone-dial-val">+57</span>
+                                        <span class="phone-caret">▾</span>
+                                    </button>
+                                    <div class="phone-dropdown-menu" id="phone-dropdown-menu" role="listbox" style="display:none;"></div>
+                                    <input type="hidden" id="id_telefono_prefijo" name="prefijo" value="CO|+57" data-dial="+57">
+                                </div>
+                                <div class="phone-number-wrap">
+                                    <input class="input-brand" id="id_telefono_numero" name="telefono" type="tel" required placeholder="300 123 4567" inputmode="numeric" autocomplete="tel-national">
+                                </div>
+                            </div>
+                            <div class="field-error-text" id="err-telefono">Ingresa un número de teléfono válido (solo números, entre 6 y 15 dígitos).</div>
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="id_mensaje">Caso de uso o proyecto (Opcional)</label>
+                            <textarea class="input-brand textarea-brand" id="id_mensaje" name="mensaje" rows="2" placeholder="Cuéntanos brevemente sobre tus procesos, volumen o requerimientos de IA"></textarea>
+                        </div>
+
+                        <!-- Honeypot -->
+                        <div style="display:none !important;">
+                            <input type="text" name="website_verification" id="id_website_verification" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <label class="consent-box" id="consent-box">
+                            <input type="checkbox" id="id_consentimiento">
+                            <span>Confirmo que deseo recibir la confirmación de la reunión y contenido técnico de Sooniverse utilizando los datos suministrados.</span>
+                        </label>
+                        <div class="field-error-text" id="err-consentimiento" style="margin-top:-4px;">Debes aceptar el consentimiento para confirmar el agendamiento.</div>
+                    </div>
+
+                    <div id="form-message" class="form-message"></div>
+
+                    <div class="btn-row">
+                        <button type="button" id="btn-back" class="btn-back">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span>Atrás</span>
+                        </button>
+                        <button type="button" id="btn-confirm" class="btn-next" disabled>Confirmar reunión</button>
+                    </div>
+
+                    <p style="margin-top:10px; font-size:10.5px; color:#64748B; text-align:center; line-height:1.4;">
+                        Este sitio está protegido por reCAPTCHA; aplican la
+                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:#60EFFF;">Política de Privacidad</a> y los
+                        <a href="https://policies.google.com/terms" target="_blank" rel="noopener" style="color:#60EFFF;">Términos de Servicio</a> de Google.
+                    </p>
+                </div>
+
+                <!-- Éxito -->
+                <div class="step-panel" id="step-done">
+                    <div class="success-panel">
+                        <div class="check">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <h2>¡Reunión agendada con éxito!</h2>
+                        <p>Tu llamada exploratoria quedó agendada para:</p>
+                        <p class="dt" id="done-datetime"></p>
+                        <p id="done-msg">En un lapso máximo de <strong style="color:#00FF87">24 horas</strong> recibirás por correo la invitación con el enlace de la reunión (Google Meet).</p>
+                        <a href="/" style="display:inline-block; margin-top:14px; border:1.5px solid #60EFFF; color:#FFFFFF; text-transform:uppercase; font-weight:700; font-size:12px; padding:12px 24px; border-radius:10px; text-decoration:none; letter-spacing:1px; transition:all .2s ease;">Volver al inicio</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -340,6 +550,10 @@
 
     const $ = (id) => document.getElementById(id);
 
+    // Regex estrictas de validación client-side
+    const RE_CORREO = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const RE_TELEFONO = /^\d{6,15}$/;
+
     const state = {
         step: 1,
         tz: null,
@@ -347,7 +561,7 @@
         slot: null,
         duracion: 30,
         fechas: [],
-        slots: [],
+        slotsPorFecha: {},
         pais: 'CO',
         cargando: false,
     };
@@ -369,7 +583,6 @@
 
     /* ── Detección de zona horaria / país ───────────────────────────── */
     async function detectarGeo() {
-        // 1) IP geolocalizada (client-side, ipapi.co, gratuito y sin claves).
         try {
             const ctrl = new AbortController();
             const timer = setTimeout(() => ctrl.abort(), 3500);
@@ -381,33 +594,33 @@
                 if (geo.country_code) state.pais = geo.country_code;
                 return;
             }
-        } catch (e) { /* falla silenciosa */ }
-        // 2) Zona horaria del navegador (Intl).
+        } catch (e) { /* fallback silencioso */ }
         try {
             const tzIntl = Intl.DateTimeFormat().resolvedOptions().timeZone;
             if (tzIntl && !state.tz) state.tz = tzIntl;
         } catch (e) { /* noop */ }
     }
 
-    /* ── Zonas horarias ─────────────────────────────────────────────── */
-    function llenarTimezones() {
-        const sel = $('id_tz');
-        let tzs = [];
-        try { tzs = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : []; } catch (e) { tzs = []; }
-        if (!tzs.length) tzs = ['America/Bogota', 'America/New_York', 'America/Mexico_City', 'America/Lima', 'America/Santiago', 'America/Argentina/Buenos_Aires', 'America/Sao_Paulo', 'Europe/Madrid', 'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo', 'Australia/Sydney', 'UTC'];
-        if (!tzs.includes('America/Bogota')) tzs.push('America/Bogota');
-        const set = new Set(tzs.includes(state.tz) ? tzs : [state.tz].concat(tzs));
-        sel.innerHTML = '';
-        [...set].sort().forEach((tz) => {
-            const label = offsetDe(tz) + ' — ' + tz.replaceAll('_', ' ');
-            sel.insertAdjacentHTML('beforeend', `<option value="${tz}" ${tz === state.tz ? 'selected' : ''}>${label}</option>`);
-        });
-        sel.addEventListener('change', () => {
-            state.tz = sel.value;
-            state.slot = null;
-            cargarDisponibilidad(state.fecha);
-        });
-    }
+    /* ── Zonas horarias descriptivas con hora actual ───────────────── */
+    const ZONAS_PRINCIPALES = [
+        { tz: 'America/Bogota', flag: '🇨🇴', pais: 'Colombia / Perú / Ecuador', desc: 'Bogotá, Lima, Quito' },
+        { tz: 'America/Mexico_City', flag: '🇲🇽', pais: 'México Central', desc: 'CDMX, Guadalajara, Monterrey' },
+        { tz: 'America/New_York', flag: '🇺🇸', pais: 'EE. UU. (Este)', desc: 'Miami, Nueva York, Atlanta' },
+        { tz: 'America/Chicago', flag: '🇺🇸', pais: 'EE. UU. (Central)', desc: 'Chicago, Dallas, Houston' },
+        { tz: 'America/Denver', flag: '🇺🇸', pais: 'EE. UU. (Montaña)', desc: 'Denver, Phoenix' },
+        { tz: 'America/Los_Angeles', flag: '🇺🇸', pais: 'EE. UU. (Pacífico)', desc: 'Los Ángeles, San Francisco' },
+        { tz: 'Europe/Madrid', flag: '🇪🇸', pais: 'España', desc: 'Madrid, Barcelona' },
+        { tz: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', pais: 'Argentina / Uruguay', desc: 'Buenos Aires, Montevideo' },
+        { tz: 'America/Santiago', flag: '🇨🇱', pais: 'Chile', desc: 'Santiago' },
+        { tz: 'America/Sao_Paulo', flag: '🇧🇷', pais: 'Brasil', desc: 'São Paulo, Río de Janeiro' },
+        { tz: 'America/Panama', flag: '🇵🇦', pais: 'Panamá', desc: 'Ciudad de Panamá' },
+        { tz: 'America/Costa_Rica', flag: '🇨🇷', pais: 'Centroamérica', desc: 'San José, Guatemala, El Salvador' },
+        { tz: 'America/Caracas', flag: '🇻🇪', pais: 'Venezuela', desc: 'Caracas' },
+        { tz: 'America/La_Paz', flag: '🇧🇴', pais: 'Bolivia', desc: 'La Paz' },
+        { tz: 'America/Santo_Domingo', flag: '🇩🇴', pais: 'República Dominicana', desc: 'Santo Domingo' },
+        { tz: 'Europe/London', flag: '🇬🇧', pais: 'Reino Unido', desc: 'Londres' },
+        { tz: 'Europe/Paris', flag: '🇪🇺', pais: 'Europa Central', desc: 'París, Berlín, Roma' },
+    ];
 
     function offsetDe(tz) {
         try {
@@ -418,33 +631,112 @@
         } catch (e) { return ''; }
     }
 
-    /* ── Formato 24h ────────────────────────────────────────────────── */
+    function horaActualEn(tz) {
+        try {
+            return new Intl.DateTimeFormat('es-CO', {
+                timeZone: tz,
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+            }).format(new Date());
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function actualizarPreviewTz() {
+        const preview = $('tz-preview-text');
+        if (!preview) return;
+        const horaVisitante = horaActualEn(state.tz);
+        const offset = offsetDe(state.tz);
+        preview.textContent = `📍 Tu hora seleccionada: ${horaVisitante} (${offset})`;
+    }
+
+    function llenarTimezones() {
+        const sel = $('id_tz');
+        sel.innerHTML = '';
+
+        const optGroupPrincipal = document.createElement('optgroup');
+        optGroupPrincipal.label = 'Zonas horarias frecuentes';
+
+        const agregados = new Set();
+        ZONAS_PRINCIPALES.forEach((item) => {
+            agregados.add(item.tz);
+            const opt = document.createElement('option');
+            opt.value = item.tz;
+            const hora = horaActualEn(item.tz);
+            const off = offsetDe(item.tz);
+            opt.textContent = `${item.pais} (${item.desc}) · ${hora} [${off}]`;
+            if (item.tz === state.tz) opt.selected = true;
+            optGroupPrincipal.appendChild(opt);
+        });
+        sel.appendChild(optGroupPrincipal);
+
+        // Si la zona detectada no está en la lista principal, se añade como primera opción
+        if (state.tz && !agregados.has(state.tz)) {
+            const optPropia = document.createElement('option');
+            optPropia.value = state.tz;
+            optPropia.textContent = `Tu zona: ${state.tz.replaceAll('_', ' ')} · ${horaActualEn(state.tz)} [${offsetDe(state.tz)}]`;
+            optPropia.selected = true;
+            sel.prepend(optPropia);
+            agregados.add(state.tz);
+        }
+
+        // Otras zonas del sistema
+        let todasTz = [];
+        try { todasTz = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : []; } catch (e) { todasTz = []; }
+        const restantes = todasTz.filter(t => !agregados.has(t)).sort();
+        if (restantes.length) {
+            const optGroupOtras = document.createElement('optgroup');
+            optGroupOtras.label = 'Otras zonas del mundo';
+            restantes.forEach((tz) => {
+                const opt = document.createElement('option');
+                opt.value = tz;
+                opt.textContent = `${tz.replaceAll('_', ' ')} · ${horaActualEn(tz)} [${offsetDe(tz)}]`;
+                optGroupOtras.appendChild(opt);
+            });
+            sel.appendChild(optGroupOtras);
+        }
+
+        actualizarPreviewTz();
+
+        sel.addEventListener('change', () => {
+            state.tz = sel.value;
+            state.slot = null;
+            actualizarPreviewTz();
+            cargarDisponibilidad();
+        });
+    }
+
+    /* ── Formato de fechas y horas ─────────────────────────────────── */
     const DOW = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom', 'Lun'];
     const MON = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
     function fmtHora(iso) {
         const d = new Date(iso);
-        const p = new Intl.DateTimeFormat('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: state.tz }).format(d);
-        return p;
-    }
-    function fmtLarga(iso) {
-        const d = new Date(iso);
-        const fecha = new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: state.tz }).format(d);
-        const hora = fmtHora(iso);
-        return `${fecha}, ${hora} (${state.tz})`;
+        return new Intl.DateTimeFormat('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: state.tz }).format(d);
     }
 
-    /* ── Disponibilidad ─────────────────────────────────────────────── */
-    async function cargarDisponibilidad(fechaOpcional) {
+    /* ── Carga en lote de disponibilidad (Una sola petición) ────────── */
+    async function cargarDisponibilidad() {
         if (state.cargando) return;
         state.cargando = true;
-        $('slots-loading').style.display = 'block';
+
+        const loader = $('booking-init-loader');
+        const wizard = $('booking-wizard');
+        const slotsLoad = $('slots-loading');
+
+        if (wizard.style.display === 'none') {
+            loader.style.display = 'block';
+        } else {
+            slotsLoad.style.display = 'block';
+        }
+
         $('slots-grid').innerHTML = '';
         $('slots-empty').style.display = 'none';
 
         const token = await recaptchaToken();
         const params = new URLSearchParams({ tz: state.tz });
-        if (fechaOpcional) params.set('fecha', fechaOpcional);
         params.set('g-recaptcha-response', token);
 
         try {
@@ -455,26 +747,42 @@
             if (!data.success) throw new Error(data.message || 'Error de disponibilidad');
 
             state.tz = data.zona_horaria || state.tz;
-            state.duracion = data.duracion_min;
+            state.duracion = data.duracion_min || 30;
             state.fechas = data.fechas_disponibles || [];
-            if (!state.fecha || !state.fechas.includes(state.fecha)) {
-                state.fecha = data.fecha || state.fechas[0] || null;
+            state.slotsPorFecha = data.slots_por_fecha || {};
+
+            // Si hay compatibilidad o el mapa está vacío, usar slots directos
+            if (data.fecha && data.slots && (!state.slotsPorFecha[data.fecha] || !state.slotsPorFecha[data.fecha].length)) {
+                state.slotsPorFecha[data.fecha] = data.slots;
             }
-            state.slots = data.slots || [];
+
+            if (!state.fecha || !state.fechas.includes(state.fecha)) {
+                state.fecha = state.fechas[0] || null;
+            }
+
             pintarFechas();
             pintarSlots();
         } catch (e) {
-            state.fechas = state.fechas || [];
-            state.slots = [];
+            state.fechas = [];
+            state.slotsPorFecha = {};
             pintarSlots(e.message);
         }
+
         state.cargando = false;
-        $('slots-loading').style.display = 'none';
+        loader.style.display = 'none';
+        wizard.style.display = 'block';
+        slotsLoad.style.display = 'none';
     }
 
     function pintarFechas() {
         const strip = $('dates-strip');
         strip.innerHTML = '';
+
+        if (!state.fechas.length) {
+            strip.innerHTML = '<p class="empty-state">No hay fechas disponibles en este momento.</p>';
+            return;
+        }
+
         state.fechas.forEach((iso) => {
             const d = new Date(iso + 'T12:00:00');
             const chip = document.createElement('button');
@@ -488,8 +796,9 @@
                 if (state.fecha === iso) return;
                 state.fecha = iso;
                 state.slot = null;
+                pintarFechas();
+                pintarSlots(); // Conmutación instantánea en memoria sin peticiones al servidor
                 actualizarUI();
-                cargarDisponibilidad(iso);
             });
             strip.appendChild(chip);
         });
@@ -499,9 +808,22 @@
         const grid = $('slots-grid');
         grid.innerHTML = '';
         $('slots-empty').style.display = 'none';
-        if (msgError) { $('slots-empty').textContent = msgError || 'No hay horarios disponibles.'; $('slots-empty').style.display = 'block'; return; }
-        if (!state.slots.length) { $('slots-empty').style.display = 'block'; actualizarUI(); return; }
-        state.slots.forEach((iso) => {
+
+        if (msgError) {
+            $('slots-empty').textContent = msgError || 'No hay horarios disponibles.';
+            $('slots-empty').style.display = 'block';
+            return;
+        }
+
+        const slots = (state.fecha && state.slotsPorFecha[state.fecha]) ? state.slotsPorFecha[state.fecha] : [];
+
+        if (!slots.length) {
+            $('slots-empty').style.display = 'block';
+            actualizarUI();
+            return;
+        }
+
+        slots.forEach((iso) => {
             const b = document.createElement('button');
             b.type = 'button';
             b.className = 'slot-btn' + (state.slot === iso ? ' selected' : '');
@@ -517,50 +839,134 @@
         actualizarUI();
     }
 
-    /* ── Teléfono: prefijos + banderas ──────────────────────────────── */
-    // Lista curada: ISO2 -> dial. La bandera se pinta con flagcdn.
-    const PAIS_PREFIJO = [
-        ['CO', '+57'], ['MX', '+52'], ['US', '+1'], ['AR', '+54'], ['BR', '+55'],
-        ['CL', '+56'], ['PE', '+51'], ['EC', '+593'], ['VE', '+58'], ['BO', '+591'],
-        ['PY', '+595'], ['UY', '+598'], ['CR', '+506'], ['PA', '+507'], ['GT', '+502'],
-        ['DO', '+1809'], ['PR', '+1787'], ['CU', '+53'], ['HN', '+504'], ['SV', '+503'],
-        ['NI', '+505'], ['ES', '+34'], ['GB', '+44'], ['PT', '+351'], ['FR', '+33'],
-        ['DE', '+49'], ['IT', '+39'], ['NL', '+31'], ['BE', '+32'], ['CH', '+41'],
-        ['AT', '+43'], ['SE', '+46'], ['NO', '+47'], ['DK', '+45'], ['FI', '+358'],
-        ['PL', '+48'], ['IE', '+353'], ['CA', '+1'], ['JP', '+81'], ['KR', '+82'],
-        ['CN', '+86'], ['IN', '+91'], ['AE', '+971'], ['SA', '+966'], ['SG', '+65'],
-        ['AU', '+61'], ['NZ', '+64'], ['ZA', '+27'], ['IL', '+972'],
+    /* ── Teléfono: Prefijos con banderas emoji (cero peticiones) ───── */
+    const PAIS_DATOS = [
+        ['CO', '+57', 'Colombia'],
+        ['MX', '+52', 'México'],
+        ['US', '+1', 'EE. UU. / Canadá'],
+        ['ES', '+34', 'España'],
+        ['AR', '+54', 'Argentina'],
+        ['CL', '+56', 'Chile'],
+        ['PE', '+51', 'Perú'],
+        ['EC', '+593', 'Ecuador'],
+        ['VE', '+58', 'Venezuela'],
+        ['PA', '+507', 'Panamá'],
+        ['CR', '+506', 'Costa Rica'],
+        ['GT', '+502', 'Guatemala'],
+        ['DO', '+1809', 'Rep. Dominicana'],
+        ['BO', '+591', 'Bolivia'],
+        ['UY', '+598', 'Uruguay'],
+        ['PY', '+595', 'Paraguay'],
+        ['BR', '+55', 'Brasil'],
+        ['GB', '+44', 'Reino Unido'],
+        ['FR', '+33', 'Francia'],
+        ['DE', '+49', 'Alemania'],
+        ['IT', '+39', 'Italia'],
+        ['PT', '+351', 'Portugal'],
+        ['NL', '+31', 'Países Bajos'],
+        ['CH', '+41', 'Suiza'],
+        ['SE', '+46', 'Suecia'],
+        ['JP', '+81', 'Japón'],
+        ['AE', '+971', 'Emiratos Árabes'],
+        ['AU', '+61', 'Australia'],
     ];
-    const PAIS_NOMBRE = { CO: 'Colombia', MX: 'México', US: 'EE. UU.' };
 
     function llenarPaises() {
-        const sel = $('id_telefono_prefijo');
-        sel.innerHTML = '';
-        PAIS_PREFIJO.forEach(([iso2, dial]) => {
-            const opt = document.createElement('option');
-            opt.value = iso2 + '|' + dial;
-            opt.textContent = dial;
-            sel.appendChild(opt);
+        const menu = $('phone-dropdown-menu');
+        const btn = $('phone-prefix-btn');
+        if (!menu || !btn) return;
+        menu.innerHTML = '';
+
+        PAIS_DATOS.forEach(([iso2, dial, nombre]) => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = 'phone-dropdown-item' + (iso2 === (state.pais || 'CO') ? ' selected' : '');
+            item.dataset.iso2 = iso2;
+            item.dataset.dial = dial;
+            item.innerHTML = `
+                <img src="https://flagcdn.com/w40/${iso2.toLowerCase()}.png" alt="${nombre}" class="item-flag">
+                <span class="item-name">${nombre}</span>
+                <span class="item-dial">${dial}</span>`;
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                seleccionarPais(iso2, dial);
+                cerrarDropdown();
+            });
+            menu.appendChild(item);
         });
-        // Default: +57 Colombia si no se detectó geo/nombre país conocido.
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = menu.style.display !== 'none';
+            if (isOpen) {
+                cerrarDropdown();
+            } else {
+                abrirDropdown();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrap = $('phone-prefix-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                cerrarDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarDropdown();
+        });
+
         setPais(state.pais || 'CO');
-        sel.addEventListener('change', () => setPais(sel.value.split('|')[0]));
+    }
+
+    function abrirDropdown() {
+        const menu = $('phone-dropdown-menu');
+        const btn = $('phone-prefix-btn');
+        if (menu && btn) {
+            menu.style.display = 'block';
+            btn.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+    }
+
+    function cerrarDropdown() {
+        const menu = $('phone-dropdown-menu');
+        const btn = $('phone-prefix-btn');
+        if (menu && btn) {
+            menu.style.display = 'none';
+            btn.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function seleccionarPais(iso2, dial) {
+        state.pais = iso2;
+        const flagEl = $('phone-flag');
+        if (flagEl) flagEl.src = `https://flagcdn.com/w40/${iso2.toLowerCase()}.png`;
+        const dialEl = $('phone-dial-val');
+        if (dialEl) dialEl.textContent = dial;
+        const hiddenEl = $('id_telefono_prefijo');
+        if (hiddenEl) {
+            hiddenEl.value = iso2 + '|' + dial;
+            hiddenEl.dataset.dial = dial;
+        }
+        const items = document.querySelectorAll('.phone-dropdown-item');
+        items.forEach((it) => {
+            it.classList.toggle('selected', it.dataset.iso2 === iso2);
+        });
     }
 
     function setPais(iso2) {
-        const sel = $('id_telefono_prefijo');
-        const fila = PAIS_PREFIJO.find(([i]) => i === iso2);
-        const objetivo = fila ? iso2 : 'CO';
-        const indice = PAIS_PREFIJO.findIndex(([i]) => i === objetivo);
-        sel.selectedIndex = indice;
-        $('phone-flag').src = `https://flagcdn.com/w40/${objetivo.toLowerCase()}.png`;
-        const dial = PAIS_PREFIJO[indice][1];
-        sel.dataset.dial = dial;
-        sel.title = PAIS_NOMBRE[objetivo] || objetivo;
+        const objetivo = PAIS_DATOS.some(([i]) => i === iso2) ? iso2 : 'CO';
+        const dato = PAIS_DATOS.find(([i]) => i === objetivo);
+        if (dato) {
+            seleccionarPais(dato[0], dato[1]);
+        }
     }
 
     /* ── Wizard: navegación y resumen ───────────────────────────────── */
-    function setStep(n) {        state.step = n;
+    function setStep(n) {
+        state.step = n;
         ['step-1', 'step-2', 'step-done'].forEach((id, i) => {
             $(id).classList.toggle('active', i + 1 === Math.min(n, 3));
         });
@@ -594,40 +1000,84 @@
         $('btn-step2').disabled = !state.slot;
     }
 
-    /* ── Submit ─────────────────────────────────────────────────────── */
-    async function reservar() {
+    /* ── Sanitización y validaciones del formulario ─────────────────── */
+    function limpiarErrores() {
+        ['id_nombre', 'id_correo', 'id_telefono_numero'].forEach((id) => {
+            $(id).classList.remove('input-err');
+        });
+        ['err-nombre', 'err-correo', 'err-telefono', 'err-consentimiento'].forEach((id) => {
+            $(id).classList.remove('show');
+        });
+        $('consent-box').classList.remove('err');
         const msg = $('form-message');
         msg.className = 'form-message';
-        const consent = $('id_consentimiento');
-        if (!consent.checked) {
-            $('consent-box').classList.add('err');
-            msg.classList.add('err');
-            msg.textContent = "Debes confirmar el consentimiento de contacto para agendar.";
-            return;
+        msg.style.display = 'none';
+        msg.textContent = '';
+    }
+
+    function validarFormulario() {
+        limpiarErrores();
+        let esValido = true;
+
+        const nombre = $('id_nombre').value.trim();
+        const correo = $('id_correo').value.trim();
+        const numero = $('id_telefono_numero').value.replace(/\D/g, '');
+        const consentimiento = $('id_consentimiento').checked;
+
+        if (nombre.length < 3) {
+            $('id_nombre').classList.add('input-err');
+            $('err-nombre').classList.add('show');
+            esValido = false;
         }
-        $('consent-box').classList.remove('err');
+
+        if (!RE_CORREO.test(correo)) {
+            $('id_correo').classList.add('input-err');
+            $('err-correo').classList.add('show');
+            esValido = false;
+        }
+
+        if (!RE_TELEFONO.test(numero)) {
+            $('id_telefono_numero').classList.add('input-err');
+            $('err-telefono').classList.add('show');
+            esValido = false;
+        }
+
+        if (!consentimiento) {
+            $('consent-box').classList.add('err');
+            $('err-consentimiento').classList.add('show');
+            esValido = false;
+        }
 
         if (!state.slot) {
-            msg.classList.add('err');
-            msg.textContent = 'Selecciona primero una fecha y un horario.';
+            const msg = $('form-message');
+            msg.className = 'form-message err';
+            msg.textContent = 'Selecciona primero una fecha y un horario disponible.';
             setStep(1);
-            return;
+            return false;
         }
+
+        return esValido;
+    }
+
+    /* ── Submit y Agendamiento ──────────────────────────────────────── */
+    async function reservar() {
+        if (!validarFormulario()) return;
 
         const nombre = $('id_nombre').value.trim();
         const correo = $('id_correo').value.trim();
         const dial = $('id_telefono_prefijo').dataset.dial || '+57';
-        const numero = $('id_telefono_numero').value.replace(/[^\d]/g, '');
-
-        if (!nombre || !correo || !numero) {
-            msg.classList.add('err');
-            msg.textContent = 'Completa tu nombre, correo y teléfono para continuar.';
-            return;
-        }
+        const numero = $('id_telefono_numero').value.replace(/\D/g, '');
 
         const btn = $('btn-confirm');
+        const btnBack = $('btn-back');
+        const msg = $('form-message');
+
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span>Agendando…';
+        btnBack.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Agendando…';
+
+        msg.className = 'form-message info';
+        msg.innerHTML = '<span class="spinner-cyan"></span> Asegurando tu espacio y agendando la reunión... Por favor espera un momento.';
 
         try {
             const token = await recaptchaToken();
@@ -651,40 +1101,72 @@
                     'g-recaptcha-response': token,
                 }),
             });
+
             const data = await res.json();
             if (res.ok && data.success) {
                 $('done-datetime').textContent = data.fecha_hora_visitante;
                 if (document.querySelector('.summary-card')) document.querySelector('.summary-card').remove();
                 setStep(3);
             } else {
-                msg.classList.add('err');
-                msg.textContent = data.message || 'Hubo un error interno. Por favor, intente más tarde.';
+                msg.className = 'form-message err';
+                msg.textContent = data.message || 'Hubo un error al procesar tu solicitud. Por favor intenta nuevamente.';
                 btn.disabled = false;
+                btnBack.disabled = false;
                 btn.innerHTML = 'Confirmar reunión';
-                if (String(res.status) === '409' || String(res.status) === '429') { setStep(1); cargarDisponibilidad(); }
+                if (String(res.status) === '409' || String(res.status) === '429') {
+                    setTimeout(() => { setStep(1); cargarDisponibilidad(); }, 2000);
+                }
             }
         } catch (e) {
-            msg.classList.add('err');
-            msg.textContent = 'Hubo un error interno. Por favor, intente más tarde.';
+            msg.className = 'form-message err';
+            msg.textContent = 'Hubo un inconveniente de conexión. Por favor revisa tu internet o intenta más tarde.';
             btn.disabled = false;
+            btnBack.disabled = false;
             btn.innerHTML = 'Confirmar reunión';
         }
     }
 
-    /* ── Init ───────────────────────────────────────────────────────── */
+    /* ── Inicialización ─────────────────────────────────────────────── */
     async function init() {
-        await detectarGeo();
-        if (!state.tz) state.tz = 'America/Bogota';
-        llenarTimezones();
-        llenarPaises();
+        // Validación interactiva y limpieza en tiempo real del teléfono
+        $('id_telefono_numero').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            if (e.target.value.length >= 6) {
+                e.target.classList.remove('input-err');
+                $('err-telefono').classList.remove('show');
+            }
+        });
+
+        $('id_nombre').addEventListener('input', (e) => {
+            if (e.target.value.trim().length >= 3) {
+                e.target.classList.remove('input-err');
+                $('err-nombre').classList.remove('show');
+            }
+        });
+
+        $('id_correo').addEventListener('input', (e) => {
+            if (RE_CORREO.test(e.target.value.trim())) {
+                e.target.classList.remove('input-err');
+                $('err-correo').classList.remove('show');
+            }
+        });
+
+        $('id_consentimiento').addEventListener('change', () => {
+            $('btn-confirm').disabled = !$('id_consentimiento').checked;
+            if ($('id_consentimiento').checked) {
+                $('consent-box').classList.remove('err');
+                $('err-consentimiento').classList.remove('show');
+            }
+        });
 
         $('btn-step2').addEventListener('click', () => setStep(2));
         $('btn-back').addEventListener('click', () => setStep(1));
         $('btn-confirm').addEventListener('click', reservar);
-        $('id_consentimiento').addEventListener('change', () => {
-            $('btn-confirm').disabled = !$('id_consentimiento').checked;
-            if ($('id_consentimiento').checked) $('consent-box').classList.remove('err');
-        });
+
+        await detectarGeo();
+        if (!state.tz) state.tz = 'America/Bogota';
+        llenarTimezones();
+        llenarPaises();
 
         await cargarDisponibilidad();
     }

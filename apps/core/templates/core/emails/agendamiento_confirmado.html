@@ -1,53 +1,110 @@
 {% extends "core/emails/base_email.html" %}
 
-{% block title %}Reunión agendada - Sooniverse{% endblock %}
+{% block title %}Reunión confirmada - Sooniverse{% endblock %}
 
 {% block content %}
-<h2 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">
-    Hola {{ nombre }}, ¡tu reunión está agendada!
+<!-- Badge de estado -->
+<table border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+    <tr>
+        <td style="background-color: rgba(0, 255, 135, 0.08); border: 1px solid rgba(0, 255, 135, 0.3); border-radius: 6px; padding: 4px 10px;">
+            <span style="font-family: 'JetBrains Mono', monospace, Courier; font-size: 10px; font-weight: 700; color: #00FF87; letter-spacing: 2px; text-transform: uppercase;">
+                Llamada exploratoria · 30 min
+            </span>
+        </td>
+    </tr>
+</table>
+
+<!-- Saludo y confirmación -->
+<h2 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin-top: 0; margin-bottom: 14px; font-family: 'Inter', -apple-system, sans-serif; letter-spacing: -0.5px; line-height: 1.3;">
+    Hola {{ nombre }}, tu reunión está confirmada.
 </h2>
 
-<p style="font-size: 16px; line-height: 1.6; color: #94A3B8; margin-bottom: 20px;">
-    Confirmamos tu reserva con éxito. Te esperamos el:
+<p style="font-size: 15px; line-height: 1.6; color: #94A3B8; margin-top: 0; margin-bottom: 22px;">
+    Confirmamos tu agendamiento para una llamada exploratoria de 30 minutos donde analizaremos las necesidades de tu empresa y cómo nuestro equipo puede ayudarte.
 </p>
 
-<!-- Fecha/hora destacada -->
-<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 22px; text-align: center;">
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #00FF87; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px;">
-        Llamada exploratoria · 30 minutos
-    </div>
-    <div style="color: #FFFFFF; font-size: 26px; font-weight: 800; line-height: 1.3;">
-        {{ fecha_hora_visitante }}
-    </div>
-    <div style="color: #94A3B8; font-size: 13px; margin-top: 6px;">
-        {{ zona_horaria }} · Correspondiente en hora Colombia: {{ fecha_hora_bogota }}
-    </div>
-</div>
+<!-- Tarjeta de Fecha y Hora -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 10px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);">
+    <tr>
+        <td style="padding: 22px 20px; text-align: center;">
+            <div style="font-family: 'JetBrains Mono', monospace, Courier; font-size: 10px; font-weight: 700; color: #60EFFF; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 8px;">
+                Fecha y Hora Reservada
+            </div>
+            <div style="color: #FFFFFF; font-size: 24px; font-weight: 800; line-height: 1.3; font-family: 'Inter', sans-serif; margin-bottom: 6px;">
+                {{ fecha_hora_visitante }}
+            </div>
+            <div style="color: #94A3B8; font-size: 12.5px; font-family: 'JetBrains Mono', monospace;">
+                Zona horaria: <span style="color: #FFFFFF;">{{ zona_horaria }}</span>
+                {% if fecha_hora_bogota %}
+                <span style="color: #475569;"> · </span><span style="color: #94A3B8;">{{ fecha_hora_bogota }}</span>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</table>
 
-<p style="font-size: 16px; line-height: 1.6; color: #94A3B8; margin-bottom: 20px;">
-    📩 <strong style="color: #FFFFFF;">Importante:</strong> en un plazo máximo de
-    <strong style="color: #00FF87;">24 horas</strong> recibirás por este medio la
-    invitación con el enlace de la reunión (Google Meet).
-</p>
+<!-- Aviso enlace Google Meet -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(96, 239, 255, 0.05); border-left: 3px solid #60EFFF; border-radius: 4px; margin-bottom: 24px;">
+    <tr>
+        <td style="padding: 14px 16px;">
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #E2E8F0;">
+                📩 <strong style="color: #60EFFF;">Enlace de acceso:</strong> En un plazo máximo de <strong style="color: #00FF87;">24 horas</strong> recibirás por correo la invitación con el enlace directo de la reunión (Google Meet).
+            </p>
+        </td>
+    </tr>
+</table>
 
-<!-- Agenda card -->
-<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;">
-        De qué hablaremos
+<!-- En esta llamada trataremos (Basado en agendar.html) -->
+<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 10px; padding: 22px; margin-bottom: 24px;">
+    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace, Courier; font-size: 11px; margin-top: 0; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px;">
+        En esta llamada:
     </h3>
-    <ul style="margin: 0; padding-left: 20px; color: #94A3B8; font-size: 13.5px; line-height: 1.6;">
-        <li style="margin-bottom: 8px;">Comprenderemos claramente tus <strong style="color: #FFFFFF;">objetivos, desafíos y plazos</strong>.</li>
-        <li style="margin-bottom: 8px;">Te explicaremos cómo <strong style="color: #FFFFFF;">DEV.co</strong> (desarrollo web y software a medida) y <strong style="color: #FFFFFF;">LLM.co</strong> (soluciones personalizadas de IA/LLM) pueden serte útiles.</li>
-        <li>Respondemos tus preguntas y te presentamos los posibles <strong style="color: #FFFFFF;">próximos pasos</strong>.</li>
-    </ul>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td valign="top" style="padding: 0 10px 12px 0; color: #00FF87; font-size: 14px; line-height: 1.5; font-weight: bold;">•</td>
+            <td style="padding-bottom: 12px; color: #94A3B8; font-size: 13px; line-height: 1.55;">
+                Comprenderemos a fondo los desafíos, casos de uso y objetivos de Inteligencia Artificial de su organización.
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" style="padding: 0 10px 12px 0; color: #00FF87; font-size: 14px; line-height: 1.5; font-weight: bold;">•</td>
+            <td style="padding-bottom: 12px; color: #94A3B8; font-size: 13px; line-height: 1.55;">
+                Le presentaremos la arquitectura de <strong style="color: #FFFFFF;">Sooniverse</strong> (plataformas privadas de IA y modelos dedicados) y le explicamos qué beneficios le trae a usted específicamente.
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" style="padding: 0 10px 0 0; color: #00FF87; font-size: 14px; line-height: 1.5; font-weight: bold;">•</td>
+            <td style="color: #94A3B8; font-size: 13px; line-height: 1.55;">
+                Le entregaremos una estimación de ahorro de costos frente a APIs de terceros y una hoja de ruta técnica personalizada para su infraestructura.
+            </td>
+        </tr>
+    </table>
+    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #1E293B; color: #64748B; font-size: 12px; line-height: 1.5;">
+        Esta es una conversación técnica y estratégica, sin compromiso de contratación, para evaluar la viabilidad y el retorno de inversión de su proyecto.
+    </div>
 </div>
 
-<p style="font-size: 14px; line-height: 1.6; color: #64748B; margin-bottom: 25px; font-style: italic;">
-    Es una conversación abierta y sin compromiso. Si necesitas cambiar el horario, simplemente responde a este correo.
+<p style="color: #FFFFFF; font-weight: 600; font-size: 14px; margin-bottom: 24px;">
+    ¡Esperamos conectar con usted!
 </p>
 
+<!-- Nota de reprogramación / No-reply AWS SES -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #070A12; border: 1px solid #1E293B; border-radius: 8px; margin-bottom: 26px;">
+    <tr>
+        <td style="padding: 14px 16px; font-size: 12px; line-height: 1.6; color: #64748B;">
+            <p style="margin: 0 0 4px 0; color: #94A3B8; font-weight: 600;">
+                ¿Necesitas cambiar o reprogramar tu horario?
+            </p>
+            <p style="margin: 0;">
+                Este correo es un mensaje automatizado y no admite respuestas directas. Si requieres cambiar el horario o la fecha de la reunión, por favor envía un correo solicitándolo a <a href="mailto:contacto@sooniverse.co" style="color: #60EFFF; text-decoration: none; font-weight: 600;">contacto@sooniverse.co</a> indicando tu nombre y la nueva fecha de preferencia.
+            </p>
+        </td>
+    </tr>
+</table>
+
+<!-- Botón de acción -->
 <div style="text-align: center;">
-    <a href="{{ base_url }}" class="btn-email-secondary" style="display: inline-block; background-color: transparent; border: 1.5px solid #60EFFF; color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; text-transform: uppercase; padding: 11px 22px; text-decoration: none; border-radius: 6px; letter-spacing: 0.5px;">
+    <a href="{{ base_url }}" class="btn-email-secondary" style="display: inline-block; background-color: transparent; border: 1.5px solid #60EFFF; color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12.5px; text-transform: uppercase; padding: 11px 24px; text-decoration: none; border-radius: 6px; letter-spacing: 0.8px;">
         Explorar Sooniverse
     </a>
 </div>

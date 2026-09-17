@@ -37,6 +37,7 @@ def verify_recaptcha(
     secret = getattr(settings, "RECAPTCHA_SECRET_KEY", "")
     if not secret:
         return True, "disabled"
+    token = (token or "").strip()
     if not token:
         return False, "missing-token"
 

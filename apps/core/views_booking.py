@@ -119,21 +119,23 @@ def booking_disponibilidad(request):
     tz_name = request.GET.get("tz")
     fecha = request.GET.get("fecha")
     config = BookingConfig.get_solo()
-    tz_valida = svc.zona_segura(tz_name)
-
-    fechas = svc.fechas_disponibles(tz_valida)
-    slots = svc.slots_para_fecha(fecha or (fechas[0] if fechas else ""), tz_valida)
+    disp = svc.disponibilidad_completa_ventana(tz_name)
+    fechas = disp["fechas_disponibles"]
+    slots_por_fecha = disp["slots_por_fecha"]
+    fecha_seleccionada = fecha if fecha in slots_por_fecha else (fechas[0] if fechas else "")
+    slots_fecha = slots_por_fecha.get(fecha_seleccionada, [])
 
     return JsonResponse(
         {
             "success": True,
-            "zona_horaria": slots["zona_horaria"],
+            "zona_horaria": disp["zona_horaria"],
             "zona_negocio": ZONA_NEGOCIO,
             "duracion_min": config.duracion_min,
             "dias_apertura": config.dias_apertura,
             "fechas_disponibles": fechas,
-            "fecha": slots["fecha"],
-            "slots": slots["slots"],
+            "slots_por_fecha": slots_por_fecha,
+            "fecha": fecha_seleccionada,
+            "slots": slots_fecha,
         }
     )
 
