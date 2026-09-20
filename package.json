@@ -8,6 +8,7 @@
     "watch": "npx tailwindcss -i ./static/css/src/tailwind.css -o ./static/css/dist/tailwind.css --watch"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
     "tailwindcss": "^3.4.1"
   }
 }

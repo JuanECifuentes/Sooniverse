@@ -81,13 +81,9 @@ Y algo que suele sorprender: **no hay que reescribir nada**. Sus automatizacione
 
 ---
 
-## [3:25 – 4:00] Cómo se implementa y la objeción de frente
+## [3:25 – 4:00] Cómo se implementa
 
 Hay dos formas de tenerla. **En la nube de su propia empresa**, donde sus datos nunca salen de su cuenta y la plataforma queda como un activo suyo. O **alojada por nosotros**, en un entorno aislado, sin que su organización administre nada.
-
-Y déjenme adelantarme a la pregunta obvia: *su equipo podría montar esto*. Es cierto, y conviene decirlo.
-
-No competimos contra la capacidad técnica de su equipo. Competimos contra su lista de prioridades. La arquitectura no es el secreto. El trabajo está en acertar el modelo y el tamaño a la primera. Mientras eso se aprende pasan meses, el roadmap de su equipo se corre, y la factura que quería reducir se sigue pagando completa.
 
 ---
 
@@ -99,7 +95,7 @@ Resumo en una línea: **deje de alquilar inteligencia artificial y empiece a ten
 
 No les traigo una cotización, porque no hay dos empresas iguales. Les traigo un primer paso concreto: **un diagnóstico**.
 
-Medimos su consumo real, revisamos los procesos de IA que hoy tiene en marcha, y le entregamos por escrito tres cosas: cuánto está pagando hoy, cuánto pagaría con plataforma propia, y qué capacidad necesita su operación.
+Medimos su consumo real, revisamos los procesos de IA que hoy tiene en marcha, y le entregamos por escrito cuatro cosas: cuánto está pagando hoy, cuánto pagaría con plataforma propia, cual es el coste de implementacion y qué capacidad necesita su operación.
 
 Con ese número sobre la mesa, la decisión se toma sola.
 
@@ -126,7 +122,10 @@ En este orden, sin dañar la venta:
 
 > Instalamos plataformas privadas de inteligencia artificial dentro de la empresa. En vez de pagarle a un proveedor externo por cada palabra que la IA lee y escribe, usted paga una capacidad fija y sus datos nunca salen de casa. En nuestro caso de referencia eso significó 74% menos costo mensual, y la capacidad queda instalada para las siguientes automatizaciones. Empezamos con un diagnóstico que le dice cuánto está pagando hoy y cuánto pagaría con plataforma propia.
 
-## Tres objeciones probables y su respuesta corta
+## Cuatro objeciones probables y su respuesta corta
+
+**"¿Nuestro equipo interno podría montar esto?"**
+> Es cierto, su equipo podría montarlo. No competimos contra la capacidad técnica de su equipo; competimos contra su lista de prioridades. La arquitectura no es el secreto: el trabajo está en acertar el modelo y el tamaño a la primera. Mientras eso se aprende pasan meses, el roadmap de su equipo se corre, y la factura que quería reducir se sigue pagando completa.
 
 **"¿Y la calidad de los modelos abiertos?"**
 > La última palabra sobre la calidad es suya. Nadie conoce sus casos como su equipo: ustedes fijan el estándar y lo verifican con sus propios ejemplos. Nuestro trabajo es entregar una plataforma que lo cumpla y ajustarla hasta que así sea.
