@@ -61,7 +61,7 @@ def _leads_nuevos_sin_atender(hoy_local: date) -> list[ItemDigest]:
 
 
 def _reuniones_proximas(hoy_local: date) -> list[ItemDigest]:
-    """Reuniones confirmadas a 3 o 1 día(s) de distancia (día calendario)."""
+    """Reuniones confirmadas a 3, 1 o 0 día(s) de distancia (día calendario)."""
     qs = Lead.objects.notificables().filter(
         estado=Lead.Estado.REUNION_CONFIRMADA, meeting_at__isnull=False
     )
@@ -69,7 +69,7 @@ def _reuniones_proximas(hoy_local: date) -> list[ItemDigest]:
     for lead in qs:
         meeting_local = timezone.localtime(lead.meeting_at)
         dias = (meeting_local.date() - hoy_local).days
-        if dias not in (3, 1):
+        if dias not in (3, 1, 0):
             continue
         items.append(
             ItemDigest(
@@ -84,7 +84,7 @@ def _reuniones_proximas(hoy_local: date) -> list[ItemDigest]:
 
 
 def _mantenimientos_proximos(hoy_local: date) -> list[ItemDigest]:
-    """Ventanas de mantenimiento a 15, 7, 3 o 0 días. No se condiciona a que
+    """Ventanas de mantenimiento a 15, 7, 3, 1 o 0 días. No se condiciona a que
     el lead siga en estado 'Mantenimiento programado': la ventana es un
     compromiso independiente de esa etiqueta, y condicionarlo dejaría caer
     avisos en silencio si el operador mueve el lead a otro estado. Solo
@@ -98,7 +98,7 @@ def _mantenimientos_proximos(hoy_local: date) -> list[ItemDigest]:
     for mw in qs:
         scheduled_local = timezone.localtime(mw.scheduled_for)
         dias = (scheduled_local.date() - hoy_local).days
-        if dias not in (15, 7, 3, 0):
+        if dias not in (15, 7, 3, 1, 0):
             continue
         items.append(
             ItemDigest(

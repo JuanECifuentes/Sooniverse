@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banner LinkedIn Empresa — Sooniverse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================
+   BANNER LINKEDIN EMPRESA / COMPANY PAGE — 1128 x 191 px
+   (Proporción oficial ~5.9:1 / 6:1)
+   Sistema de marca Sooniverse v1.0.0
+   Zona segura: la foto/logo de empresa se superpone en la 
+   esquina inferior izquierda, por lo que el contenido crítico
+   se ubica en el área centro-derecha y la marca superior izquierda.
+   =========================================================== */
+
+:root{
+  --deep-space:#070A12;
+  --cyber-surface:#0F172A;
+  --structural:#1E293B;
+  --white:#FFFFFF;
+  --slate:#94A3B8;
+  --neon:#00FF87;
+  --cyan:#60EFFF;
+  --violet:#8A2BE2;
+  --cosmic:linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#05070D;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:30px 0;margin:0;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Barra de herramientas para previsualización web ---------- */
+.toolbar{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(15,23,42,.8);border:1px solid #1E293B;padding:8px 16px;border-radius:10px;
+  font-size:12.5px;color:#94A3B8;
+}
+.toolbar button{
+  background:#1E293B;color:#FFFFFF;border:1px solid #334155;
+  padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;
+  transition:all .2s ease;
+}
+.toolbar button:hover{background:#334155;color:#60EFFF}
+.badge-dim{
+  font-family:'JetBrains Mono',monospace;color:#00FF87;background:rgba(0,255,135,.1);
+  padding:3px 8px;border-radius:4px;border:1px solid rgba(0,255,135,.2);
+}
+
+/* ===================== EL BANNER ===================== */
+#banner{
+  position:relative;width:1128px;height:191px;flex:none;overflow:hidden;
+  background:
+    radial-gradient(550px 320px at 10% 120%, rgba(0,255,135,.14), transparent 65%),
+    radial-gradient(720px 400px at 88% -25%, rgba(138,43,226,.26), transparent 65%),
+    radial-gradient(520px 300px at 64% 130%, rgba(96,239,255,.12), transparent 60%),
+    linear-gradient(115deg,#070A12 0%,#0B1120 48%,#080D18 100%);
+  color:var(--white);isolation:isolate;
+}
+
+/* Guía de avatar de LinkedIn (solo visualización de prueba) */
+.avatar-guide{
+  display:none;position:absolute;left:34px;bottom:-30px;width:110px;height:110px;
+  border-radius:12px;border:2px dashed rgba(255,80,80,.8);background:rgba(255,80,80,.15);
+  z-index:10;pointer-events:none;align-items:center;justify-content:center;
+  font-size:10px;font-family:'JetBrains Mono',monospace;color:#FF8080;text-align:center;
+  padding:6px;text-transform:uppercase;box-shadow:0 0 16px rgba(255,80,80,.3);
+}
+body.show-guides .avatar-guide{display:flex}
+
+#banner .grid{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(96,239,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,239,255,.05) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(780px 240px at 68% 50%, #000 0%, transparent 80%);
+  -webkit-mask-image:radial-gradient(780px 240px at 68% 50%, #000 0%, transparent 80%);
+}
+
+#banner .orbits{position:absolute;inset:0;z-index:1;pointer-events:none}
+#banner .noise{
+  position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.02;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#banner .edge{position:absolute;left:0;right:0;bottom:0;height:3px;z-index:5;background:var(--cosmic);opacity:.9}
+
+/* ---------- MARCA: SUPERIOR IZQUIERDA (ZONA SEGURA) ---------- */
+.lockup{
+  position:absolute;z-index:3;left:38px;top:24px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.lockup .row{display:flex;align-items:center;gap:11px}
+.lockup svg{width:42px;height:42px;flex:none}
+.wordmark{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
+.wordmark .a{color:var(--white)}
+.wordmark .b{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.site{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:14.5px;font-weight:700;letter-spacing:3px;color:var(--cyan);
+  padding-left:2px;text-shadow:0 0 12px rgba(96,239,255,.5);
+}
+
+/* ---------- CONTENEDOR PRINCIPAL ---------- */
+.content{
+  position:relative;z-index:3;height:100%;
+  display:flex;align-items:center;justify-content:flex-end;gap:30px;
+  padding:0 36px 0 250px;
+}
+
+/* ---------- COLUMNA CENTRAL: HEADLINE + CTA (ALINEADO A LA DERECHA) ---------- */
+.headline-block{
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  text-align:right;max-width:540px;
+}
+h1.headline{
+  font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.12;
+  text-align:right;
+}
+h1.headline .grad{
+  font-size:32px;
+  background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+.cta-line{
+  margin-top:10px;display:flex;align-items:center;justify-content:flex-end;gap:7px;
+}
+.cta-call{
+  color:var(--white);font-weight:600;font-size:13px;letter-spacing:-.1px;
+}
+.cta-email{
+  color:var(--cyan);font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:13.5px;font-weight:700;letter-spacing:.3px;
+  text-shadow:0 0 12px rgba(96,239,255,.5);
+}
+
+/* ---------- COLUMNA DERECHA: MÉTRICAS APILADAS (TAMAÑO ORIGINAL) ---------- */
+.metrics{
+  display:flex;flex-direction:column;gap:9px;
+  flex:none;
+}
+.metric{
+  display:flex;align-items:center;gap:14px;padding:9px 18px 9px 14px;
+  border-radius:12px;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);
+  border:1px solid var(--structural);
+  min-width:245px;
+}
+.metric.m-save{border-color:rgba(0,255,135,.42);box-shadow:0 0 20px rgba(0,255,135,.12) inset,0 0 16px rgba(0,255,135,.1)}
+.metric.m-priv{border-color:rgba(96,239,255,.42);box-shadow:0 0 20px rgba(96,239,255,.12) inset,0 0 16px rgba(96,239,255,.1)}
+.metric svg{flex:none;width:32px;height:32px}
+.metric .n{font-size:38px;font-weight:800;letter-spacing:-1.2px;line-height:1}
+.metric.m-save .n{color:var(--neon);text-shadow:0 0 18px rgba(0,255,135,.45)}
+.metric.m-priv .n{color:var(--cyan);text-shadow:0 0 18px rgba(96,239,255,.45)}
+.metric .l{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;color:#E2E8F0;text-align:left;line-height:1.25;
+}
+</style>
+</head>
+<body>
+
+  <!-- Barra de control para previsualización en navegador -->
+  <div class="toolbar">
+    <span>Dimensiones oficiales LinkedIn Empresa: <strong class="badge-dim">1128 x 191 px</strong> (~6:1)</span>
+    <button onclick="document.body.classList.toggle('show-guides')">Simular Logo LinkedIn (Zona de Superposición)</button>
+  </div>
+
+  <!-- ================= BANNER EMPRESA 1128x191 ================= -->
+  <div id="banner">
+      <!-- Guía opcional para visualizar zona de avatar en LinkedIn -->
+      <div class="avatar-guide">Logo Empresa<br>(LinkedIn Avatar)</div>
+
+      <div class="grid"></div>
+
+      <!-- Orbits cósmicos -->
+      <svg class="orbits" viewBox="0 0 1128 191" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="cosmicH" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/>
+          </linearGradient>
+        </defs>
+        <g transform="rotate(-15 110 210)" fill="none" stroke="url(#cosmicH)" stroke-linecap="round">
+          <ellipse cx="110" cy="210" rx="170" ry="74" stroke-width="1.8" stroke-opacity=".5"/>
+          <ellipse cx="110" cy="210" rx="240" ry="104" stroke-width="5"   stroke-opacity=".18"/>
+          <ellipse cx="110" cy="210" rx="240" ry="104" stroke-width="1.4" stroke-opacity=".38"/>
+          <ellipse cx="110" cy="210" rx="330" ry="142" stroke-width="2.2" stroke-opacity=".15"/>
+          <ellipse cx="110" cy="210" rx="450" ry="190" stroke-width="1.4" stroke-opacity=".08"/>
+        </g>
+        <g>
+          <circle cx="165" cy="148" r="9" fill="#00FF87" fill-opacity=".14"/>
+          <circle cx="165" cy="148" r="4.5" fill="#00FF87" fill-opacity=".85"/>
+          <circle cx="165" cy="148" r="1.8" fill="#FFFFFF"/>
+          <circle cx="235" cy="162" r="7" fill="#60EFFF" fill-opacity=".14"/>
+          <circle cx="235" cy="162" r="3.5" fill="#60EFFF" fill-opacity=".75"/>
+        </g>
+      </svg>
+
+      <!-- Marca: Superior Izquierda -->
+      <div class="lockup">
+        <div class="row">
+          <svg width="42" height="42" viewBox="-140 -140 280 280" aria-hidden="true">
+            <defs>
+              <linearGradient id="cosmicI" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/>
+              </linearGradient>
+              <linearGradient id="planetI" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2563EB"/><stop offset="45%" stop-color="#4C1D95"/><stop offset="100%" stop-color="#1E1B4B"/>
+              </linearGradient>
+            </defs>
+            <g transform="rotate(-18)">
+              <path d="M -68,0 A 68,19 0 0,1 68,0" fill="none" stroke="url(#cosmicI)" stroke-width="2.5" stroke-opacity=".35"/>
+              <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="url(#cosmicI)" stroke-width="11" stroke-opacity=".4"/>
+              <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="#60EFFF" stroke-width="2" stroke-opacity=".6"/>
+              <path d="M -114,0 A 114,32 0 0,1 114,0" fill="none" stroke="url(#cosmicI)" stroke-width="3.5" stroke-opacity=".3"/>
+            </g>
+            <circle cx="0" cy="0" r="46" fill="url(#planetI)" stroke="#3B82F6" stroke-width="1.5" stroke-opacity=".5"/>
+            <path d="M -40,-22 Q 0,-10 40,-22" fill="none" stroke="#60EFFF" stroke-width="1.5" stroke-opacity=".4"/>
+            <path d="M -45,12 Q 0,26 45,12" fill="none" stroke="#00FF87" stroke-width="1.5" stroke-opacity=".5"/>
+            <g transform="rotate(-18)">
+              <path d="M 68,0 A 68,19 0 0,1 -68,0" fill="none" stroke="url(#cosmicI)" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="url(#cosmicI)" stroke-width="11" stroke-linecap="round"/>
+              <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-opacity=".85" stroke-linecap="round"/>
+              <path d="M 114,0 A 114,32 0 0,1 -114,0" fill="none" stroke="url(#cosmicI)" stroke-width="3.5" stroke-linecap="round"/>
+            </g>
+            <circle cx="-80" cy="-45" r="12" fill="#00FF87" fill-opacity=".30"/>
+            <circle cx="-80" cy="-45" r="9" fill="#00FF87"/>
+            <circle cx="-80" cy="-45" r="4" fill="#FFFFFF"/>
+            <circle cx="104" cy="12" r="10" fill="#60EFFF" fill-opacity=".30"/>
+            <circle cx="104" cy="12" r="7.5" fill="#60EFFF"/>
+            <circle cx="15" cy="58" r="11" fill="#8A2BE2" fill-opacity=".32"/>
+            <circle cx="15" cy="58" r="8.5" fill="#8A2BE2"/>
+            <circle cx="15" cy="58" r="3" fill="#60EFFF"/>
+          </svg>
+          <div class="wordmark"><span class="a">Sooni</span><span class="b">verse</span></div>
+        </div>
+        <div class="site">sooniverse.co</div>
+      </div>
+
+      <!-- Contenido: En medio el mensaje alineado a la derecha, a la derecha las cards de porcentajes -->
+      <div class="content">
+        <!-- Columna Central: Headline y llamada a la acción alineados a la derecha -->
+        <div class="headline-block">
+          <h1 class="headline">
+            Deja de alquilar inteligencia artificial.<br>
+            <span class="grad">Ten la tuya.</span>
+          </h1>
+          <div class="cta-line">
+            <span class="cta-call">Escríbenos:</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;filter:drop-shadow(0 0 6px rgba(96,239,255,.6))">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            <span class="cta-email">contacto@sooniverse.co</span>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Métricas apiladas en su tamaño original -->
+        <div class="metrics">
+          <div class="metric m-save">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7l7.5 7.5 4-4L21 18"/><path d="M21 18v-5"/><path d="M21 18h-5"/>
+            </svg>
+            <div class="n">74%</div>
+            <div class="l">de ahorro<br>en IA</div>
+          </div>
+          <div class="metric m-priv">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2.5l7.5 3v5.6c0 4.6-3.1 8.2-7.5 9.4-4.4-1.2-7.5-4.8-7.5-9.4V5.5z"/>
+              <path d="M9.4 12.1l1.9 1.9 3.4-3.7"/>
+            </svg>
+            <div class="n">100%</div>
+            <div class="l">privacidad<br>de datos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="noise"></div>
+      <div class="edge"></div>
+    </div>
+</body>
+</html>
