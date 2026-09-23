@@ -1,0 +1,675 @@
+{% extends "core/base_internal.html" %}
+{% load static %}
+
+{% block title %}Sooniverse | Guía de Cotización{% endblock %}
+{% block meta_description %}Guía de cotización y calculadora interactiva para proyectos de Sooniverse.{% endblock %}
+
+{% block extra_head %}
+<style>
+:root {
+  --deep-space: #070A12;
+  --cyber-surface: #0F172A;
+  --structural: #1E293B;
+  --line: #24344C;
+  --white: #FFFFFF;
+  --slate: #94A3B8;
+  --slate-dim: #64748B;
+  --neon: #00FF87;
+  --cyan: #60EFFF;
+  --violet: #8A2BE2;
+  --amber: #FFB020;
+  --stop: #FF5470;
+}
+
+.num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+/* ---------- layout cotizador ---------- */
+.cotiz-shell { max-width: 1280px; margin: 0 auto; }
+.cotiz-top { padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.cotiz-lede { color: var(--slate); max-width: 68ch; font-size: 15.5px; line-height: 1.6; margin-top: 10px; }
+.cotiz-lede b { color: var(--white); font-weight: 600; }
+
+.cotiz-layout { display: grid; grid-template-columns: minmax(0, 1fr) 372px; gap: 40px; align-items: start; }
+
+/* ---------- sections ---------- */
+.cotiz-sec { margin-bottom: 56px; scroll-margin-top: 24px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.sec-head h2 { font-size: 22px; letter-spacing: -0.025em; margin: 0; font-weight: 700; color: #FFFFFF; }
+.sec-head span { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--slate-dim); }
+.sec-intro { color: var(--slate); margin: 16px 0 24px; max-width: 66ch; font-size: 14.5px; line-height: 1.6; }
+.sec-intro b { color: var(--white); font-weight: 600; }
+
+/* ---------- fields ---------- */
+.cotiz-grid { display: grid; gap: 16px 20px; }
+.cotiz-g2 { grid-template-columns: 1fr 1fr; }
+.cotiz-g3 { grid-template-columns: 1fr 1fr 1fr; }
+
+label.f { display: block; }
+label.f .lbl { display: block; font-size: 12.5px; color: var(--slate); margin-bottom: 6px; font-weight: 500; }
+label.f .hint { color: var(--slate-dim); font-weight: 400; font-size: 11px; }
+
+input.cotiz-inp, select.cotiz-sel {
+  width: 100%; background: var(--cyber-surface); border: 1px solid var(--line);
+  color: var(--white); border-radius: 8px; padding: 10px 12px; font-size: 14.5px;
+  font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums;
+  transition: border-color .12s, box-shadow .12s;
+}
+input.cotiz-inp:focus, select.cotiz-sel:focus, input.cotiz-range:focus-visible, .chk:focus-within {
+  outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(96, 239, 255, .14);
+}
+input.cotiz-inp::-webkit-outer-spin-button, input.cotiz-inp::-webkit-inner-spin-button { opacity: .25; }
+
+.chk {
+  display: flex; gap: 11px; align-items: flex-start; background: var(--cyber-surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.chk:hover { border-color: #31445f; }
+.chk input { accent-color: var(--neon); margin: 3px 0 0; width: 16px; height: 16px; flex: none; cursor: pointer; }
+.chk b { display: block; font-weight: 500; font-size: 14px; color: #FFFFFF; }
+.chk small { color: var(--slate-dim); font-size: 12px; line-height: 1.4; display: block; margin-top: 2px; }
+.chk:has(input:checked) { border-color: rgba(0, 255, 135, .42); background: rgba(0, 255, 135, .05); }
+
+input.cotiz-range { width: 100%; accent-color: var(--violet); margin: 6px 0 0; }
+
+/* ---------- readouts ---------- */
+.rates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 22px; }
+.rate { background: var(--cyber-surface); padding: 16px 14px; }
+.rate .k { font-size: 12px; color: var(--slate); margin-bottom: 6px; }
+.rate .v { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; }
+.rate .m { font-size: 11px; color: var(--slate-dim); margin-top: 4px; }
+.rate:nth-child(1) .v { color: var(--neon); }
+.rate:nth-child(2) .v { color: var(--cyan); }
+.rate:nth-child(3) .v { color: var(--violet); }
+
+/* ---------- breakdown table ---------- */
+table.bd { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13.5px; }
+table.bd th { text-align: left; font-weight: 500; color: var(--slate-dim); font-size: 11.5px; padding: 0 0 9px; border-bottom: 1px solid var(--line); }
+table.bd th:last-child, table.bd td:last-child { text-align: right; }
+table.bd td { padding: 9px 0; border-bottom: 1px solid rgba(36, 52, 76, .5); color: #E2E8F0; }
+table.bd tr.total td { border-bottom: none; border-top: 1px solid var(--line); font-weight: 700; padding-top: 12px; color: #FFFFFF; }
+table.bd .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+table.bd .off td { color: var(--slate-dim); }
+
+/* ---------- prose blocks ---------- */
+.cotiz-note { border-left: 2px solid var(--violet); padding: 4px 0 4px 16px; margin: 24px 0; color: var(--slate); max-width: 66ch; font-size: 13.5px; line-height: 1.6; }
+.cotiz-note b { color: var(--white); font-weight: 600; }
+.rules { margin: 20px 0 0; padding: 0; list-style: none; max-width: 70ch; }
+.rules li { padding: 12px 0; border-bottom: 1px solid rgba(36, 52, 76, .6); display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline; }
+.rules li:last-child { border-bottom: none; }
+.rules .tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--deep-space);
+  background: var(--cyan); padding: 3px 7px; border-radius: 4px; font-weight: 700; white-space: nowrap;
+}
+.rules .tag.n { background: var(--neon); }
+.rules .tag.a { background: var(--amber); }
+.rules .tag.s { background: var(--stop); color: var(--white); }
+.rules b { font-weight: 600; color: #FFFFFF; font-size: 14px; }
+.rules p { margin: 4px 0 0; color: var(--slate); font-size: 13px; line-height: 1.5; }
+
+/* ---------- tiers ---------- */
+.mant-selection-bar {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  margin-top: 20px; padding: 12px 16px; background: rgba(15, 23, 42, .7);
+  border: 1px solid var(--line); border-radius: 10px;
+}
+.mant-sel-title { font-size: 13px; font-weight: 600; color: var(--slate); }
+.mant-pills { display: inline-flex; gap: 6px; flex-wrap: wrap; background: var(--deep-space); padding: 4px; border-radius: 8px; border: 1px solid var(--line); }
+.mant-pill {
+  display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1px solid transparent;
+  color: var(--slate); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-family: inherit; font-weight: 500;
+  cursor: pointer; transition: all .15s ease;
+}
+.mant-pill:hover { color: var(--white); background: rgba(255, 255, 255, .05); }
+.mant-pill .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--slate-dim); transition: background .15s; }
+.mant-pill.active { background: var(--structural); color: var(--white); border-color: var(--line); font-weight: 600; }
+.mant-pill.active .pill-dot { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
+.mant-pill .pill-tag { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--neon); background: rgba(0, 255, 135, .12); padding: 1px 5px; border-radius: 3px; }
+
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+.tier {
+  border: 1px solid var(--line); border-radius: 10px; padding: 18px 16px; background: var(--cyber-surface);
+  position: relative; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s;
+}
+.tier:hover { border-color: #384f72; transform: translateY(-2px); }
+.tier.tier-selected {
+  border-color: var(--neon) !important;
+  box-shadow: 0 0 0 1px var(--neon), 0 8px 24px rgba(0, 255, 135, .16);
+  background: linear-gradient(180deg, rgba(0, 255, 135, .09), var(--cyber-surface) 60%) !important;
+}
+.tier.mid { border-color: rgba(0, 255, 135, .4); background: linear-gradient(180deg, rgba(0, 255, 135, .06), transparent 60%); }
+.tier h4 { margin: 0 0 3px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #FFFFFF; }
+.tier .price { font-family: 'JetBrains Mono', monospace; font-size: 19px; font-weight: 700; margin: 10px 0 3px; letter-spacing: -0.02em; }
+.tier.mid .price { color: var(--neon); }
+.tier .per { font-size: 11px; color: var(--slate-dim); margin-bottom: 14px; }
+.tier ul { margin: 0; padding-left: 16px; color: var(--slate); font-size: 12.5px; line-height: 1.6; }
+.tier ul li { margin-bottom: 4px; }
+.tier .rec { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--neon); margin-bottom: 6px; display: block; text-transform: uppercase; font-weight: 700; }
+.tier-select-action {
+  margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(36, 52, 76, .6);
+  font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center;
+  color: var(--slate-dim); transition: color .15s;
+}
+.tier:hover .tier-select-action { color: var(--cyan); }
+.tier.tier-selected .tier-select-action { color: var(--neon); }
+
+/* ---------- rail ---------- */
+.rail { position: sticky; top: 88px; }
+.quote { border: 1px solid var(--line); border-radius: 14px; background: var(--cyber-surface); overflow: hidden; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
+.verdict { padding: 15px 18px; display: flex; gap: 10px; align-items: center; font-weight: 650; font-size: 14px; transition: background .2s, color .2s; }
+.verdict .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; box-shadow: 0 0 12px currentColor; }
+.v-go { background: rgba(0, 255, 135, .12); color: var(--neon); }
+.v-ok { background: rgba(96, 239, 255, .12); color: var(--cyan); }
+.v-warn { background: rgba(255, 176, 32, .13); color: var(--amber); }
+.v-stop { background: rgba(255, 84, 112, .14); color: var(--stop); }
+
+.qbody { padding: 20px 18px; }
+.qmain .k { font-size: 11.5px; color: var(--slate); margin-bottom: 4px; text-transform: uppercase; font-mono; letter-spacing: 0.05em; }
+.qmain .v { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.1; color: #FFFFFF; }
+.qmain .sub { font-size: 12px; color: var(--slate-dim); margin-top: 6px; }
+
+.qsplit { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin: 18px 0 0; }
+.qcell { background: var(--cyber-surface); padding: 12px 12px; }
+.qcell .k { font-size: 10.5px; color: var(--slate-dim); margin-bottom: 3px; }
+.qcell .v { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; font-weight: 600; letter-spacing: -0.02em; color: #FFFFFF; }
+
+.qlist { margin: 16px 0 0; padding: 0; list-style: none; font-size: 12.5px; }
+.qlist li { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(36, 52, 76, .55); }
+.qlist li:last-child { border-bottom: none; }
+.qlist .k { color: var(--slate); }
+.qlist .v { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; color: #FFFFFF; }
+.qlist li.strong .v { color: var(--neon); font-weight: 700; font-size: 14px; }
+.qlist li.muted .k, .qlist li.muted .v { color: var(--slate-dim); }
+
+.qfoot { padding: 12px 18px; border-top: 1px solid var(--line); font-size: 11px; color: var(--slate-dim); line-height: 1.45; }
+.reason { margin-top: 14px; font-size: 12px; color: var(--slate); line-height: 1.5; border-left: 2px solid var(--line); padding-left: 12px; }
+
+.cotiz-footer { border-top: 1px solid var(--line); padding-top: 24px; color: var(--slate-dim); font-size: 12px; line-height: 1.6; }
+.cotiz-footer b { color: var(--slate); font-weight: 600; }
+
+@media (max-width: 1080px) {
+  .cotiz-layout { grid-template-columns: 1fr; }
+  .rail { position: static; order: -1; margin-bottom: 32px; }
+  .tiers { grid-template-columns: 1fr; }
+  .rates { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .cotiz-g2, .cotiz-g3 { grid-template-columns: 1fr; }
+  .qsplit { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cotiz-shell">
+
+  <!-- Header -->
+  <div class="cotiz-top">
+    <div class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2">Herramienta Comercial Interna</div>
+    <h1 class="text-3xl font-bold tracking-[-1px] text-white">Guía de Cotización</h1>
+    <p class="cotiz-lede">Un precio que sale de <b>dos números a la vez</b>: lo que te cuesta hacerlo y lo que le vale al cliente. El mayor de los dos manda, con un techo que evita cotizaciones invendibles. Cambia los parámetros y la cotización se recalcula sola en tiempo real.</p>
+  </div>
+
+  <div class="cotiz-layout">
+    <main>
+
+      <!-- ============ 1. TU HORA ============ -->
+      <section id="hora" class="cotiz-sec">
+        <div class="sec-head"><h2>1. Cuánto vale tu hora</h2><span>base de todo lo demás</span></div>
+        <p class="sec-intro">Tu hora no es lo que "se paga en el mercado", es lo que necesitas que valga para que el año cierre. El divisor crítico son las <b>horas facturables</b>: de ~160 horas trabajadas al mes, un consultor solo factura entre 50 y 70. El resto se va en venta, administración y aprender lo que aún no sabes.</p>
+
+        <div class="cotiz-grid cotiz-g2">
+          <label class="f"><span class="lbl">Ingreso mensual objetivo <span class="hint">millones COP</span></span><input type="number" class="cotiz-inp" id="i_ingreso" value="40" min="0" step="0.5"></label>
+          <label class="f"><span class="lbl">Costos fijos del negocio <span class="hint">millones COP / mes</span></span><input type="number" class="cotiz-inp" id="i_costos" value="13" min="0" step="0.25"></label>
+          <label class="f"><span class="lbl">Reserva para impuestos y seguridad social <span class="hint">%</span></span><input type="number" class="cotiz-inp" id="i_imp" value="30" min="0" max="70" step="1"></label>
+          <label class="f"><span class="lbl">Horas facturables al mes <span class="hint">realistas, no deseadas</span></span><input type="number" class="cotiz-inp" id="i_horas" value="60" min="10" max="180" step="5"></label>
+        </div>
+
+        <div class="rates">
+          <div class="rate"><div class="k">Ingeniería</div><div class="v num" id="o_r_ing">—</div><div class="m">Construir, desplegar, mantener</div></div>
+          <div class="rate"><div class="k">Consultoría <span class="num">×1,4</span></div><div class="v num" id="o_r_con">—</div><div class="m">Diagnóstico, reuniones, criterio</div></div>
+          <div class="rate"><div class="k">Fuera de ventana <span class="num">×1,8</span></div><div class="v num" id="o_r_urg">—</div><div class="m">Urgencias e incidentes</div></div>
+        </div>
+
+        <div class="cotiz-note"><b>Por qué consultoría vale más que ingeniería:</b> La hora de construir la puedes automatizar, y ya lo hiciste. La hora de decidir cuál modelo y cuántos workers es la que no se automatiza y la que evita que el cliente queme cien millones en la nube equivocada. Cóbrala como criterio, no manos.</div>
+      </section>
+
+      <!-- ============ 2. ANTES ============ -->
+      <section id="antes" class="cotiz-sec">
+        <div class="sec-head"><h2>2. Antes: diagnóstico y reuniones</h2><span>el filtro</span></div>
+        <p class="sec-intro">Aquí no estás vendiendo una hora de revisión, estás vendiendo <b>el filtro que decide si vale la pena seguir</b>. El precio del diagnóstico tiene un trabajo distinto al de ganar plata: separar a quien va a comprar de quien está cotizando por curiosidad.</p>
+
+        <ul class="rules">
+          <li><span class="tag n">gratis</span><div><b>Pre-diagnóstico automático</b><p>Los 4 bloques de preguntas en línea, con informe automático de rango de ahorro. Es tu imán y calificador: si no llenan el formulario, no hay reunión.</p></div></li>
+          <li><span class="tag">1</span><div><b>Reunión de descubrimiento — 45 min, incluida</b><p>Una sola, y solo si ya llenaron el formulario. Regla dura: si no hay alguien con presupuesto en la llamada, no es una reunión, es una charla.</p></div></li>
+          <li><span class="tag">2</span><div><b>Diagnóstico ejecutivo — <span class="num" id="o_diag">—</span></b><p>Revisión manual, dimensionamiento de modelo y workers, proyección de ahorro verificada y cotización en firme. Equivale a 2 horas de consultoría. <b>100% deducible</b> si contrata implementación dentro de 45 días.</p></div></li>
+          <li><span class="tag">3</span><div><b>Presentación de resultados — 60 min, incluida</b><p>Entregas el documento y la cotización. Hasta aquí llega lo gratis.</p></div></li>
+          <li><span class="tag a">4+</span><div><b>Reuniones adicionales — bolsa de horas</b><p>De la cuarta en adelante vende una <b>bolsa de 4 horas prepagada por <span class="num" id="o_bolsa">—</span></b> (10% de descuento), consumible en bloques de 60 minutos y deducible contra la implementación.</p></div></li>
+          <li><span class="tag s">stop</span><div><b>Vigencia de 30 días</b><p>La cotización y deducibilidad vencen. Impide que un cliente indeciso consuma meses de agenda sin cerrar.</p></div></li>
+        </ul>
+      </section>
+
+      <!-- ============ 3. IMPLEMENTACIÓN ============ -->
+      <section id="impl" class="cotiz-sec">
+        <div class="sec-head"><h2>3. Implementación</h2><span>piso técnico contra valor</span></div>
+        <p class="sec-intro">El piso sale de la complejidad real y no baja aunque el ahorro sea pobre. El valor sale del ahorro y sube cuando el cliente gana mucho. <b>Cobras el mayor de los dos</b>, con un tope de 10 meses de ahorro para mantenerlo vendible.</p>
+
+        <div class="cotiz-grid cotiz-g2">
+          <label class="f"><span class="lbl">Gasto actual en IA del cliente <span class="hint">millones COP / mes, verificado</span></span><input type="number" class="cotiz-inp" id="i_gasto" value="7.5" min="0" step="0.5"></label>
+          <label class="f"><span class="lbl">Costo mensual nuevo <span class="hint">infraestructura + cuota</span></span><input type="number" class="cotiz-inp" id="i_nuevo" value="2.6" min="0" step="0.1"></label>
+        </div>
+
+        <div class="cotiz-grid cotiz-g3" style="margin-top:16px">
+          <label class="f"><span class="lbl">Workers / GPUs</span><input type="number" class="cotiz-inp" id="i_workers" value="1" min="1" max="60" step="1"></label>
+          <label class="f"><span class="lbl">Familias de modelo</span><input type="number" class="cotiz-inp" id="i_familias" value="1" min="1" max="8" step="1"></label>
+          <label class="f"><span class="lbl">Sistemas a integrar</span><input type="number" class="cotiz-inp" id="i_integr" value="1" min="1" max="30" step="1"></label>
+        </div>
+
+        <div style="margin-top:16px">
+          <label class="chk"><input type="checkbox" id="c_urg"><span><b>Entrega en menos de 3 semanas <span class="num">+25%</span></b><small>Desplaza otros compromisos de tu agenda</small></span></label>
+        </div>
+
+        <label class="f" style="margin-top:22px">
+          <span class="lbl">Múltiplo de captura de valor — <b class="num" id="o_mult_lbl" style="color:var(--violet)">—</b> meses de ahorro <span class="hint" id="o_mult_auto"></span></span>
+          <input type="range" class="cotiz-range" id="i_mult" min="2" max="12" step="0.5" value="6.5">
+        </label>
+        <p style="color:var(--slate-dim);font-size:12px;margin:8px 0 0;max-width:66ch">El múltiplo se autocalibra según el ahorro mensual proyectado (8 meses si es menor a 3M, 3,5 si supera 60M).</p>
+
+        <table class="bd" id="t_piso">
+          <thead><tr><th>Piso técnico</th><th>Horas</th><th>Valor</th></tr></thead>
+          <tbody id="tb_piso"></tbody>
+        </table>
+      </section>
+
+      <!-- ============ 4. MANTENIMIENTO ============ -->
+      <section id="mant" class="cotiz-sec">
+        <div class="sec-head"><h2>4. Mantenimiento programado</h2><span>ventanas trimestrales</span></div>
+        <p class="sec-intro">Se cotiza calculando las <b>horas reales por ventana</b> y el <b>porcentaje anual de la implementación</b>. El mayor de los dos métodos asegura un precio justo y rentable.</p>
+
+        <div class="mant-selection-bar">
+          <div class="mant-sel-title">Elige un plan de mantenimiento (opcional):</div>
+          <div class="mant-pills" role="radiogroup" aria-label="Plan de mantenimiento">
+            <button type="button" class="mant-pill active" data-plan="none" id="btn_plan_none">
+              <span class="pill-dot"></span> Sin mantenimiento
+            </button>
+            <button type="button" class="mant-pill" data-plan="esen" id="btn_plan_esen">
+              <span class="pill-dot"></span> Esencial
+            </button>
+            <button type="button" class="mant-pill" data-plan="std" id="btn_plan_std">
+              <span class="pill-dot"></span> Estándar <span class="pill-tag">Recomendado</span>
+            </button>
+            <button type="button" class="mant-pill" data-plan="crit" id="btn_plan_crit">
+              <span class="pill-dot"></span> Crítico
+            </button>
+          </div>
+        </div>
+
+        <div class="tiers">
+          <div class="tier" id="tier_esen" data-plan="esen">
+            <h4>Esencial</h4>
+            <div style="color:var(--slate-dim);font-size:12px">2 ventanas al año</div>
+            <div class="price num" id="o_m_esen">—</div>
+            <div class="per">al año, facturado mensual</div>
+            <ul><li>Limpieza y optimización</li><li>Parches de componentes</li><li>Informe de estado</li><li>Sin SLA de respuesta</li></ul>
+            <div class="tier-select-action"><span id="act_m_esen">Elegir plan</span></div>
+          </div>
+          <div class="tier mid" id="tier_std" data-plan="std">
+            <span class="rec">recomendado</span>
+            <h4>Estándar</h4>
+            <div style="color:var(--slate-dim);font-size:12px">4 ventanas al año</div>
+            <div class="price num" id="o_m_std">—</div>
+            <div class="per">al año, facturado mensual</div>
+            <ul><li>Todo lo de Esencial</li><li>Actualización a la última versión</li><li>Monitoreo continuo</li><li>Respuesta en 2 días hábiles</li></ul>
+            <div class="tier-select-action"><span id="act_m_std">Elegir plan</span></div>
+          </div>
+          <div class="tier" id="tier_crit" data-plan="crit">
+            <h4>Crítico</h4>
+            <div style="color:var(--slate-dim);font-size:12px">4 ventanas + incidentes</div>
+            <div class="price num" id="o_m_crit">—</div>
+            <div class="per">al año, facturado mensual</div>
+            <ul><li>Todo lo de Estándar</li><li>Incidentes con SLA en horas</li><li>Evaluación de modelos nuevos</li><li>Un cambio de config / trimestre</li></ul>
+            <div class="tier-select-action"><span id="act_m_crit">Elegir plan</span></div>
+          </div>
+        </div>
+
+        <table class="bd" id="t_vent">
+          <thead><tr><th>Una ventana Estándar</th><th>Horas</th><th>Valor</th></tr></thead>
+          <tbody id="tb_vent"></tbody>
+        </table>
+      </section>
+
+      <!-- ============ 5. REGLAS ============ -->
+      <section id="reglas" class="cotiz-sec">
+        <div class="sec-head"><h2>5. Reglas contractuales clave</h2><span>blindaje comercial</span></div>
+        <p class="sec-intro">Cláusulas indispensables para proteger el alcance, la agenda y el margen del proyecto.</p>
+
+        <ul class="rules">
+          <li><span class="tag">accesos</span><div><b>El rol técnico debe permanecer vigente</b><p>El cliente mantiene activo el usuario con los permisos y notifica cualquier cambio con 10 días hábiles de anticipación.</p></div></li>
+          <li><span class="tag">agenda</span><div><b>Ventana confirmada con 15 días, accesos verificados 72 horas antes</b><p>Pruebas de conexión 3 días antes. Si falla, hay margen de corrección.</p></div></li>
+          <li><span class="tag a">sin acceso</span><div><b>Si al abrir la ventana no hay acceso, se consume</b><p>Reagendamientos adicionales cuestan el <b>30% del valor de la ventana</b>.</p></div></li>
+          <li><span class="tag a">permisos</span><div><b>Restablecer accesos se cobra aparte</b><p>Tarifa de consultoría, mínimo 2 horas: <span class="num" id="o_reperm">—</span>.</p></div></li>
+          <li><span class="tag s">urgencia</span><div><b>Fuera de ventana a tarifa de urgencia</b><p><span class="num" id="o_urg2">—</span> por hora, mínimo 2 horas (incluido en Crítico).</p></div></li>
+          <li><span class="tag n">pago</span><div><b>50% al firmar, 50% contra entrega</b><p>En proyectos sobre <span class="num">40M COP</span>, esquema recomendado 40/40/20 con hito en despliegue.</p></div></li>
+        </ul>
+      </section>
+
+      <div class="cotiz-footer">
+        <b>Sooniverse — Plataforma Privada de Inteligencia Artificial</b><br>
+        Valores de referencia para uso interno comercial.
+      </div>
+
+    </main>
+
+    <!-- ============ RAIL RESUMEN ============ -->
+    <aside class="rail">
+      <div class="quote">
+        <div class="verdict v-ok" id="o_verdict"><span class="dot"></span><span id="o_verdict_txt">—</span></div>
+        <div class="qbody">
+          <div class="qmain">
+            <div class="k">Implementación</div>
+            <div class="v" id="o_precio">—</div>
+            <div class="sub" id="o_precio_sub">—</div>
+          </div>
+          <div class="qsplit">
+            <div class="qcell"><div class="k">Piso técnico</div><div class="v" id="o_piso">—</div></div>
+            <div class="qcell"><div class="k">Valor del ahorro</div><div class="v" id="o_valor">—</div></div>
+          </div>
+          <ul class="qlist">
+            <li><span class="k">Ahorro mensual</span><span class="v" id="o_ahorro">—</span></li>
+            <li><span class="k">Ahorro sobre el gasto</span><span class="v" id="o_pct">—</span></li>
+            <li><span class="k">Retorno cliente</span><span class="v" id="o_payback">—</span></li>
+            <li class="muted"><span class="k">Horas estimadas</span><span class="v" id="o_horas">—</span></li>
+            <li class="muted"><span class="k">Rinde por hora</span><span class="v" id="o_rinde">—</span></li>
+            <li><span class="k">Diagnóstico deducible</span><span class="v" id="o_diag2">—</span></li>
+            <li><span class="k" id="o_m_lbl">Mantenimiento</span><span class="v" id="o_m_incl">—</span></li>
+            <li id="row_m_cuota" style="display:none"><span class="k">Cuota recurrente</span><span class="v" id="o_m_cuota">—</span></li>
+            <li class="strong"><span class="k">Total a facturar</span><span class="v" id="o_total">—</span></li>
+          </ul>
+          <div class="reason" id="o_reason">—</div>
+        </div>
+        <div class="qfoot" id="o_qfoot">Valores antes de IVA. Diagnóstico deducible si contrata dentro de 45 días.</div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var M = 1000000;
+
+  var cop = function(v){
+    return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(v);
+  };
+  var copM = function(v){
+    if (v >= 10*M) return '$' + (v/M).toFixed(1).replace('.',',') + 'M';
+    return cop(v);
+  };
+  var round = function(v, step){ return Math.round(v/step)*step; };
+
+  function autoMult(s){
+    var m = s/M;
+    if (m <= 3) return 8;
+    if (m <= 10) return 6.5;
+    if (m <= 25) return 5.5;
+    if (m <= 60) return 4.5;
+    return 3.5;
+  }
+
+  var multTouched = false;
+  if ($('i_mult')) {
+    $('i_mult').addEventListener('input', function(){ multTouched = true; calc(); });
+  }
+
+  function num(id){ var el = $(id); if (!el) return 0; var v = parseFloat(el.value); return isNaN(v) ? 0 : v; }
+
+  function calc(){
+    /* 1. Tarifas */
+    var ingreso = num('i_ingreso')*M;
+    var costos  = num('i_costos')*M;
+    var imp     = Math.min(num('i_imp'),69)/100;
+    var horasMes= Math.max(num('i_horas'),1);
+
+    var rIng = round(((ingreso + costos) / (1 - imp)) / horasMes, 5000);
+    var rCon = round(rIng*1.4, 5000);
+    var rUrg = round(rIng*1.8, 5000);
+
+    if ($('o_r_ing')) $('o_r_ing').textContent = cop(rIng);
+    if ($('o_r_con')) $('o_r_con').textContent = cop(rCon);
+    if ($('o_r_urg')) $('o_r_urg').textContent = cop(rUrg);
+
+    /* 2. Antes */
+    var diag  = round(rCon*2, 50000);
+    var bolsa = round(rCon*4*0.9, 50000);
+    if ($('o_diag')) $('o_diag').textContent   = cop(diag);
+    if ($('o_diag2')) $('o_diag2').textContent = '−' + cop(diag);
+    if ($('o_bolsa')) $('o_bolsa').textContent = cop(bolsa);
+    if ($('o_reperm')) $('o_reperm').textContent = cop(rCon*2);
+    if ($('o_urg2')) $('o_urg2').textContent   = cop(rUrg);
+
+    /* 3. Piso técnico */
+    var W = Math.max(num('i_workers'),1);
+    var F = Math.max(num('i_familias'),1);
+    var I = Math.max(num('i_integr'),1);
+
+    var hBase = 28;
+    var wExtra = W - 1;
+    var hWork = Math.min(wExtra,3)*4 + Math.max(wExtra-3,0)*2.5;
+    var hFam  = (F-1)*10;
+    var hInt  = (I-1)*3;
+    var hTot  = hBase + hWork + hFam + hInt;
+
+    var mults = [];
+    var mTot = 1;
+    if ($('c_urg') && $('c_urg').checked) { mTot *= 1.25; mults.push(['Entrega acelerada','+25%']); }
+
+    var piso = round(hTot * rIng * mTot, 100000);
+    var horasEfect = hTot * mTot;
+
+    var rows = '';
+    function row(label, hrs, val, off){
+      rows += '<tr'+(off?' class="off"':'')+'><td>'+label+'</td><td class="mono">'+(hrs===null?'—':hrs.toLocaleString('es-CO',{maximumFractionDigits:1}))+'</td><td class="mono">'+(val===null?'—':cop(val))+'</td></tr>';
+    }
+    row('Plataforma base, gateway, pruebas y entrega', hBase, hBase*rIng);
+    if (wExtra>0) row(wExtra+' worker'+(wExtra>1?'s':'')+' adicional'+(wExtra>1?'es':''), hWork, hWork*rIng);
+    if (F>1) row((F-1)+' familia'+(F>2?'s':'')+' de modelo adicional'+(F>2?'es':''), hFam, hFam*rIng);
+    if (I>1) row((I-1)+' integración'+(I>2?'es':'')+' adicional'+(I>2?'es':''), hInt, hInt*rIng);
+    for (var i=0;i<mults.length;i++) row(mults[i][0], null, null, true);
+    if (mults.length) row('Subtotal por multiplicadores ×'+mTot.toFixed(2).replace('.',','), null, null, true);
+    rows += '<tr class="total"><td>Piso técnico</td><td class="mono">'+horasEfect.toLocaleString('es-CO',{maximumFractionDigits:0})+' h</td><td class="mono">'+cop(piso)+'</td></tr>';
+    if ($('tb_piso')) $('tb_piso').innerHTML = rows;
+
+    /* 3b. Valor */
+    var gasto = num('i_gasto')*M;
+    var nuevo = num('i_nuevo')*M;
+    var S = Math.max(gasto - nuevo, 0);
+
+    var mAuto = autoMult(S);
+    if (!multTouched && $('i_mult')) $('i_mult').value = mAuto;
+    var mUsed = $('i_mult') ? parseFloat($('i_mult').value) : mAuto;
+    if ($('o_mult_lbl')) $('o_mult_lbl').textContent = mUsed.toFixed(1).replace('.',',');
+    if ($('o_mult_auto')) {
+      $('o_mult_auto').textContent = multTouched
+        ? '(manual · auto: '+mAuto.toFixed(1).replace('.',',')+')'
+        : '(automático según el ahorro)';
+    }
+
+    var valor = round(S*mUsed, 100000);
+    var techo = S*10;
+
+    /* 3c. Precio y veredicto */
+    var precio, verdict, cls, reason;
+
+    if (S <= 0){
+      precio = piso;
+      cls='v-stop'; verdict='No hay ahorro que vender';
+      reason = 'El costo nuevo iguala o supera el gasto actual. Revisa el dimensionamiento: probablemente sobran workers o el modelo es más grande de lo necesario.';
+    } else if (piso > techo){
+      precio = piso;
+      cls='v-stop'; verdict='No vender así';
+      reason = 'El piso técnico supera 10 meses de ahorro. Este trabajo cuesta más de lo que le sirve al cliente. Reduce el alcance o pasa a modalidad mensual.';
+    } else if (piso > valor){
+      precio = piso;
+      cls='v-warn'; verdict='Manda el piso, margen justo';
+      reason = 'El ahorro no alcanza a pagar la complejidad al múltiplo elegido, así que cobras el piso. Es rentable pero sin holgura: no negocies descuentos.';
+    } else if (Math.min(valor,techo) > 120*M){
+      precio = Math.min(valor, techo);
+      cls='v-warn'; verdict='Divide en pago único más cuota';
+      reason = 'El valor es correcto pero un pago único de este tamaño requiere junta directiva. Deja la implementación cerca de ' + copM(round(Math.max(piso*1.8, 60*M),1000000)) + ' y lleva el resto a cuota mensual recurrente.';
+    } else if (valor >= piso*2.5){
+      precio = Math.min(valor, techo);
+      cls='v-go'; verdict='Cotización de alto apalancamiento';
+      reason = 'El valor para el cliente multiplica varias veces tu costo de ejecución. Justifica el precio por el ahorro obtenido, no por horas invertidas.';
+    } else {
+      precio = Math.min(valor, techo);
+      cls='v-ok'; verdict='Cotización sana';
+      reason = 'Piso y valor alineados. Precio defendible por ambos lados: costo real de ejecución y ahorro directo para el cliente.';
+    }
+    precio = round(precio, 100000);
+
+    var payback = S>0 ? precio/S : 0;
+
+    if ($('o_verdict')) $('o_verdict').className = 'verdict ' + cls;
+    if ($('o_verdict_txt')) $('o_verdict_txt').textContent = verdict;
+    if ($('o_reason')) $('o_reason').textContent = reason;
+
+    if ($('o_precio')) $('o_precio').textContent = cop(precio);
+    if ($('o_precio_sub')) {
+      $('o_precio_sub').textContent = S>0
+        ? 'Equivale a ' + payback.toFixed(1).replace('.',',') + ' meses de ahorro'
+        : 'Sin ahorro proyectado';
+    }
+
+    if ($('o_piso')) $('o_piso').textContent  = copM(piso);
+    if ($('o_valor')) $('o_valor').textContent = copM(valor);
+    if ($('o_ahorro')) $('o_ahorro').textContent= cop(S) + '/mes';
+    if ($('o_pct')) $('o_pct').textContent   = gasto>0 ? (S/gasto*100).toFixed(1).replace('.',',')+'%' : '—';
+    if ($('o_payback')) $('o_payback').textContent = S>0 ? payback.toFixed(1).replace('.',',')+' meses' : '—';
+    if ($('o_horas')) $('o_horas').textContent = horasEfect.toLocaleString('es-CO',{maximumFractionDigits:0}) + ' h';
+    if ($('o_rinde')) $('o_rinde').textContent = cop(round(precio/Math.max(horasEfect,1),5000)) + '/h';
+
+    /* 4. Mantenimiento */
+    var vBase = 3;
+    var vWork = Math.min(wExtra,8)*0.75 + Math.max(wExtra-8,0)*0.4;
+    var vFam  = (F-1)*1.5;
+    var vHoras = (vBase + vWork + vFam) * (1 + (mTot-1)*0.5);
+    var ventana = round(vHoras * rIng, 50000);
+
+    var esenBU = ventana*2, stdBU = ventana*4, critBU = ventana*4*1.35;
+    var esenTD = precio*0.12,  stdTD = precio*0.18,  critTD = precio*0.26;
+    var esenCap = precio*0.20, stdCap = precio*0.30, critCap = precio*0.42;
+
+    var esen = round(Math.max(Math.min(esenBU,esenCap),esenTD),100000);
+    var std  = round(Math.max(Math.min(stdBU,stdCap),stdTD),100000);
+    var crit = round(Math.max(Math.min(critBU,critCap),critTD),100000);
+
+    if ($('o_m_esen')) $('o_m_esen').textContent = cop(esen);
+    if ($('o_m_std')) $('o_m_std').textContent  = cop(std);
+    if ($('o_m_crit')) $('o_m_crit').textContent = cop(crit);
+
+    var vrows = '';
+    vrows += '<tr><td>Revisión, limpieza y optimización</td><td class="mono">'+vBase+'</td><td class="mono">'+cop(vBase*rIng)+'</td></tr>';
+    if (vWork>0) vrows += '<tr><td>Verificación de '+wExtra+' worker'+(wExtra>1?'s':'')+' adicional'+(wExtra>1?'es':'')+'</td><td class="mono">'+vWork.toLocaleString('es-CO',{maximumFractionDigits:2})+'</td><td class="mono">'+cop(vWork*rIng)+'</td></tr>';
+    if (vFam>0) vrows += '<tr><td>Actualización de '+(F-1)+' familia'+(F>2?'s':'')+' adicional'+(F>2?'es':'')+'</td><td class="mono">'+vFam.toLocaleString('es-CO',{maximumFractionDigits:2})+'</td><td class="mono">'+cop(vFam*rIng)+'</td></tr>';
+    if (mTot>1) vrows += '<tr class="off"><td>Complejidad del entorno, a mitad de peso</td><td class="mono">—</td><td class="mono">—</td></tr>';
+    vrows += '<tr class="total"><td>Costo de una ventana</td><td class="mono">'+vHoras.toLocaleString('es-CO',{maximumFractionDigits:1})+' h</td><td class="mono">'+cop(ventana)+'</td></tr>';
+    vrows += '<tr class="off"><td>Estándar por horas · 4 ventanas</td><td class="mono">—</td><td class="mono">'+cop(stdBU)+'</td></tr>';
+    vrows += '<tr class="off"><td>Estándar por porcentaje · 18% del precio cotizado</td><td class="mono">—</td><td class="mono">'+cop(stdTD)+'</td></tr>';
+    if ($('tb_vent')) $('tb_vent').innerHTML = vrows;
+
+    /* Selección y desglose de mantenimiento */
+    var allPills = document.querySelectorAll('.mant-pill');
+    for (var pi = 0; pi < allPills.length; pi++) {
+      if (allPills[pi].getAttribute('data-plan') === selectedPlan) {
+        allPills[pi].classList.add('active');
+      } else {
+        allPills[pi].classList.remove('active');
+      }
+    }
+
+    var allTiers = document.querySelectorAll('.tier[data-plan]');
+    for (var ti = 0; ti < allTiers.length; ti++) {
+      var planCode = allTiers[ti].getAttribute('data-plan');
+      var actEl = $('act_m_' + planCode);
+      if (planCode === selectedPlan) {
+        allTiers[ti].classList.add('tier-selected');
+        if (actEl) actEl.textContent = '✓ Plan seleccionado';
+      } else {
+        allTiers[ti].classList.remove('tier-selected');
+        if (actEl) actEl.textContent = 'Elegir plan';
+      }
+    }
+
+    var mVal = 0;
+    var mName = '';
+    var mColor = 'var(--white)';
+    if (selectedPlan === 'esen') { mVal = esen; mName = 'Esencial'; mColor = 'var(--cyan)'; }
+    else if (selectedPlan === 'std') { mVal = std; mName = 'Estándar'; mColor = 'var(--neon)'; }
+    else if (selectedPlan === 'crit') { mVal = crit; mName = 'Crítico'; mColor = 'var(--amber)'; }
+
+    var rowCuota = $('row_m_cuota');
+    var qfoot = $('o_qfoot');
+
+    if (selectedPlan === 'none') {
+      if ($('o_m_incl')) {
+        $('o_m_incl').textContent = 'Ninguno ($0)';
+        $('o_m_incl').style.color = 'var(--slate-dim)';
+      }
+      if (rowCuota) rowCuota.style.display = 'none';
+      if (qfoot) qfoot.textContent = 'Valores antes de IVA. Diagnóstico deducible si contrata dentro de 45 días. Sin mantenimiento.';
+    } else {
+      var cuotaMes = round(mVal / 12, 10000);
+      if ($('o_m_incl')) {
+        $('o_m_incl').textContent = mName + ' · ' + copM(mVal) + '/año';
+        $('o_m_incl').style.color = mColor;
+      }
+      if (rowCuota) {
+        rowCuota.style.display = 'flex';
+        if ($('o_m_cuota')) $('o_m_cuota').textContent = cop(cuotaMes) + '/mes';
+      }
+      if (qfoot) qfoot.textContent = 'Valores antes de IVA. Diagnóstico deducible. Mantenimiento ' + mName + ' facturado mensual (~' + cop(cuotaMes) + '/mes).';
+    }
+
+    if ($('o_total')) $('o_total').textContent = cop(precio - diag);
+  }
+
+  var selectedPlan = 'none';
+
+  function setPlan(plan){
+    if (selectedPlan === plan && plan !== 'none') {
+      selectedPlan = 'none';
+    } else {
+      selectedPlan = plan;
+    }
+    calc();
+  }
+
+  var planPills = document.querySelectorAll('.mant-pill');
+  for (var p = 0; p < planPills.length; p++) {
+    planPills[p].addEventListener('click', function(e){
+      e.stopPropagation();
+      setPlan(this.getAttribute('data-plan'));
+    });
+  }
+
+  var tierCards = document.querySelectorAll('.tier[data-plan]');
+  for (var t = 0; t < tierCards.length; t++) {
+    tierCards[t].addEventListener('click', function(){
+      setPlan(this.getAttribute('data-plan'));
+    });
+  }
+
+  var ids = ['i_ingreso','i_costos','i_imp','i_horas','i_gasto','i_nuevo','i_workers','i_familias','i_integr'];
+  for (var k=0; k<ids.length; k++) {
+    var el = $(ids[k]);
+    if (el) el.addEventListener('input', calc);
+  }
+  if ($('c_urg')) $('c_urg').addEventListener('change', calc);
+
+  calc();
+})();
+</script>
+{% endblock %}

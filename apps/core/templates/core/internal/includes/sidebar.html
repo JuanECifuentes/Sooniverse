@@ -24,6 +24,15 @@
       </svg>
       Agenda
     </a>
+
+    <a href="{% url 'core:internal_cotizaciones' %}"
+       class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200
+              {% if request.path == '/interno/cotizaciones/' %}bg-neon/10 text-neon border border-neon/20{% else %}text-slate hover:text-white hover:bg-surface{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm3-4.5h.008v.008H11.25v-.008zm0 2.25h.008v.008H11.25V13.5zm0 2.25h.008v.008H11.25v-.008zm3-4.5h.008v.008H14.25v-.008zm0 2.25h.008v.008H14.25V13.5zM4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15A2.25 2.25 0 002.25 6.75v10.5A2.25 2.25 0 004.5 19.5zM7.5 7.5h9v2.25h-9V7.5z"/>
+      </svg>
+      Cotizaciones
+    </a>
   </nav>
 
   <div class="p-4 border-t border-border">

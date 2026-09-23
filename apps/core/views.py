@@ -574,6 +574,17 @@ def internal_agenda(request):
 
 
 # ──────────────────────────────────────────────
+# Internal: módulo Cotizaciones (/interno/cotizaciones/)
+# ──────────────────────────────────────────────
+
+
+@login_required
+def internal_cotizaciones(request):
+    """Módulo interno: Guía interactiva y calculadora de cotización para proyectos."""
+    return render(request, "core/internal/cotizaciones_dashboard.html")
+
+
+# ──────────────────────────────────────────────
 # Public: diagnostic questionnaire
 # ──────────────────────────────────────────────
 

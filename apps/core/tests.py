@@ -1154,3 +1154,34 @@ class InmutabilidadCitasYSeguridadTestCase(TestCase):
             primera = data["fechas_disponibles"][0]
             self.assertIn(primera, data["slots_por_fecha"])
 
+
+class InternalCotizacionesTestCase(TestCase):
+    """Pruebas del módulo interno de cotizaciones (/interno/cotizaciones/)."""
+
+    def setUp(self):
+        from django.contrib.auth.models import User
+
+        self.url = reverse("core:internal_cotizaciones")
+        self.user = User.objects.create_user(
+            username="analista", password="secretpassword123"
+        )
+
+    def test_acceso_anonimo_redirige_a_login(self):
+        """Un usuario no autenticado debe ser redirigido a login."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+        self.assertIn("next=/interno/cotizaciones/", response.url)
+
+    def test_acceso_autenticado_renderiza_modulo_correctamente(self):
+        """Un usuario autenticado puede acceder a la guía de cotización."""
+        self.client.login(username="analista", password="secretpassword123")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "core/internal/cotizaciones_dashboard.html")
+        self.assertContains(response, "Guía de Cotización")
+        self.assertContains(response, "Piso técnico")
+        self.assertContains(response, "Mantenimiento programado")
+        self.assertContains(response, "i_ingreso")
+
+
