@@ -21,12 +21,14 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from django.conf import settings
 from django.utils import timezone
 
-from ..models import Appointment, BookingConfig, DiaHorario
+from ..models import Appointment, BookingConfig, DiaHorario, Lead
 
 logger = logging.getLogger("django.apps.core.booking")
 
 # Fallback si el visitante envía una zona horaria desconocida.
 ZONA_FALLBACK = getattr(settings, "TIME_ZONE", "America/Bogota")
+DESCANSO_MIN = 20
+ANTICIPO_MINIMO_MIN = 1440  # Mínimo 24 horas (1440 minutos)
 
 
 def zona_segura(tz_name: str | None) -> str:
@@ -50,37 +52,141 @@ def _horarios_por_dia() -> dict[int, tuple]:
     }
 
 
-def _generar_slots_dia_negocio(fecha_bogota, config) -> list[datetime]:
-    """Slots UTC de UN día de negocio — la fecha es la del calendario de
-    Bogotá, y el horario semanal se mira por su weekday. Slots cada
-    duracion_min, sin solapestos (el paso avanza en la misma duración)."""
+def _citas_confirmadas_rango(
+    desde: datetime, hasta: datetime
+) -> list[tuple[datetime, datetime]]:
+    """Obtiene intervalos (inicio, fin) en UTC de citas confirmadas y reuniones agendadas."""
+    citas = []
+    # 1. Appointments confirmados
+    for apt in Appointment.objects.filter(
+        estado=Appointment.Estado.CONFIRMADA,
+        inicio__lt=hasta,
+        fin__gt=desde,
+    ).values("inicio", "fin", "duracion_min"):
+        ini = apt["inicio"]
+        fin = apt["fin"] or (ini + timedelta(minutes=apt["duracion_min"] or 30))
+        citas.append((ini, fin))
+
+    # 2. Leads con meeting_at que no tengan ya Appointment confirmado asociado
+    leads_reunion = (
+        Lead.objects.filter(
+            meeting_at__isnull=False,
+            meeting_at__gte=desde - timedelta(hours=2),
+            meeting_at__lt=hasta,
+        )
+        .exclude(appointments__estado=Appointment.Estado.CONFIRMADA)
+        .values_list("meeting_at", flat=True)
+    )
+    for m_at in leads_reunion:
+        citas.append((m_at, m_at + timedelta(minutes=30)))
+
+    if not citas:
+        return []
+    citas.sort(key=lambda x: x[0])
+    return citas
+
+
+def _generar_slots_dia_negocio(
+    fecha_bogota,
+    config,
+    citas_precargadas: list[tuple[datetime, datetime]] | None = None,
+) -> list[datetime]:
+    """Genera los slots UTC disponibles para un día de negocio en Bogotá.
+
+    Aplica una redistribución dinámica cuando hay citas confirmadas:
+    - Se garantiza un margen de descanso de DESCANSO_MIN (20 min) antes y después de cada reunión.
+    - Si se agenda una reunión (ej. a las 10:30), los horarios posteriores se redistribuyen
+      arrancando exactamente en fin_cita + 20min (ej. 11:20) avanzando con paso duracion + descanso (50min).
+    - Los horarios previos se ajustan respetando el límite de apertura y el margen previo a la cita (ej. 09:00, 09:40).
+    """
     cfg = _horarios_por_dia().get(fecha_bogota.weekday())
     if cfg is None:
         return []
 
     inicio_cfg, fin_cfg = cfg
     tz_bogota = ZoneInfo(settings.TIME_ZONE)
-    paso = timedelta(minutes=config.duracion_min)
+    duracion = timedelta(minutes=config.duracion_min)
+    descanso = timedelta(minutes=DESCANSO_MIN)
+    step = duracion + descanso
 
-    cursor = datetime.combine(fecha_bogota, inicio_cfg, tzinfo=tz_bogota)
-    limite = datetime.combine(fecha_bogota, fin_cfg, tzinfo=tz_bogota)
+    limite_inicio = datetime.combine(
+        fecha_bogota, inicio_cfg, tzinfo=tz_bogota
+    ).astimezone(dt_timezone.utc)
+    limite_fin = datetime.combine(
+        fecha_bogota, fin_cfg, tzinfo=tz_bogota
+    ).astimezone(dt_timezone.utc)
 
-    slots = []
-    while cursor + paso <= limite:
-        # Colombia nunca observa DST; timezone.make_aware también serviría,
-        # pero el aware explícito es inequívoco (sin fold/ambigüedad).
-        slots.append(cursor.astimezone(dt_timezone.utc))
-        cursor += paso
-    return slots
+    if citas_precargadas is not None:
+        citas_dia = [
+            (c_ini, c_fin)
+            for c_ini, c_fin in citas_precargadas
+            if c_ini < limite_fin and c_fin > limite_inicio
+        ]
+    else:
+        citas_dia = _citas_confirmadas_rango(limite_inicio, limite_fin)
 
+    # Si no hay ninguna cita confirmada en el día, slots estándar cada duracion_min
+    if not citas_dia:
+        slots = []
+        cursor = limite_inicio
+        while cursor + duracion <= limite_fin:
+            slots.append(cursor)
+            cursor += duracion
+        return slots
 
-def _inicios_confirmados(desde: datetime, hasta: datetime) -> list[datetime]:
-    rows = Appointment.objects.filter(
-        estado=Appointment.Estado.CONFIRMADA,
-        inicio__gte=desde,
-        inicio__lt=hasta,
-    ).values_list("inicio", flat=True)
-    return list(rows)
+    # Fusionar citas que se solapan o están a menos del margen de descanso
+    citas_merged = []
+    for c_start, c_end in citas_dia:
+        if not citas_merged:
+            citas_merged.append([c_start, c_end])
+        else:
+            prev = citas_merged[-1]
+            if c_start <= prev[1] + descanso:
+                prev[1] = max(prev[1], c_end)
+            else:
+                citas_merged.append([c_start, c_end])
+
+    # Construir ventanas libres de la jornada
+    ventanas = []
+    primera = citas_merged[0]
+    if limite_inicio < primera[0] - descanso:
+        ventanas.append((limite_inicio, primera[0] - descanso, "antes"))
+
+    for i in range(len(citas_merged) - 1):
+        c_act = citas_merged[i]
+        c_sig = citas_merged[i + 1]
+        w_ini = c_act[1] + descanso
+        w_fin = c_sig[0] - descanso
+        if w_ini < w_fin:
+            ventanas.append((w_ini, w_fin, "intermedia"))
+
+    ultima = citas_merged[-1]
+    if ultima[1] + descanso < limite_fin:
+        ventanas.append((ultima[1] + descanso, limite_fin, "despues"))
+
+    slots_set = set()
+    for w_ini, w_fin, tipo in ventanas:
+        if w_fin - w_ini < duracion:
+            continue
+
+        if tipo == "antes":
+            # Hacia adelante desde el inicio del día
+            cursor = w_ini
+            while cursor + duracion <= w_fin:
+                slots_set.add(cursor)
+                cursor += step
+            # Alinear también hacia atrás desde el límite previo a la cita (ej. 09:40 si cita es 10:30)
+            slot_backward = w_fin - duracion
+            if slot_backward >= w_ini:
+                slots_set.add(slot_backward)
+        else:
+            # Hacia adelante desde fin_reunion + descanso (ej. 11:20, 12:10, 13:00...)
+            cursor = w_ini
+            while cursor + duracion <= w_fin:
+                slots_set.add(cursor)
+                cursor += step
+
+    return sorted(slots_set)
 
 
 def _pertenece_a_ventana(slot: datetime, config, hoy_bogota) -> bool:
@@ -94,8 +200,7 @@ def slots_para_fecha(fecha_iso: str, tz_name: str | None) -> dict:
 
     Devuelve {"fecha": iso, "zona_horaria": tz_validada, "slots": [iso_utc]}
     ordenado cronológicamente. El frontend formatea cada instante UTC con la
-    tz elegida en formato 24h; por eso un slot de la noche de Bogotá puede
-    aparecer en el día siguiente del visitante (y viceversa).
+    tz elegida en formato 24h.
     """
     config = BookingConfig.get_solo()
     tz_valida = zona_segura(tz_name)
@@ -103,13 +208,13 @@ def slots_para_fecha(fecha_iso: str, tz_name: str | None) -> dict:
     tz_bogota = ZoneInfo(settings.TIME_ZONE)
 
     try:
-        # Solo se usa .date(); el tzinfo es irrelevante aquí. noqa: DTZ007
-        fecha_visitante = datetime.strptime(fecha_iso, "%Y-%m-%d").date()  # noqa: DTZ007
+        fecha_visitante = datetime.strptime(fecha_iso, "%Y-%m-%d").date()
     except (ValueError, TypeError):
         return {"fecha": fecha_iso, "zona_horaria": tz_valida, "slots": []}
 
     ahora = timezone.now()
-    limite_reserva = ahora + timedelta(minutes=config.anticipo_min)
+    anticipo_minimo = max(config.anticipo_min, ANTICIPO_MINIMO_MIN)
+    limite_reserva = ahora + timedelta(minutes=anticipo_minimo)
     hoy_bogota = ahora.astimezone(tz_bogota).date()
 
     candidatos: list[datetime] = []
@@ -131,18 +236,19 @@ def slots_para_fecha(fecha_iso: str, tz_name: str | None) -> dict:
             "slots": [],
         }
 
-    # Un único query de ocupación cubre todo el rango consultado; el
-    # traslape se evalúa en memoria (host único: una cita ocupa su rango
-    # completo, no solo el instante de inicio).
-    ocupados = _inicios_confirmados(
-        candidatos[0] - timedelta(minutes=config.duracion_min),
-        candidatos[-1] + timedelta(minutes=config.duracion_min),
+    duracion = timedelta(minutes=config.duracion_min)
+    descanso = timedelta(minutes=DESCANSO_MIN)
+    citas = _citas_confirmadas_rango(
+        candidatos[0] - timedelta(hours=2),
+        candidatos[-1] + timedelta(hours=2),
     )
-    pasos = timedelta(minutes=config.duracion_min).total_seconds()
     libres = [
         s
         for s in candidatos
-        if not any(abs((o - s).total_seconds()) < pasos for o in ocupados)
+        if not any(
+            (s < c_end + descanso and s + duracion + descanso > c_start)
+            for c_start, c_end in citas
+        )
     ]
 
     return {
@@ -155,10 +261,6 @@ def slots_para_fecha(fecha_iso: str, tz_name: str | None) -> dict:
 def disponibilidad_completa_ventana(tz_name: str | None) -> dict:
     """Calcula y devuelve las fechas disponibles y los slots libres de cada una en
     la zona horaria del visitante para toda la ventana de agenda abierta.
-
-    Permite al frontend cargar toda la disponibilidad en una única petición inicial,
-    de modo que el usuario pueda cambiar de fecha instantáneamente sin nuevas
-    llamadas al backend.
     """
     config = BookingConfig.get_solo()
     tz_valida = zona_segura(tz_name)
@@ -166,17 +268,27 @@ def disponibilidad_completa_ventana(tz_name: str | None) -> dict:
     tz_bogota = ZoneInfo(settings.TIME_ZONE)
 
     ahora = timezone.now()
-    limite_reserva = ahora + timedelta(minutes=config.anticipo_min)
+    anticipo_minimo = max(config.anticipo_min, ANTICIPO_MINIMO_MIN)
+    limite_reserva = ahora + timedelta(minutes=anticipo_minimo)
     hoy_bogota = ahora.astimezone(tz_bogota).date()
     hoy_visitante = ahora.astimezone(tz_visitante).date()
 
-    # Genera el catálogo completo de slots de la ventana una sola vez
-    # (dias_apertura + 1 días de negocio en Bogotá, más un día de margen para
-    # husos desplazados) y agrupa por fecha local del visitante.
+    limite_inicio_ventana = datetime.combine(
+        hoy_bogota - timedelta(days=1), datetime.min.time(), tzinfo=tz_bogota
+    ).astimezone(dt_timezone.utc)
+    limite_fin_ventana = datetime.combine(
+        hoy_bogota + timedelta(days=config.dias_apertura + 2),
+        datetime.max.time(),
+        tzinfo=tz_bogota,
+    ).astimezone(dt_timezone.utc)
+    citas_ventana = _citas_confirmadas_rango(limite_inicio_ventana, limite_fin_ventana)
+
     catalogo: dict = {}
     for delta in range(-1, config.dias_apertura + 2):
         dia_bogota = hoy_bogota + timedelta(days=delta)
-        for slot_utc in _generar_slots_dia_negocio(dia_bogota, config):
+        for slot_utc in _generar_slots_dia_negocio(
+            dia_bogota, config, citas_precargadas=citas_ventana
+        ):
             if slot_utc < limite_reserva:
                 continue
             if not _pertenece_a_ventana(slot_utc, config, hoy_bogota):
@@ -192,12 +304,8 @@ def disponibilidad_completa_ventana(tz_name: str | None) -> dict:
             "slots_por_fecha": {},
         }
 
-    todas = sorted(s for slots in catalogo.values() for s in slots)
-    ocupados = _inicios_confirmados(
-        todas[0] - timedelta(minutes=config.duracion_min),
-        todas[-1] + timedelta(minutes=config.duracion_min),
-    )
-    pasos = timedelta(minutes=config.duracion_min).total_seconds()
+    duracion = timedelta(minutes=config.duracion_min)
+    descanso = timedelta(minutes=DESCANSO_MIN)
 
     fechas = []
     slots_por_fecha = {}
@@ -207,7 +315,10 @@ def disponibilidad_completa_ventana(tz_name: str | None) -> dict:
         libres = [
             s
             for s in slots
-            if not any(abs((o - s).total_seconds()) < pasos for o in ocupados)
+            if not any(
+                (s < c_end + descanso and s + duracion + descanso > c_start)
+                for c_start, c_end in citas_ventana
+            )
         ]
         if libres:
             fecha_iso = fecha.isoformat()
@@ -229,8 +340,8 @@ def fechas_disponibles(tz_name: str | None) -> list[str]:
 
 def validar_slot(inicio_utc: datetime) -> tuple[bool, str]:
     """Re-validación server-side al reservar: ventana de apertura, horario
-    semanal en Bogotá, antelación mínima y disponibilidad (traslape con otra
-    cita confirmada). Devuelve (ok, motivo)."""
+    semanal en Bogotá, antelación mínima (>= 24hr), correspondencia con slots
+    redistribuidos y verificación del margen de descanso de 20 minutos. Devuelve (ok, motivo)."""
     config = BookingConfig.get_solo()
     if timezone.is_naive(inicio_utc):
         return False, "slot-naive"
@@ -238,7 +349,10 @@ def validar_slot(inicio_utc: datetime) -> tuple[bool, str]:
     ahora = timezone.now()
     if inicio_utc < ahora:
         return False, "slot-pasado"
-    if inicio_utc < ahora + timedelta(minutes=config.anticipo_min):
+
+    # Mínimo 24 horas (1440 min)
+    anticipo_minimo = max(config.anticipo_min, ANTICIPO_MINIMO_MIN)
+    if inicio_utc < ahora + timedelta(minutes=anticipo_minimo):
         return False, "anticipo-insuficiente"
 
     tz_bogota = ZoneInfo(settings.TIME_ZONE)
@@ -247,19 +361,22 @@ def validar_slot(inicio_utc: datetime) -> tuple[bool, str]:
     if (dia_bogota - hoy_bogota).days > config.dias_apertura:
         return False, "fuera-de-ventana"
 
-    # Debe corresponder EXACTAMENTE a un slot del horario semanal (evita
-    # type-in de fechas manuales contra la API).
-    if inicio_utc not in _generar_slots_dia_negocio(dia_bogota, config):
+    # Verificar que el slot pertenezca a los slots válidos redistribuidos del día
+    slots_validos = _generar_slots_dia_negocio(dia_bogota, config)
+    if inicio_utc not in slots_validos:
         return False, "slot-invalido"
 
-    fin = inicio_utc + timedelta(minutes=config.duracion_min)
-    conflicto = Appointment.objects.filter(
-        estado=Appointment.Estado.CONFIRMADA,
-        inicio__lt=fin,
-        inicio__gt=inicio_utc - timedelta(minutes=config.duracion_min),
-    ).exists()
-    if conflicto:
-        return False, "slot-ocupado"
+    # Verificar que no colisione con citas confirmadas ni viole el descanso de 20 min
+    duracion = timedelta(minutes=config.duracion_min)
+    descanso = timedelta(minutes=DESCANSO_MIN)
+    citas = _citas_confirmadas_rango(
+        inicio_utc - timedelta(hours=2),
+        inicio_utc + timedelta(hours=2),
+    )
+    for c_start, c_end in citas:
+        if inicio_utc < c_end + descanso and inicio_utc + duracion + descanso > c_start:
+            return False, "slot-ocupado"
+
     return True, "ok"
 
 

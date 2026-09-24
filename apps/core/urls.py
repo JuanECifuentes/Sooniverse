@@ -56,6 +56,12 @@ urlpatterns = [
     path("interno/leads/", views.internal_leads_dashboard, name="internal_leads"),
     # Internal module: Agenda (config del booking público + próximas citas)
     path("interno/agenda/", views.internal_agenda, name="internal_agenda"),
+    # Internal module: Cotizaciones (Guía y calculadora de cotización)
+    path(
+        "interno/cotizaciones/",
+        views.internal_cotizaciones,
+        name="internal_cotizaciones",
+    ),
     path(
         "interno/leads/estado/actualizar/",
         views.lead_update_status,
@@ -65,6 +71,11 @@ urlpatterns = [
         "interno/leads/<int:lead_pk>/detalle/",
         views.lead_detail_modal,
         name="lead_detail_modal",
+    ),
+    path(
+        "interno/leads/<int:lead_pk>/editar/",
+        views.lead_update_info,
+        name="lead_update_info",
     ),
     path(
         "interno/leads/<int:lead_pk>/reunion/",

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Historias destacadas — Sooniverse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep-space:#070A12;--cyber-surface:#0F172A;--structural:#1E293B;
+  --white:#FFFFFF;--slate:#94A3B8;--neon:#00FF87;--cyan:#60EFFF;--violet:#8A2BE2;
+  --cosmic:linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 600px at 12% -8%,rgba(0,255,135,.06),transparent 60%),
+  radial-gradient(900px 700px at 88% 108%,rgba(138,43,226,.10),transparent 60%),#070A12;
+  color:#fff;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  padding:clamp(20px,4vw,48px) clamp(14px,3vw,36px) 90px}
+.wrap{max-width:1240px;margin:0 auto}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:6.5px;
+  text-transform:uppercase;color:var(--neon);margin-bottom:14px}
+h1.page{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1.2px;line-height:1.1}
+h1.page .g{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin-top:14px;max-width:72ch;font-size:15.5px;line-height:1.65;color:var(--slate)}
+h2.sec{font-size:clamp(20px,3vw,27px);font-weight:700;letter-spacing:-.7px;margin:50px 0 6px;
+  padding-top:26px;border-top:1px solid var(--structural)}
+h2.sec + p{font-size:14.5px;line-height:1.6;color:var(--slate);max-width:72ch;margin-bottom:22px}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 22px}
+.toolbar button{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.6px;
+  text-transform:uppercase;background:transparent;border:1.5px solid var(--cyan);color:#fff;
+  border-radius:12px;padding:9px 15px;cursor:pointer;transition:all .3s ease}
+.toolbar button:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(96,239,255,.35)}
+.toolbar button[aria-pressed="true"]{background:var(--cosmic);color:var(--deep-space);border-color:transparent}
+.toolbar button:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+
+.group{margin-top:36px}
+.group-hd{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.group-hd .num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--deep-space);
+  background:var(--cosmic);border-radius:8px;padding:5px 9px;letter-spacing:1px}
+.group-hd h3{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.group-hd .cnt{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--slate);
+  text-transform:uppercase}
+.strip{display:flex;gap:16px;flex-wrap:wrap}
+.slot{width:258px;height:459px;position:relative;overflow:hidden;border-radius:14px;flex:none;
+  border:1px solid var(--structural);box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.slot .story{position:absolute;top:0;left:0;transform-origin:top left;transform:scale(.238888)}
+.cap{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.6px;color:#64748B;
+  text-transform:uppercase;margin-top:7px;text-align:center}
+.item{display:flex;flex-direction:column}
+.covers{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.cov{text-align:center}
+.cov .ring{width:126px;height:126px;border-radius:50%;padding:3px;background:var(--cosmic);
+  filter:drop-shadow(0 0 14px rgba(96,239,255,.45))}
+.cov .ring .in{width:100%;height:100%;border-radius:50%;overflow:hidden;position:relative;background:#070A12}
+.cov .ring .in .story{position:absolute;transform-origin:top left}
+.cov .lbl{margin-top:9px;font-size:12px;color:#CBD5E1;max-width:126px;line-height:1.3}
+
+/* ================= HISTORIA 1080x1920 ================= */
+.story{width:1080px;height:1920px;position:relative;overflow:hidden;color:#fff;
+  background:
+    radial-gradient(760px 700px at 12% 104%,rgba(0,255,135,.15),transparent 62%),
+    radial-gradient(980px 900px at 92% -8%,rgba(138,43,226,.26),transparent 64%),
+    radial-gradient(700px 640px at 70% 112%,rgba(96,239,255,.12),transparent 60%),
+    linear-gradient(160deg,#070A12 0%,#0B1120 50%,#080D18 100%)}
+.st-grid{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(96,239,255,.05) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(96,239,255,.05) 1px,transparent 1px);background-size:90px 90px;
+  mask-image:radial-gradient(700px 900px at 50% 46%,#000 0%,transparent 76%);
+  -webkit-mask-image:radial-gradient(700px 900px at 50% 46%,#000 0%,transparent 76%)}
+.st-orb{position:absolute;inset:0}
+.st-noise{position:absolute;inset:0;opacity:.02;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.st-top{position:absolute;top:96px;left:72px;right:72px;display:flex;align-items:center;gap:20px;z-index:3}
+.st-top .wm{font-size:44px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.st-top .wm .a{color:#fff}
+.st-top .wm .b{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.st-body{position:absolute;left:0;right:0;top:250px;bottom:250px;z-index:3;
+  display:flex;flex-direction:column;justify-content:center;padding:0 78px}
+.st-badge{align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;
+  letter-spacing:6px;text-transform:uppercase;color:var(--neon);padding:14px 24px;border-radius:10px;
+  border:1px solid rgba(0,255,135,.4);background:rgba(0,255,135,.07)}
+.st-q{margin-top:50px;font-size:86px;font-weight:800;letter-spacing:-3.2px;line-height:1.06}
+.st-q .g{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.st-rule{margin-top:38px;width:200px;height:5px;border-radius:99px;background:var(--cosmic)}
+.st-a{margin-top:38px;font-size:48px;line-height:1.46;color:#CBD5E1;font-weight:400}
+.st-a b{color:#fff;font-weight:700}
+.st-big{margin-top:48px;display:flex;align-items:baseline;gap:24px}
+.st-big .n{font-size:180px;font-weight:800;letter-spacing:-9px;line-height:.9;
+  background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 44px rgba(0,255,135,.3))}
+.st-big .u{font-family:'JetBrains Mono',monospace;font-size:31px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:#E2E8F0;line-height:1.35;max-width:440px}
+.st-note{margin-top:34px;font-size:29px;color:#64748B;line-height:1.45}
+.st-chips{display:flex;gap:22px;margin-top:46px;flex-wrap:wrap}
+.st-chip{display:flex;align-items:center;gap:20px;padding:24px 34px 24px 28px;border-radius:14px;
+  background:rgba(15,23,42,.82);border:1px solid var(--structural)}
+.st-chip.save{border-color:rgba(0,255,135,.42);box-shadow:0 0 30px rgba(0,255,135,.14) inset}
+.st-chip.priv{border-color:rgba(96,239,255,.42);box-shadow:0 0 30px rgba(96,239,255,.14) inset}
+.st-chip .n{font-size:74px;font-weight:800;letter-spacing:-3.4px;line-height:1}
+.st-chip.save .n{color:var(--neon);text-shadow:0 0 26px rgba(0,255,135,.45)}
+.st-chip.priv .n{color:var(--cyan);text-shadow:0 0 26px rgba(96,239,255,.45)}
+.st-chip .l{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;letter-spacing:2.6px;
+  text-transform:uppercase;color:#E2E8F0;line-height:1.3;text-align:left}
+.st-cta{margin-top:56px;align-self:flex-start;display:inline-flex;align-items:center;gap:22px;
+  padding:32px 52px;border-radius:16px;background:var(--cosmic);color:var(--deep-space);
+  font-size:42px;font-weight:700;letter-spacing:-.8px;box-shadow:0 0 60px rgba(0,255,135,.32)}
+
+.st-foot{position:absolute;left:78px;right:78px;bottom:146px;z-index:3;display:flex;
+  align-items:center;justify-content:space-between;gap:20px}
+.st-foot .url{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:2.4px;
+  color:var(--cyan);text-shadow:0 0 16px rgba(96,239,255,.5)}
+.st-foot .nx{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--slate)}
+
+/* portada: solo el icono */
+.story.cover .st-body{justify-content:center;align-items:center;padding:0}
+.story.cover .ico{width:520px;height:520px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;border:5px solid rgba(96,239,255,.42);background:rgba(15,23,42,.72);
+  box-shadow:0 0 90px rgba(96,239,255,.3) inset,0 0 80px rgba(0,255,135,.16)}
+
+/* zonas seguras */
+.st-safe{position:absolute;inset:0;z-index:6;display:none}
+.show-safe .st-safe{display:block}
+.st-safe .z{position:absolute;left:0;right:0;height:250px;background:rgba(255,0,80,.22);
+  border-bottom:3px dashed rgba(255,107,138,.9)}
+.st-safe .z.b{top:auto;bottom:0;border-bottom:0;border-top:3px dashed rgba(255,107,138,.9)}
+.st-safe .c{position:absolute;inset:0;border:3px dashed rgba(0,255,135,.5);margin:250px 58px}
+.st-safe em{position:absolute;top:172px;left:60px;font-family:'JetBrains Mono',monospace;font-size:26px;
+  font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FFD6DE;font-style:normal}
+/* el circulo que Instagram recorta para la portada destacada */
+.st-safe .circ{position:absolute;left:50%;top:50%;width:640px;height:640px;margin:-320px 0 0 -320px;
+  border-radius:50%;border:3px dashed rgba(255,214,0,.85)}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-top:16px}
+.note{background:rgba(15,23,42,.8);border:1px solid var(--structural);border-left:2px solid var(--neon);
+  border-radius:0 12px 12px 0;padding:16px 18px}
+.note:nth-child(even){border-left-color:var(--cyan)}
+.note b{display:block;font-size:14.5px;font-weight:700;margin-bottom:6px}
+.note p{font-size:13.5px;line-height:1.6;color:#CBD5E1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Historias destacadas</div>
+  <h1 class="page">Tres bloques,<br><span class="g">veinte historias.</span></h1>
+  <p class="lead">
+    Qué es, Beneficios y FAQ. Cada bloque abre con una portada que es solo el icono, porque Instagram
+    recorta un círculo del centro y cualquier texto ahí se corta. Todo a 1080 × 1920 px, con los 250 px
+    de arriba y de abajo libres para la interfaz de la aplicación.
+  </p>
+
+  <div class="toolbar">
+    <button id="tglSafe" aria-pressed="false">Mostrar zonas seguras</button>
+    <button id="tglGrid" aria-pressed="true">Cuadrícula de fondo</button>
+  </div>
+
+  <h2 class="sec">Cómo se verán en el perfil</h2>
+  <p>Previsualización del recorte circular de las tres destacadas.</p>
+  <div class="covers" id="covers"></div>
+
+  <h2 class="sec">Las historias, bloque por bloque</h2>
+  <p>Las portadas se exportan igual que las demás: son historias completas de 1080 × 1920 con su propio <code>id</code>.</p>
+  <div id="groups"></div>
+
+  <h2 class="sec">Cómo exportarlas</h2>
+  <div class="notes">
+    <div class="note">
+      <b>En lote</b>
+      <p>Cada historia tiene un <code>id</code> del tipo <code>st-2-3</code> y cada portada
+      <code>st-2-0</code>. Con Playwright: recorrer <code>document.querySelectorAll('.story')</code> y
+      hacer <code>screenshot</code> de cada nodo. Salen a 1080 × 1920 exactos.</p>
+    </div>
+    <div class="note">
+      <b>A mano</b>
+      <p>Herramientas de desarrollo, seleccionar el nodo <code>.story</code> y «Capturar captura de
+      pantalla del nodo». La escala de la vista previa no afecta el resultado.</p>
+    </div>
+    <div class="note">
+      <b>Antes de publicar</b>
+      <p>Apaga las zonas seguras: son una capa de ayuda y se exportarían encima del diseño.</p>
+    </div>
+    <div class="note">
+      <b>Texto editable</b>
+      <p>Todo vive en el arreglo <code>DATA</code> del script. Cambiar una respuesta es editar una
+      línea; el orden del arreglo es el orden de publicación.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ ICONOS ============ */
+const LOGO = (w) => `<svg width="${w}" height="${w}" viewBox="-140 -140 280 280"><defs>
+<linearGradient class="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/></linearGradient>
+<linearGradient class="lp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="45%" stop-color="#4C1D95"/><stop offset="100%" stop-color="#1E1B4B"/></linearGradient></defs>
+<g transform="rotate(-18)"><path class="s-g" d="M -68,0 A 68,19 0 0,1 68,0" fill="none" stroke-width="2.5" stroke-opacity=".35"/>
+<path class="s-g" d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke-width="11" stroke-opacity=".4"/>
+<path class="s-g" d="M -114,0 A 114,32 0 0,1 114,0" fill="none" stroke-width="3.5" stroke-opacity=".3"/></g>
+<circle class="f-p" r="46" stroke="#3B82F6" stroke-width="1.5" stroke-opacity=".5"/>
+<path d="M -45,12 Q 0,26 45,12" fill="none" stroke="#00FF87" stroke-width="1.5" stroke-opacity=".5"/>
+<g transform="rotate(-18)"><path class="s-g" d="M 68,0 A 68,19 0 0,1 -68,0" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+<path class="s-g" d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke-width="11" stroke-linecap="round"/>
+<path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="#FFF" stroke-width="2" stroke-opacity=".85" stroke-linecap="round"/>
+<path class="s-g" d="M 114,0 A 114,32 0 0,1 -114,0" fill="none" stroke-width="3.5" stroke-linecap="round"/></g>
+<circle cx="-80" cy="-45" r="9" fill="#00FF87"/><circle cx="-80" cy="-45" r="4" fill="#FFF"/>
+<circle cx="104" cy="12" r="7.5" fill="#60EFFF"/>
+<circle cx="15" cy="58" r="8.5" fill="#8A2BE2"/><circle cx="15" cy="58" r="3" fill="#60EFFF"/></svg>`;
+
+const IC = {
+  planeta: LOGO(300),
+  beneficios:`<svg width="270" height="270" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.4l2.5 1.5 2.9-.3 1 2.7 2.4 1.7-1 2.7 1 2.7-2.4 1.7-1 2.7-2.9-.3L12 21.6l-2.5-1.5-2.9.3-1-2.7-2.4-1.7 1-2.7-1-2.7 2.4-1.7 1-2.7 2.9.3z"/>
+    <path d="M8.6 12.2l2.3 2.3 4.5-4.7"/></svg>`,
+  faq:`<svg width="270" height="270" viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9.3"/>
+    <path d="M9.3 9.2a2.8 2.8 0 1 1 3.6 2.7c-.6.2-.9.7-.9 1.3v.6"/>
+    <path d="M12 17.2h.01"/></svg>`
+};
+
+/* ============ CONTENIDO EDITABLE ============ */
+const URL = "sooniverse.co/agendar";
+
+const DATA = [
+ {t:"Qué es", ico:"planeta", stories:[
+   {q:"¿Qué es <span class='g'>Sooniverse</span>?",
+    a:"Somos una empresa de <b>instalación de plataformas privadas de inteligencia artificial</b>. La montamos dentro de la infraestructura de tu empresa.",
+    chips:[{c:"save",n:"74%",l:"Ahorro en costos <br>de IA"},{c:"priv",n:"100%",l:"Privacidad total<br>de datos"}]},
+   {q:"¿Qué recibo exactamente?",
+    a:"El motor de IA, una única puerta de entrada para tus automatizaciones y evitar que tus datos se filtren, un chat interno privado y un tablero de métricas."},
+   {q:"¿Cómo empiezo?",
+    a:"Con una reunión de exploración <b>sin costo</b>. Medimos tu consumo real y revisamos los procesos de IA que ya tienes andando.",
+    cta:"Agenda tu reunión"}
+ ]},
+ {t:"Beneficios", ico:"beneficios", stories:[
+   {q:"¿Por qué mi factura de IA sube cada mes?",
+    a:"Porque pagas por uso: cada palabra que el modelo lee y escribe suma. <b>Mientras más útil se vuelve la IA, más cara es.</b>"},
+   {q:"¿Cuánto se puede ahorrar?",
+    big:"74%", unit:"menos costo<br>mensual"},
+   {q:"¿Que pasa con mi informacion?",
+    big:"100%", unit:"de privacidad",
+    a:"No sale de tus servidores. No se procesa ni se retransmite datos fuera de tu entorno cerrado. <b>Tus archivos, documentos e informacion se queda contigo.</b>"},
+   {q:"¿Y si mi volumen no es tan alto?",
+    a:"Esa es exactamente la pregunta que responde el diagnóstico. Si los números no te dan, <b>te lo decimos</b>."},
+   {q:"¿Mis documentos salen de la empresa?",
+    a:"No. El procesamiento ocurre dentro de un entorno que tú controlas. Nada viaja a servicios de propósito general."},
+   {q:"¿Cómo protejo datos sensibles de la IA?",
+    a:"Con un entorno de inferencia propio y <b>trazabilidad completa</b>: qué sistema accedió, qué lo procesó y bajo qué permiso. <b>Nada sale de tu entorno.</b>"},
+   {q:"¿Sirve para sectores regulados?",
+    a:"Salud, financiero, legal, seguros y BPO. Ahí la privacidad no es una mejora opcional: <b>es la condición para que el proyecto exista</b>."},
+   {q:"¿Y si los ahorros no lo justifican?",
+    a:"Recibes una recomendación de seguir o no seguir, con números, <b>antes de implementar nada</b>."},
+   {q:"¿Cómo se paga?",
+    a:"Un pago único de implementación. Al terminar, la plataforma es un <b>activo de tu empresa</b>, no una suscripción. El mantenimiento es aparte y opcional."},
+   {q:"¿Y si mañana quiero salirme?",
+    a:"Sobre tu propia nube, la plataforma ya está en tu casa, documentada y operable por tu gente. <b>Y asi puedes eliminarlo cuando desees</b>"},
+   {q:"Menos costo y más control,<br><span class='g'>sobre lo que ya pagas.</span>",
+    a:"Te decimos en números si te conviene antes de que inviertas nada.",
+    cta:"Agenda tu reunión"}
+ ]},
+ {t:"FAQ", ico:"faq", stories:[
+   {q:"¿Qué es un LLM privado?",
+    a:"Es un modelo de IA que corre en la infraestructura que <b>tú controlas</b>. A diferencia de los servicios comerciales, tus documentos y respuestas nunca salen de tu entorno."},
+   {q:"¿Cuánto tarda la implementación?",
+    big:"1–3", unit:"semanas", note:"Desde el diagnóstico hasta el tráfico en producción. El plazo escala con la complejidad."},
+   {q:"¿Tengo que reescribir mi código?",
+    a:"No. Tus automatizaciones actuales solo cambian la dirección a la que se conectan. <b>Cambia el destino, no el código.</b>"},
+   {q:"¿Dónde vive la plataforma?",
+    a:"En la nube de tu propia empresa, donde queda como un activo tuyo, o alojada por nosotros en un entorno aislado."},
+   {q:"¿Qué me llevo de la primera reunión?",
+    a:"Por escrito: cuánto pagas hoy, cuánto pagarías con plataforma propia, cuánto cuesta implementarla y qué capacidad necesita tu operación."},
+   {q:"Con ese número sobre la mesa,<br><span class='g'>la decisión se toma sola.</span>",
+    cta:"Agenda tu reunión"}
+ ]}
+];
+
+/* ============ RENDER ============ */
+const ORB = `<svg class="st-orb" viewBox="0 0 1080 1920" preserveAspectRatio="none">
+ <defs><linearGradient class="og" x1="0%" y1="0%" x2="100%" y2="100%">
+ <stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/>
+ </linearGradient></defs>
+ <g transform="rotate(-16 200 1980)" fill="none" stroke-linecap="round">
+  <ellipse cx="200" cy="1980" rx="420" ry="185" stroke-width="10" stroke-opacity=".18"/>
+  <ellipse cx="200" cy="1980" rx="600" ry="262" stroke-width="3" stroke-opacity=".14"/>
+  <ellipse cx="200" cy="1980" rx="820" ry="352" stroke-width="2" stroke-opacity=".09"/>
+ </g>
+ <circle cx="900" cy="330" r="22" fill="#00FF87" fill-opacity=".12"/>
+ <circle cx="900" cy="330" r="10" fill="#00FF87" fill-opacity=".8"/>
+ <circle cx="960" cy="1520" r="16" fill="#60EFFF" fill-opacity=".12"/>
+ <circle cx="960" cy="1520" r="8" fill="#60EFFF" fill-opacity=".7"/>
+</svg>`;
+
+const SAFE = c => `<div class="st-safe"><div class="z"></div><div class="z b"></div><div class="c"></div>
+ ${c?'<div class="circ"></div>':''}<em>Interfaz de Instagram</em></div>`;
+
+const TOP = `<div class="st-top">${LOGO(74)}
+  <div class="wm"><span class="a">Sooni</span><span class="b">verse</span></div></div>`;
+
+const CHROME = `<div class="st-grid"></div>${ORB}${TOP}`;
+
+function storyHTML(g, s, i, total, id){
+  let body = `<div class="st-badge">${g.t}</div><div class="st-q">${s.q}</div><div class="st-rule"></div>`;
+  if (s.big)   body += `<div class="st-big"><div class="n">${s.big}</div><div class="u">${s.unit}</div></div>`;
+  if (s.a)     body += `<div class="st-a">${s.a}</div>`;
+  if (s.chips) body += `<div class="st-chips">${s.chips.map(c=>
+                  `<div class="st-chip ${c.c}"><div class="n">${c.n}</div><div class="l">${c.l}</div></div>`).join('')}</div>`;
+  if (s.note)  body += `<div class="st-note">${s.note}</div>`;
+  if (s.cta)   body += `<div class="st-cta">
+      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#070A12" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+      ${s.cta}</div>`;
+  const foot = `<div class="st-foot"><div class="url">${URL}</div>
+    <div class="nx">${i<total-1?'Desliza →':'Escríbenos'}</div></div>`;
+  return `<div class="story" id="${id}">${CHROME}
+    <div class="st-body">${body}</div>${foot}<div class="st-noise"></div>${SAFE(false)}</div>`;
+}
+
+function coverHTML(g, id){
+  return `<div class="story cover" id="${id}">${CHROME}
+    <div class="st-body"><div class="ico">${IC[g.ico]}</div></div>
+    <div class="st-noise"></div>${SAFE(true)}</div>`;
+}
+
+const groups = document.getElementById('groups');
+const covers = document.getElementById('covers');
+
+DATA.forEach((g, gi) => {
+  const c = document.createElement('div');
+  c.className = 'cov';
+  c.innerHTML = `<div class="ring"><div class="in"></div></div><div class="lbl">${g.t}</div>`;
+  const inn = c.querySelector('.in');
+  inn.innerHTML = coverHTML(g, 'prev-'+(gi+1));
+  const st = inn.querySelector('.story');
+  const sc = 120/640;                       // el circulo recortado mide ~640px del lienzo
+  st.style.transform = 'scale('+sc+')';
+  st.style.left = (-(1080*sc-120)/2)+'px';
+  st.style.top  = (-(1920*sc-120)/2)+'px';
+  covers.appendChild(c);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'group';
+  wrap.innerHTML = `<div class="group-hd"><span class="num">${String(gi+1).padStart(2,'0')}</span>
+    <h3>${g.t}</h3><span class="cnt">${g.stories.length+1} historias</span></div><div class="strip"></div>`;
+  const strip = wrap.querySelector('.strip');
+  const addSlot = (html, cap) => {
+    const it = document.createElement('div');
+    it.className = 'item';
+    it.innerHTML = `<div class="slot">${html}</div><div class="cap">${cap}</div>`;
+    strip.appendChild(it);
+  };
+  addSlot(coverHTML(g, 'st-'+(gi+1)+'-0'), 'portada');
+  g.stories.forEach((s,i) => addSlot(storyHTML(g,s,i,g.stories.length,'st-'+(gi+1)+'-'+(i+1)), (i+1)+' de '+g.stories.length));
+  groups.appendChild(wrap);
+});
+
+// ids unicos de gradiente por clon de SVG
+document.querySelectorAll('.st-orb').forEach((svg,i)=>{
+  const id='og'+i; svg.querySelector('.og').id=id;
+  svg.querySelectorAll('ellipse').forEach(e=>e.setAttribute('stroke','url(#'+id+')'));
+});
+document.querySelectorAll('svg').forEach((svg,i)=>{
+  const g=svg.querySelector('.lg'), p=svg.querySelector('.lp');
+  if(!g) return;
+  g.id='lg'+i; svg.querySelectorAll('.s-g').forEach(e=>e.setAttribute('stroke','url(#lg'+i+')'));
+  if(p){p.id='lp'+i; svg.querySelectorAll('.f-p').forEach(e=>e.setAttribute('fill','url(#lp'+i+')'));}
+});
+
+const tglSafe=document.getElementById('tglSafe'), tglGrid=document.getElementById('tglGrid');
+tglSafe.onclick=()=>{const on=!(tglSafe.getAttribute('aria-pressed')==='true');
+  tglSafe.setAttribute('aria-pressed',String(on));
+  document.querySelectorAll('.story').forEach(s=>s.classList.toggle('show-safe',on))};
+tglGrid.onclick=()=>{const on=!(tglGrid.getAttribute('aria-pressed')==='true');
+  tglGrid.setAttribute('aria-pressed',String(on));
+  document.querySelectorAll('.st-grid').forEach(s=>s.style.display=on?'block':'none')};
+</script>
+</body>
+</html>

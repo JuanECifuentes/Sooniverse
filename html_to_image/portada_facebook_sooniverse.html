@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portada de Facebook — Sooniverse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================
+   PORTADA DE PÁGINA DE FACEBOOK — 1640 x 924 px
+   Escritorio muestra 820x312  ->  banda central de 624 px
+   Móvil muestra 640x360       ->  lienzo completo
+   Zona muerta: esquina inferior izquierda (foto de perfil)
+   Exportar: "Ver a 100%" y capturar #cover, o Playwright
+   con deviceScaleFactor 1 sobre #cover.
+   Borra .controls y .guides antes de exportar.
+   =========================================================== */
+:root{
+  --deep-space:#070A12;--cyber-surface:#0F172A;--structural:#1E293B;
+  --white:#FFFFFF;--slate:#94A3B8;--neon:#00FF87;--cyan:#60EFFF;--violet:#8A2BE2;
+  --cosmic:linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#05070D;min-height:100vh;padding:34px 18px 80px;
+  font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#fff;
+  display:flex;flex-direction:column;align-items:center;gap:20px}
+.hdr{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:5px;
+  text-transform:uppercase;color:var(--neon);text-align:center}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--slate)}
+.controls button{font:inherit;letter-spacing:1.6px;text-transform:uppercase;background:transparent;
+  border:1.5px solid var(--cyan);color:#fff;border-radius:12px;padding:9px 16px;cursor:pointer;transition:all .3s ease}
+.controls button:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(96,239,255,.35)}
+.controls button[aria-pressed="true"]{background:var(--cosmic);color:var(--deep-space);border-color:transparent}
+.controls button:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+.viewport{width:100%;max-width:1640px;overflow:auto}
+.scaler{transform-origin:top left}
+
+/* ==================== LA PORTADA ==================== */
+#cover{position:relative;width:1640px;height:924px;overflow:hidden;flex:none;
+  background:
+    radial-gradient(720px 560px at 10% 112%, rgba(0,255,135,.14), transparent 62%),
+    radial-gradient(1000px 760px at 88% -22%, rgba(138,43,226,.24), transparent 64%),
+    radial-gradient(720px 520px at 62% 118%, rgba(96,239,255,.11), transparent 60%),
+    linear-gradient(115deg,#070A12 0%,#0B1120 48%,#080D18 100%)}
+.grid{position:absolute;inset:0;z-index:0;background-image:
+  linear-gradient(rgba(96,239,255,.05) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(96,239,255,.05) 1px,transparent 1px);background-size:82px 82px;
+  mask-image:radial-gradient(1100px 620px at 66% 48%,#000 0%,transparent 78%);
+  -webkit-mask-image:radial-gradient(1100px 620px at 66% 48%,#000 0%,transparent 78%)}
+.orbits{position:absolute;inset:0;z-index:1}
+.noise{position:absolute;inset:0;z-index:4;opacity:.02;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.edge{position:absolute;left:0;right:0;bottom:0;height:4px;z-index:5;background:var(--cosmic);opacity:.9}
+
+/* marca, dentro de la banda segura */
+.lockup{position:absolute;z-index:3;left:78px;top:196px;display:flex;flex-direction:column;gap:10px}
+.lockup .row{display:flex;align-items:center;gap:18px}
+.wordmark{font-size:50px;font-weight:800;letter-spacing:-1.8px;line-height:1}
+.wordmark .a{color:#fff}
+.wordmark .b{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tagline{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:6.5px;
+  text-transform:uppercase;color:var(--neon);padding-left:2px}
+
+/* contenido, alineado a la derecha y dentro de la banda central */
+.band{position:absolute;z-index:3;left:0;right:0;top:150px;height:624px;
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  padding:0 78px 0 460px;text-align:right}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;letter-spacing:7px;
+  text-transform:uppercase;color:var(--neon);text-shadow:0 0 16px rgba(0,255,135,.45)}
+h1{font-size:84px;font-weight:800;letter-spacing:-3.2px;line-height:1.05}
+h1 .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin-top:18px;font-size:25px;line-height:1.4;color:#CBD5E1;font-weight:500;max-width:960px}
+.metrics{display:flex;gap:22px;margin-top:48px}
+.metric{display:flex;align-items:center;gap:20px;padding:21px 34px 21px 26px;border-radius:12px;
+  background:rgba(15,23,42,.8);border:1px solid var(--structural)}
+.metric.save{border-color:rgba(0,255,135,.42);box-shadow:0 0 28px rgba(0,255,135,.14) inset,0 0 22px rgba(0,255,135,.12)}
+.metric.priv{border-color:rgba(96,239,255,.42);box-shadow:0 0 28px rgba(96,239,255,.14) inset,0 0 22px rgba(96,239,255,.12)}
+.metric .n{font-size:70px;font-weight:800;letter-spacing:-3px;line-height:1}
+.metric.save .n{color:var(--neon);text-shadow:0 0 22px rgba(0,255,135,.45)}
+.metric.priv .n{color:var(--cyan);text-shadow:0 0 22px rgba(96,239,255,.45)}
+.metric .l{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;letter-spacing:2.6px;
+  text-transform:uppercase;color:#E2E8F0;text-align:left;line-height:1.35}
+.cta{margin-top:46px;display:inline-flex;align-items:center;gap:18px;padding:23px 42px;border-radius:14px;
+  background:var(--cosmic);color:var(--deep-space);font-weight:700;font-size:29px;letter-spacing:-.2px;
+  box-shadow:0 0 44px rgba(0,255,135,.3)}
+.cta .mono{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:25px;letter-spacing:1.2px}
+
+/* guías */
+.guides{position:absolute;inset:0;z-index:6;display:none;pointer-events:none}
+#cover.show-guides .guides{display:block}
+.g-band{position:absolute;left:0;right:0;top:150px;height:624px;border-top:2px dashed rgba(0,255,135,.85);
+  border-bottom:2px dashed rgba(0,255,135,.85);background:rgba(0,255,135,.05)}
+.g-crop{position:absolute;left:0;right:0;top:0;height:150px;background:rgba(255,0,80,.16)}
+.g-crop.b{top:auto;bottom:0}
+.g-pfp{position:absolute;left:48px;bottom:60px;width:352px;height:352px;border-radius:50%;
+  border:2px dashed rgba(255,214,0,.9);background:rgba(255,214,0,.08)}
+.guides span{position:absolute;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;background:rgba(7,10,18,.85);padding:4px 9px;border-radius:5px}
+
+/* simulaciones de recorte */
+.sims{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:26px}
+.sim{background:rgba(15,23,42,.8);border:1px solid var(--structural);border-radius:12px;padding:16px}
+.sim h3{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:11px}
+.sim .win{position:relative;overflow:hidden;background:#0B1120;border-radius:8px}
+.sim .win .fit{position:absolute;width:1640px;height:924px;transform-origin:top left}
+.win.desktop{width:820px;height:312px}
+.win.mobile{width:640px;height:360px}
+.sim p{margin-top:9px;font-size:12.5px;color:var(--slate);max-width:640px;line-height:1.5}
+@media (max-width:900px){.win.desktop,.win.mobile{width:min(88vw,640px)}}
+</style>
+</head>
+<body>
+
+<div class="hdr">Portada de página de Facebook · 1640 × 924 px</div>
+
+<div class="viewport"><div class="scaler" id="scaler">
+  <div id="cover">
+    <div class="grid"></div>
+
+    <svg class="orbits" viewBox="0 0 1640 924" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/>
+      </linearGradient></defs>
+      <g transform="rotate(-16 224 880)" fill="none" stroke="url(#cg)" stroke-linecap="round">
+        <ellipse cx="224" cy="880" rx="300" ry="132" stroke-width="2.6" stroke-opacity=".5"/>
+        <ellipse cx="224" cy="880" rx="420" ry="186" stroke-width="9" stroke-opacity=".2"/>
+        <ellipse cx="224" cy="880" rx="420" ry="186" stroke-width="2" stroke-opacity=".4"/>
+        <ellipse cx="224" cy="880" rx="575" ry="252" stroke-width="3" stroke-opacity=".16"/>
+        <ellipse cx="224" cy="880" rx="780" ry="334" stroke-width="2" stroke-opacity=".09"/>
+      </g>
+      <circle cx="470" cy="700" r="16" fill="#00FF87" fill-opacity=".14"/>
+      <circle cx="470" cy="700" r="8" fill="#00FF87" fill-opacity=".85"/>
+      <circle cx="470" cy="700" r="3" fill="#FFFFFF"/>
+      <circle cx="620" cy="560" r="12" fill="#60EFFF" fill-opacity=".14"/>
+      <circle cx="620" cy="560" r="6" fill="#60EFFF" fill-opacity=".75"/>
+    </svg>
+
+    <div class="lockup">
+      <div class="row">
+        <svg width="84" height="84" viewBox="-140 -140 280 280" aria-hidden="true">
+          <defs>
+            <linearGradient id="ci" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00FF87"/><stop offset="50%" stop-color="#60EFFF"/><stop offset="100%" stop-color="#8A2BE2"/>
+            </linearGradient>
+            <linearGradient id="pl" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563EB"/><stop offset="45%" stop-color="#4C1D95"/><stop offset="100%" stop-color="#1E1B4B"/>
+            </linearGradient>
+          </defs>
+          <g transform="rotate(-18)">
+            <path d="M -68,0 A 68,19 0 0,1 68,0" fill="none" stroke="url(#ci)" stroke-width="2.5" stroke-opacity=".35"/>
+            <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="url(#ci)" stroke-width="11" stroke-opacity=".4"/>
+            <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="#60EFFF" stroke-width="2" stroke-opacity=".6"/>
+            <path d="M -114,0 A 114,32 0 0,1 114,0" fill="none" stroke="url(#ci)" stroke-width="3.5" stroke-opacity=".3"/>
+          </g>
+          <circle cx="0" cy="0" r="46" fill="url(#pl)" stroke="#3B82F6" stroke-width="1.5" stroke-opacity=".5"/>
+          <path d="M -40,-22 Q 0,-10 40,-22" fill="none" stroke="#60EFFF" stroke-width="1.5" stroke-opacity=".4"/>
+          <path d="M -45,12 Q 0,26 45,12" fill="none" stroke="#00FF87" stroke-width="1.5" stroke-opacity=".5"/>
+          <g transform="rotate(-18)">
+            <path d="M 68,0 A 68,19 0 0,1 -68,0" fill="none" stroke="url(#ci)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="url(#ci)" stroke-width="11" stroke-linecap="round"/>
+            <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="#FFF" stroke-width="2" stroke-opacity=".85" stroke-linecap="round"/>
+            <path d="M 114,0 A 114,32 0 0,1 -114,0" fill="none" stroke="url(#ci)" stroke-width="3.5" stroke-linecap="round"/>
+          </g>
+          <circle cx="-80" cy="-45" r="12" fill="#00FF87" fill-opacity=".3"/><circle cx="-80" cy="-45" r="9" fill="#00FF87"/><circle cx="-80" cy="-45" r="4" fill="#FFF"/>
+          <circle cx="104" cy="12" r="10" fill="#60EFFF" fill-opacity=".3"/><circle cx="104" cy="12" r="7.5" fill="#60EFFF"/>
+          <circle cx="15" cy="58" r="11" fill="#8A2BE2" fill-opacity=".32"/><circle cx="15" cy="58" r="8.5" fill="#8A2BE2"/><circle cx="15" cy="58" r="3" fill="#60EFFF"/>
+        </svg>
+        <div class="wordmark"><span class="a">Sooni</span><span class="b">verse</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <h1>Deja de alquilar<br>inteligencia artificial.<br><span class="grad">Ten la tuya.</span></h1>
+      <div class="metrics">
+        <div class="metric save">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l7.5 7.5 4-4L21 18"/><path d="M21 18v-5"/><path d="M21 18h-5"/></svg>
+          <div class="n">74%</div><div class="l">de ahorro<br>en IA</div>
+        </div>
+        <div class="metric priv">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v5.6c0 4.6-3.1 8.2-7.5 9.4-4.4-1.2-7.5-4.8-7.5-9.4V5.5z"/><path d="M9.4 12.1l1.9 1.9 3.4-3.7"/></svg>
+          <div class="n">100%</div><div class="l">privacidad<br>de datos</div>
+        </div>
+      </div>
+      <div class="cta">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#070A12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+        <span>Agenda tu reunión</span>
+        <span class="mono">sooniverse.co/agendar</span>
+      </div>
+    </div>
+
+    <div class="guides">
+      <div class="g-crop"></div><div class="g-crop b"></div>
+      <div class="g-band"></div>
+      <div class="g-pfp"></div>
+      <span style="left:24px;top:56px;color:#FF6B8A">Se recorta en escritorio</span>
+      <span style="left:24px;top:166px;color:#00FF87">Banda segura 1640 × 624</span>
+      <span style="left:64px;bottom:20px;color:#FFD600">Foto de perfil</span>
+    </div>
+
+    <div class="noise"></div>
+    <div class="edge"></div>
+  </div>
+</div></div>
+
+<div class="controls">
+  <button id="btnFit" aria-pressed="true">Ajustar a pantalla</button>
+  <button id="btnFull" aria-pressed="false">Ver a 100%</button>
+  <button id="btnGuides" aria-pressed="false">Mostrar guías</button>
+  <span>1640 × 924 px</span>
+</div>
+
+<div class="sims">
+  <div class="sim">
+    <h3>Escritorio · 820 × 312</h3>
+    <div class="win desktop"><div class="fit" data-sim="desktop"></div></div>
+    <p>Facebook recorta 150 px arriba y 150 px abajo. Todo lo importante sobrevive.</p>
+  </div>
+  <div class="sim">
+    <h3>Móvil · 640 × 360</h3>
+    <div class="win mobile"><div class="fit" data-sim="mobile"></div></div>
+    <p>El móvil muestra el lienzo completo. Aquí sí se ve el logo y el filo inferior.</p>
+  </div>
+</div>
+
+<script>
+const cover=document.getElementById('cover'),scaler=document.getElementById('scaler'),
+vp=document.querySelector('.viewport'),bF=document.getElementById('btnFit'),
+bU=document.getElementById('btnFull'),bG=document.getElementById('btnGuides');
+let fit=true;
+function apply(){
+  if(fit){const s=Math.min(1,vp.clientWidth/1640);scaler.style.transform='scale('+s+')';scaler.style.height=(924*s)+'px';}
+  else{scaler.style.transform='none';scaler.style.height='auto';}
+  bF.setAttribute('aria-pressed',String(fit));bU.setAttribute('aria-pressed',String(!fit));
+}
+bF.onclick=()=>{fit=true;apply()};bU.onclick=()=>{fit=false;apply()};
+bG.onclick=()=>{bG.setAttribute('aria-pressed',String(cover.classList.toggle('show-guides')))};
+window.addEventListener('resize',()=>{apply();sims()});
+// simulaciones: clona la portada dentro de cada ventana recortada
+function sims(){
+  document.querySelectorAll('[data-sim]').forEach(slot=>{
+    if(!slot.firstChild){const c=cover.cloneNode(true);c.id='';c.classList.remove('show-guides');
+      const g=c.querySelector('.guides'); if(g) g.remove(); slot.appendChild(c);}
+    const win=slot.parentElement, s=win.clientWidth/1640;
+    slot.style.transform='scale('+s+')';
+    slot.style.top = slot.parentElement.classList.contains('desktop') ? (-150*s)+'px' : '0px';
+  });
+}
+apply();sims();
+</script>
+</body>
+</html>

@@ -149,7 +149,7 @@ class InternalLeadForm(forms.ModelForm):
 
     class Meta:
         model = Lead
-        fields = ["nombre", "correo", "empresa", "mensaje", "estado"]
+        fields = ["nombre", "correo", "empresa", "telefono", "mensaje", "estado"]
         widgets = {
             "nombre": forms.TextInput(
                 attrs={
@@ -166,6 +166,12 @@ class InternalLeadForm(forms.ModelForm):
             "empresa": forms.TextInput(
                 attrs={
                     "placeholder": "Nombre de la empresa",
+                    "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition",
+                }
+            ),
+            "telefono": forms.TextInput(
+                attrs={
+                    "placeholder": "Teléfono (ej. +57 300 123 4567)",
                     "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white placeholder-slate focus:outline-none focus:border-cyan transition",
                 }
             ),
@@ -541,7 +547,7 @@ class BookingConfigForm(forms.ModelForm):
             "anticipo_min": forms.NumberInput(
                 attrs={
                     "type": "number",
-                    "min": 0,
+                    "min": 1440,
                     "max": 10080,
                     "class": "w-full rounded-lg bg-deep border border-border px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan transition",
                 }
@@ -561,6 +567,14 @@ class BookingConfigForm(forms.ModelForm):
         if not 15 <= dur <= 240:
             raise ValidationError("La duración debe estar entre 15 y 240 minutos.")
         return dur
+
+    def clean_anticipo_min(self):
+        anticipo = self.cleaned_data["anticipo_min"]
+        if anticipo < 1440:
+            raise ValidationError(
+                "La antelación mínima debe ser de al menos 24 horas (1440 minutos)."
+            )
+        return anticipo
 
 
 class AgendaDiaHorarioForm(forms.Form):
