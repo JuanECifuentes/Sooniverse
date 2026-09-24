@@ -415,8 +415,8 @@ class BookingConfig(models.Model):
         help_text="Duración de la reunión y del intervalo entre slots (min).",
     )
     anticipo_min = models.PositiveIntegerField(
-        default=60,
-        help_text="Antelación mínima (min) que debe tener un slot reservable.",
+        default=1440,
+        help_text="Antelación mínima (min) que debe tener un slot reservable (mínimo 24hr = 1440 min).",
     )
     actualizado_en = models.DateTimeField(auto_now=True)
 
@@ -432,8 +432,11 @@ class BookingConfig(models.Model):
     def get_solo(cls):
         obj = cls.objects.filter(pk=1).first()
         if obj is None:
-            obj = cls(pk=1)
+            obj = cls(pk=1, anticipo_min=1440)
             obj.save()
+        elif obj.anticipo_min < 1440:
+            obj.anticipo_min = 1440
+            obj.save(update_fields=["anticipo_min"])
         return obj
 
     def __str__(self):

@@ -73,6 +73,11 @@ urlpatterns = [
         name="lead_detail_modal",
     ),
     path(
+        "interno/leads/<int:lead_pk>/editar/",
+        views.lead_update_info,
+        name="lead_update_info",
+    ),
+    path(
         "interno/leads/<int:lead_pk>/reunion/",
         views.lead_meeting_update,
         name="lead_meeting_update",

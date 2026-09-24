@@ -1,4 +1,5 @@
 {% load static %}
+<!-- Desktop Sidebar -->
 <aside class="hidden md:flex w-64 flex-col border-r border-border bg-surface/80 backdrop-blur-xl shrink-0">
   <div class="p-6 border-b border-border">
     <a href="{% url 'core:internal_leads' %}" class="flex items-center gap-3 group">
@@ -39,3 +40,52 @@
     <p class="font-mono text-[9px] uppercase tracking-widest text-slate text-center">Sooniverse Internal v1.0</p>
   </div>
 </aside>
+
+<!-- Mobile Slide-over Drawer -->
+<div id="mobile-sidebar-drawer" class="fixed inset-0 z-50 md:hidden hidden transition-all duration-300">
+  <div class="fixed inset-0 bg-deep/80 backdrop-blur-sm" onclick="closeMobileSidebar()"></div>
+  <aside class="relative w-64 max-w-[80vw] h-full bg-surface/95 backdrop-blur-xl border-r border-border flex flex-col shadow-2xl z-10">
+    <div class="p-4 border-b border-border flex items-center justify-between">
+      <a href="{% url 'core:internal_leads' %}" class="flex items-center gap-3">
+        <img src="{% static 'logos_v1/logo_completo_sin_fondo_soloNombre2.svg' %}" alt="Sooniverse" class="h-7 w-auto">
+      </a>
+      <button type="button" onclick="closeMobileSidebar()" class="text-slate hover:text-white p-1 rounded-lg hover:bg-surface focus:outline-none" aria-label="Cerrar menú">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <a href="{% url 'core:internal_leads' %}" onclick="closeMobileSidebar()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200
+                {% if request.path == '/interno/leads/' %}bg-neon/10 text-neon border border-neon/20{% else %}text-slate hover:text-white hover:bg-surface{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+        </svg>
+        Leads
+      </a>
+
+      <a href="{% url 'core:internal_agenda' %}" onclick="closeMobileSidebar()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200
+                {% if request.path == '/interno/agenda/' %}bg-neon/10 text-neon border border-neon/20{% else %}text-slate hover:text-white hover:bg-surface{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+        </svg>
+        Agenda
+      </a>
+
+      <a href="{% url 'core:internal_cotizaciones' %}" onclick="closeMobileSidebar()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200
+                {% if request.path == '/interno/cotizaciones/' %}bg-neon/10 text-neon border border-neon/20{% else %}text-slate hover:text-white hover:bg-surface{% endif %}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm3-4.5h.008v.008H11.25v-.008zm0 2.25h.008v.008H11.25V13.5zm0 2.25h.008v.008H11.25v-.008zm3-4.5h.008v.008H14.25v-.008zm0 2.25h.008v.008H14.25V13.5zM4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15A2.25 2.25 0 002.25 6.75v10.5A2.25 2.25 0 004.5 19.5zM7.5 7.5h9v2.25h-9V7.5z"/>
+        </svg>
+        Cotizaciones
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-border">
+      <p class="font-mono text-[9px] uppercase tracking-widest text-slate text-center">Sooniverse Internal v1.0</p>
+    </div>
+  </aside>
+</div>
+

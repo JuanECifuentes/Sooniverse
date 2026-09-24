@@ -275,10 +275,12 @@ table.bd .off td { color: var(--slate-dim); }
         </label>
         <p style="color:var(--slate-dim);font-size:12px;margin:8px 0 0;max-width:66ch">El múltiplo se autocalibra según el ahorro mensual proyectado (8 meses si es menor a 3M, 3,5 si supera 60M).</p>
 
-        <table class="bd" id="t_piso">
-          <thead><tr><th>Piso técnico</th><th>Horas</th><th>Valor</th></tr></thead>
-          <tbody id="tb_piso"></tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="bd" id="t_piso">
+            <thead><tr><th>Piso técnico</th><th>Horas</th><th>Valor</th></tr></thead>
+            <tbody id="tb_piso"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ============ 4. MANTENIMIENTO ============ -->
@@ -332,10 +334,12 @@ table.bd .off td { color: var(--slate-dim); }
           </div>
         </div>
 
-        <table class="bd" id="t_vent">
-          <thead><tr><th>Una ventana Estándar</th><th>Horas</th><th>Valor</th></tr></thead>
-          <tbody id="tb_vent"></tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="bd" id="t_vent">
+            <thead><tr><th>Una ventana Estándar</th><th>Horas</th><th>Valor</th></tr></thead>
+            <tbody id="tb_vent"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ============ 5. REGLAS ============ -->

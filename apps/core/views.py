@@ -163,6 +163,8 @@ def internal_leads_dashboard(request):
                 "nombre": lead.nombre,
                 "correo": lead.correo,
                 "empresa": lead.empresa,
+                "telefono": lead.telefono or "",
+                "mensaje": lead.mensaje or "",
                 "estado": lead.estado,
                 "estado_display": lead.get_estado_display(),
                 "creado_en": lead.creado_en.strftime("%Y-%m-%d %H:%M"),
@@ -306,6 +308,52 @@ def lead_meeting_update(request, lead_pk):
             "meeting_link": lead.meeting_link,
             "estado": lead.estado,
             "estado_display": lead.get_estado_display(),
+        }
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def lead_update_info(request, lead_pk):
+    """Guarda modificaciones de información del lead: nombre, correo, empresa, teléfono y mensaje."""
+    lead = get_object_or_404(Lead, pk=lead_pk)
+    nombre = request.POST.get("nombre", "").strip()
+    correo = request.POST.get("correo", "").strip()
+    empresa = request.POST.get("empresa", "").strip()
+    telefono = request.POST.get("telefono", "").strip()
+    mensaje = request.POST.get("mensaje", "").strip()
+    estado = request.POST.get("estado", "").strip()
+
+    if not nombre or not correo or not empresa:
+        return JsonResponse(
+            {"success": False, "message": "Nombre, correo y empresa son obligatorios."},
+            status=400,
+        )
+
+    lead.nombre = nombre
+    lead.correo = correo
+    lead.empresa = empresa
+    lead.telefono = telefono
+    lead.mensaje = mensaje
+
+    if estado and estado in dict(Lead.ESTADO_CHOICES) and estado != lead.estado:
+        transicionar_lead(lead, estado, usuario=request.user)
+
+    lead.save()
+
+    return JsonResponse(
+        {
+            "success": True,
+            "lead": {
+                "id": lead.pk,
+                "nombre": lead.nombre,
+                "correo": lead.correo,
+                "empresa": lead.empresa,
+                "telefono": lead.telefono,
+                "mensaje": lead.mensaje or "",
+                "estado": lead.estado,
+                "estado_display": lead.get_estado_display(),
+            },
         }
     )
 

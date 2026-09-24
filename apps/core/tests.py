@@ -730,6 +730,112 @@ class BookingServiceTestCase(TestCase):
         self.assertEqual(bogota["slots"], lima["slots"])
         self.assertEqual(lima["zona_horaria"], "America/Lima")
 
+    def test_anticipo_minimo_24_horas(self):
+        """No se permite reservar un slot a menos de 24 horas del momento actual."""
+        ahora = dj_tz.now()
+        slot_inminente = ahora + timedelta(hours=2)
+        valido, motivo = booking_svc.validar_slot(slot_inminente)
+        self.assertFalse(valido)
+        self.assertEqual(motivo, "anticipo-insuficiente")
+
+    def test_redistribucion_horarios_cita_10_30(self):
+        """Si se agenda a las 10:30, los horarios deben redistribuirse con margen de 20 min.
+
+        10:30 a 11:00 ocupado.
+        Ventana posterior: arranca en 11:20 (11:00 + 20min) y avanza cada 50min (12:10, 13:00, 13:50...).
+        Ventana previa: respeta 20min antes de 10:30 (09:00 y 09:40 disponibles).
+        """
+        fecha = _siguiente_dia_habil(4)
+        tz_bogota = ZoneInfo(settings.TIME_ZONE)
+        inicio_10_30 = datetime.combine(
+            fecha, time(10, 30), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+        fin_11_00 = datetime.combine(
+            fecha, time(11, 0), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+
+        lead = Lead.objects.create(
+            nombre="Cliente Test",
+            correo="test1030@example.com",
+            empresa="Empresa Test",
+        )
+        Appointment.objects.create(
+            lead=lead,
+            inicio=inicio_10_30,
+            fin=fin_11_00,
+            duracion_min=30,
+            estado=Appointment.Estado.CONFIRMADA,
+        )
+
+        data = booking_svc.slots_para_fecha(fecha.isoformat(), "America/Bogota")
+        slots_bogota = [
+            datetime.fromisoformat(s).astimezone(tz_bogota).strftime("%H:%M")
+            for s in data["slots"]
+        ]
+
+        # 10:30 y 11:00 no deben existir
+        self.assertNotIn("10:30", slots_bogota)
+        self.assertNotIn("11:00", slots_bogota)
+
+        # Redistribución posterior: 11:20, 12:10, 13:00, 13:50, 14:40, 15:30, 16:20, 17:10
+        self.assertIn("11:20", slots_bogota)
+        self.assertIn("12:10", slots_bogota)
+        self.assertIn("13:00", slots_bogota)
+        self.assertIn("13:50", slots_bogota)
+        self.assertIn("14:40", slots_bogota)
+        self.assertIn("15:30", slots_bogota)
+        self.assertIn("16:20", slots_bogota)
+        self.assertIn("17:10", slots_bogota)
+
+        # Horarios previos: 09:00 y 09:40 disponibles
+        self.assertIn("09:00", slots_bogota)
+        self.assertIn("09:40", slots_bogota)
+
+    def test_validar_slot_conflicto_descanso_20_min(self):
+        """validar_slot rechaza slots que violen los 20 min de descanso antes o después."""
+        fecha = _siguiente_dia_habil(4)
+        tz_bogota = ZoneInfo(settings.TIME_ZONE)
+        inicio_10_30 = datetime.combine(
+            fecha, time(10, 30), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+        fin_11_00 = datetime.combine(
+            fecha, time(11, 0), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+
+        lead = Lead.objects.create(
+            nombre="Cliente Descanso",
+            correo="descanso@example.com",
+            empresa="Descanso Test",
+        )
+        Appointment.objects.create(
+            lead=lead,
+            inicio=inicio_10_30,
+            fin=fin_11_00,
+            duracion_min=30,
+            estado=Appointment.Estado.CONFIRMADA,
+        )
+
+        # Slot 11:00 (0 descanso tras cita de 10:30) debe ser rechazado
+        slot_11_00 = datetime.combine(
+            fecha, time(11, 0), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+        valido, motivo = booking_svc.validar_slot(slot_11_00)
+        self.assertFalse(valido)
+
+        # Slot 11:20 (exactamente 20 min descanso) debe ser aceptado
+        slot_11_20 = datetime.combine(
+            fecha, time(11, 20), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+        valido, motivo = booking_svc.validar_slot(slot_11_20)
+        self.assertTrue(valido, f"11:20 debe ser válido pero dio {motivo}")
+
+        # Slot 09:40 (termina 10:10, 20 min antes de 10:30) debe ser aceptado
+        slot_09_40 = datetime.combine(
+            fecha, time(9, 40), tzinfo=tz_bogota
+        ).astimezone(dt_timezone.utc)
+        valido, motivo = booking_svc.validar_slot(slot_09_40)
+        self.assertTrue(valido, f"09:40 debe ser válido pero dio {motivo}")
+
 
 @override_settings(NOTIFICACION_INTERNA_EMAIL="admin@sooniverse.com")
 class BookingAPIsTestCase(TestCase):
@@ -933,13 +1039,13 @@ class InternalAgendaTestCase(TestCase):
         self.assertContains(response, "Lunes")
         self.assertContains(response, "Próximas citas")
 
-    def _post_horarios(self, activo_desde=0, activo_hasta=4, inicio="08:00", fin="17:00"):
+    def _post_horarios(self, activo_desde=0, activo_hasta=4, inicio="08:00", fin="17:00", anticipo=1440):
         self._login()
         data = {
             "csrfmiddlewaretoken": "x",
             "dias_apertura": 30,
             "duracion_min": 30,
-            "anticipo_min": 60,
+            "anticipo_min": anticipo,
         }
         for dia in range(7):
             act = activo_desde <= dia <= activo_hasta
@@ -959,6 +1065,12 @@ class InternalAgendaTestCase(TestCase):
         self.assertFalse(sabado.activo)
         lunes = DiaHorario.objects.get(dia=0)
         self.assertEqual(lunes.hora_inicio.strftime("%H:%M"), "08:00")
+
+    def test_anticipo_menor_24hr_rechazado(self):
+        """No se puede configurar un anticipo menor a 24 horas (1440 minutos)."""
+        response = self._post_horarios(anticipo=60)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "La antelación mínima debe ser de al menos 24 horas")
 
     def test_hora_inicio_mayor_a_fin_rechazada(self):
         response = self._post_horarios(0, 6, "18:00", "09:00")
@@ -1183,5 +1295,52 @@ class InternalCotizacionesTestCase(TestCase):
         self.assertContains(response, "Piso técnico")
         self.assertContains(response, "Mantenimiento programado")
         self.assertContains(response, "i_ingreso")
+
+
+class InternalLeadUpdateInfoTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="admin_test", password="password123", is_staff=True
+        )
+        self.lead = Lead.objects.create(
+            nombre="Carlos Gomez",
+            correo="carlos@example.com",
+            empresa="Gomez Tech",
+            telefono="+573001234567",
+            mensaje="Interesado en agentes",
+            estado=Lead.Estado.NUEVO,
+        )
+        self.url = reverse("core:lead_update_info", kwargs={"lead_pk": self.lead.pk})
+
+    def test_login_required(self):
+        response = self.client.post(self.url, {"nombre": "Nuevo"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_update_info_success(self):
+        self.client.login(username="admin_test", password="password123")
+        response = self.client.post(
+            self.url,
+            {
+                "nombre": "Carlos Modificado",
+                "correo": "carlos_mod@example.com",
+                "empresa": "Gomez Global",
+                "telefono": "+573119876543",
+                "mensaje": "Notas actualizadas",
+                "estado": Lead.Estado.CONTACTADO,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(data["lead"]["nombre"], "Carlos Modificado")
+        self.assertEqual(data["lead"]["telefono"], "+573119876543")
+
+        self.lead.refresh_from_db()
+        self.assertEqual(self.lead.nombre, "Carlos Modificado")
+        self.assertEqual(self.lead.correo, "carlos_mod@example.com")
+        self.assertEqual(self.lead.empresa, "Gomez Global")
+        self.assertEqual(self.lead.telefono, "+573119876543")
+        self.assertEqual(self.lead.estado, Lead.Estado.CONTACTADO)
+
 
 
