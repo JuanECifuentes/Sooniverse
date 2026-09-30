@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banner YouTube — Juan Esteban Cifuentes · Sooniverse (2048 × 1152 px)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================
+   BANNER YOUTUBE — 2048 x 1152 px (Proporción oficial 16:9)
+   Sistema de marca Sooniverse v1.0.0
+   Basado fielmente en banner_linkedin_sooniverse.html
+   
+   Dimensiones oficiales de YouTube:
+   - Lienzo total (Smart TV): 2048 x 1152 px (mínimo oficial, máx 6 MB)
+   - Banda de Escritorio: 2048 x 338 px (centrada verticalmente en Y: 407 a 745)
+   - Zona Segura Móvil & PC: 1236 x 338 px (centrada en X: 406 a 1642, Y: 407 a 745)
+   
+   Toda la información crítica (marca Sooniverse, sooniverse.co, titular,
+   métricas 74% y 100%, y CTA de contacto) está 100% contenida
+   dentro de los 1236 x 338 px con márgenes de seguridad para visualización
+   perfecta en cualquier dispositivo móvil.
+   =========================================================== */
+
+:root{
+  --deep-space: #070A12;
+  --cyber-surface: #0F172A;
+  --structural: #1E293B;
+  --white: #FFFFFF;
+  --slate: #94A3B8;
+  --neon: #00FF87;
+  --cyan: #60EFFF;
+  --violet: #8A2BE2;
+  --cosmic: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background: #05070D;
+  min-height: 100vh;
+  padding: 30px 20px 80px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Header de la herramienta */
+.hdr{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--neon);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hdr .badge{
+  background: rgba(0, 255, 135, 0.12);
+  border: 1px solid rgba(0, 255, 135, 0.35);
+  padding: 3px 10px;
+  border-radius: 6px;
+  color: #fff;
+}
+
+/* Barra de controles interactivos */
+.controls{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.controls button{
+  font: inherit;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1.5px solid var(--cyan);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.controls button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(96, 239, 255, 0.35);
+  background: rgba(30, 41, 59, 0.9);
+}
+.controls button[aria-pressed="true"]{
+  background: var(--cosmic);
+  color: var(--deep-space);
+  font-weight: 700;
+  border-color: transparent;
+  box-shadow: 0 0 20px rgba(0, 255, 135, 0.4);
+}
+
+.viewport{
+  width: 100%;
+  max-width: 2048px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+.scaler{
+  transform-origin: top center;
+  transition: transform .2s ease;
+}
+
+/* ===========================================================
+   EL BANNER MASTER (2048 x 1152 px)
+   =========================================================== */
+#banner{
+  position: relative;
+  width: 2048px;
+  height: 1152px;
+  flex: none;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 750px at 12% 78%, rgba(0, 255, 135, 0.16), transparent 64%),
+    radial-gradient(1300px 850px at 88% 22%, rgba(138, 43, 226, 0.28), transparent 65%),
+    radial-gradient(900px 600px at 68% 70%, rgba(96, 239, 255, 0.13), transparent 60%),
+    radial-gradient(1200px 500px at 50% 50%, rgba(96, 239, 255, 0.07), transparent 70%),
+    linear-gradient(115deg, #070A12 0%, #0B1120 48%, #080D18 100%);
+  color: var(--white);
+  isolation: isolate;
+}
+
+/* Rejilla cibernética / Cyber Grid */
+#banner .grid{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(96, 239, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 239, 255, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(1400px 700px at 50% 50%, #000 20%, transparent 82%);
+  -webkit-mask-image: radial-gradient(1400px 700px at 50% 50%, #000 20%, transparent 82%);
+}
+
+/* Órbitas cósmicas adaptadas */
+#banner .orbits{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Textura sci-fi táctil */
+#banner .noise{
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Filo luminoso inferior */
+#banner .edge{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  z-index: 5;
+  background: var(--cosmic);
+  opacity: 0.9;
+}
+
+/* ===========================================================
+   ZONA SEGURA YOUTUBE (1236 x 338 px)
+   Centrada horizontal y verticalmente en el lienzo 2048 x 1152.
+   Coordenadas exactas: Left = 406px, Top = 407px.
+   Garantiza que el 100% de la información es visible en Móviles.
+   =========================================================== */
+.safe-zone{
+  position: absolute;
+  left: 406px;
+  top: 407px;
+  width: 1236px;
+  height: 338px;
+  z-index: 3;
+}
+
+/* ---------- MARCA: SUPERIOR IZQUIERDA ---------- */
+.lockup{
+  position: absolute;
+  left: 28px;
+  top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 4;
+}
+.lockup .row{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.lockup svg{
+  width: 62px;
+  height: 62px;
+  flex: none;
+  filter: drop-shadow(0 0 16px rgba(0, 255, 135, 0.35));
+}
+.wordmark{
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1.3px;
+  line-height: 1;
+}
+.wordmark .a{color: var(--white)}
+.wordmark .b{
+  background: var(--cosmic);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.site{
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 4.4px;
+  color: var(--cyan);
+  padding-left: 2px;
+  text-shadow: 0 0 14px rgba(96, 239, 255, 0.55);
+}
+
+/* ---------- CONTENIDO: ALINEADO A LA DERECHA ---------- */
+.content{
+  position: absolute;
+  right: 28px;
+  top: 0;
+  bottom: 0;
+  width: 840px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+  z-index: 4;
+}
+
+h1.headline{
+  margin: 0;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.08;
+}
+h1.headline .grad{
+  font-size: 52px;
+  background: var(--cosmic);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 28px rgba(0, 255, 135, 0.3);
+}
+
+/* Métricas de beneficios */
+.metrics{
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+}
+.metric{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 26px 12px 20px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--structural);
+}
+.metric.m-save{
+  border-color: rgba(0, 255, 135, 0.42);
+  box-shadow: 0 0 26px rgba(0, 255, 135, 0.14) inset, 0 0 20px rgba(0, 255, 135, 0.12);
+}
+.metric.m-priv{
+  border-color: rgba(96, 239, 255, 0.42);
+  box-shadow: 0 0 26px rgba(96, 239, 255, 0.14) inset, 0 0 20px rgba(96, 239, 255, 0.12);
+}
+.metric svg{
+  flex: none;
+  width: 46px;
+  height: 46px;
+}
+.metric .n{
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -1.8px;
+  line-height: 1;
+}
+.metric.m-save .n{
+  color: var(--neon);
+  text-shadow: 0 0 22px rgba(0, 255, 135, 0.45);
+}
+.metric.m-priv .n{
+  color: var(--cyan);
+  text-shadow: 0 0 22px rgba(96, 239, 255, 0.45);
+}
+.metric .l{
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #E2E8F0;
+  text-align: left;
+  line-height: 1.32;
+}
+
+/* Llamado a la acción (CTA) */
+.cta-line{
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: right;
+}
+.cta-q{
+  color: var(--white);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+.cta-call{
+  color: var(--white);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.2px;
+}
+.cta-email{
+  color: var(--cyan);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 16px rgba(96, 239, 255, 0.55);
+}
+
+/* ===========================================================
+   CAPA DE GUÍAS DE RECORTE DE YOUTUBE
+   =========================================================== */
+.guides{
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  pointer-events: none;
+}
+#banner.show-guides .guides{display: block}
+
+/* Recortes superior e inferior (fuera de Escritorio y Móvil) */
+.g-crop-top{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 407px;
+  background: rgba(255, 0, 80, 0.16);
+  border-bottom: 2px dashed rgba(255, 80, 80, 0.85);
+}
+.g-crop-bottom{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 407px;
+  background: rgba(255, 0, 80, 0.16);
+  border-top: 2px dashed rgba(255, 80, 80, 0.85);
+}
+
+/* Recortes laterales (fuera de Móvil) */
+.g-crop-left{
+  position: absolute;
+  left: 0;
+  top: 407px;
+  width: 406px;
+  height: 338px;
+  background: rgba(255, 170, 0, 0.16);
+  border-right: 2px dashed rgba(255, 170, 0, 0.85);
+}
+.g-crop-right{
+  position: absolute;
+  right: 0;
+  top: 407px;
+  width: 406px;
+  height: 338px;
+  background: rgba(255, 170, 0, 0.16);
+  border-left: 2px dashed rgba(255, 170, 0, 0.85);
+}
+
+/* Marco de la Zona Segura Universal */
+.g-safe-box{
+  position: absolute;
+  left: 406px;
+  top: 407px;
+  width: 1236px;
+  height: 338px;
+  border: 2px solid var(--neon);
+  box-shadow: 0 0 30px rgba(0, 255, 135, 0.3) inset;
+  background: rgba(0, 255, 135, 0.04);
+}
+
+.guides .label{
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: rgba(7, 10, 18, 0.92);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* ===========================================================
+   SIMULACIONES EN VIVO DE DISPOSITIVOS
+   =========================================================== */
+.sims{
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 1600px;
+}
+.sim{
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--structural);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sim h3{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.sim .win{
+  position: relative;
+  overflow: hidden;
+  background: #0B1120;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+.sim .win .fit{
+  position: absolute;
+  width: 2048px;
+  height: 1152px;
+  transform-origin: top left;
+}
+.win.desktop{
+  width: 800px;
+  height: 132px;
+}
+.win.mobile{
+  width: 480px;
+  height: 131px;
+}
+.win.tv{
+  width: 480px;
+  height: 270px;
+}
+.sim p{
+  font-size: 12px;
+  color: var(--slate);
+  max-width: 600px;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+  <div class="hdr">
+    <span>YouTube Channel Banner</span>
+    <span class="badge">2048 × 1152 px</span>
+    <span>•</span>
+    <span>Zona Segura: 1236 × 338 px</span>
+  </div>
+
+  <div class="controls">
+    <button id="btnFit" aria-pressed="true">Ajustar a pantalla</button>
+    <button id="btnFull" aria-pressed="false">Ver a 100%</button>
+    <button id="btnGuides" aria-pressed="false">Mostrar guías de recorte</button>
+    <span>Máx 6 MB • Compatible Móvil & PC</span>
+  </div>
+
+  <div class="viewport">
+    <div class="scaler" id="scaler">
+
+      <!-- ================= BANNER 2048 x 1152 ================= -->
+      <div id="banner">
+        <!-- Rejilla cibernética -->
+        <div class="grid"></div>
+
+        <!-- Órbitas cósmicas y campo estelar adaptados al lienzo 16:9 -->
+        <svg class="orbits" viewBox="0 0 2048 1152" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="cosmicH" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00FF87"/>
+              <stop offset="50%" stop-color="#60EFFF"/>
+              <stop offset="100%" stop-color="#8A2BE2"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Campo de estrellas y partículas cósmicas de fondo (Smart TV) -->
+          <g fill="#FFFFFF">
+            <circle cx="180" cy="190" r="1.5" opacity="0.6"/>
+            <circle cx="340" cy="110" r="2.2" opacity="0.8"/>
+            <circle cx="520" cy="240" r="1.2" opacity="0.4"/>
+            <circle cx="780" cy="130" r="2.0" opacity="0.7" fill="#60EFFF"/>
+            <circle cx="980" cy="210" r="1.5" opacity="0.5"/>
+            <circle cx="1180" cy="90" r="2.4" opacity="0.85"/>
+            <circle cx="1380" cy="180" r="1.2" opacity="0.4"/>
+            <circle cx="1580" cy="120" r="1.8" opacity="0.6" fill="#00FF87"/>
+            <circle cx="1840" cy="160" r="2.2" opacity="0.75"/>
+            <circle cx="1960" cy="90" r="1.5" opacity="0.5"/>
+
+            <circle cx="120" cy="980" r="1.8" opacity="0.6"/>
+            <circle cx="280" cy="1060" r="2.5" opacity="0.75" fill="#00FF87"/>
+            <circle cx="480" cy="940" r="1.2" opacity="0.4"/>
+            <circle cx="700" cy="1040" r="2.0" opacity="0.7"/>
+            <circle cx="920" cy="920" r="1.5" opacity="0.5"/>
+            <circle cx="1140" cy="1080" r="2.2" opacity="0.8" fill="#60EFFF"/>
+            <circle cx="1340" cy="960" r="1.4" opacity="0.45"/>
+            <circle cx="1560" cy="1020" r="2.0" opacity="0.7"/>
+            <circle cx="1780" cy="910" r="1.6" opacity="0.5"/>
+            <circle cx="1920" cy="1050" r="2.4" opacity="0.85"/>
+
+            <!-- Estrellas sutiles dentro de la banda de escritorio -->
+            <circle cx="140" cy="510" r="1.4" opacity="0.4"/>
+            <circle cx="260" cy="460" r="2.0" opacity="0.6" fill="#60EFFF"/>
+            <circle cx="1740" cy="520" r="1.5" opacity="0.5"/>
+            <circle cx="1940" cy="480" r="2.0" opacity="0.65" fill="#00FF87"/>
+          </g>
+
+          <!-- Sistema orbital principal que nace cerca de la marca y recorre el banner -->
+          <g transform="rotate(-16 480 750)" fill="none" stroke="url(#cosmicH)" stroke-linecap="round">
+            <ellipse cx="480" cy="750" rx="360" ry="155" stroke-width="2.4" stroke-opacity=".5"/>
+            <ellipse cx="480" cy="750" rx="510" ry="220" stroke-width="8"   stroke-opacity=".2"/>
+            <ellipse cx="480" cy="750" rx="510" ry="220" stroke-width="1.8" stroke-opacity=".4"/>
+            <ellipse cx="480" cy="750" rx="710" ry="300" stroke-width="2.8" stroke-opacity=".16"/>
+            <ellipse cx="480" cy="750" rx="980" ry="410" stroke-width="1.8" stroke-opacity=".1"/>
+            <ellipse cx="480" cy="750" rx="1340" ry="560" stroke-width="1.4" stroke-opacity=".06"/>
+            <ellipse cx="480" cy="750" rx="1750" ry="730" stroke-width="1.2" stroke-opacity=".04"/>
+          </g>
+
+          <!-- Órbitas superiores complementarias para Smart TV -->
+          <g transform="rotate(22 1780 240)" fill="none" stroke="url(#cosmicH)" stroke-linecap="round">
+            <ellipse cx="1780" cy="240" rx="320" ry="130" stroke-width="2" stroke-opacity=".35"/>
+            <ellipse cx="1780" cy="240" rx="480" ry="200" stroke-width="5" stroke-opacity=".14"/>
+            <ellipse cx="1780" cy="240" rx="680" ry="280" stroke-width="1.4" stroke-opacity=".08"/>
+          </g>
+
+          <!-- Satélites y nodos luminosos en intersecciones clave -->
+          <g>
+            <circle cx="730" cy="600" r="16" fill="#00FF87" fill-opacity=".14"/>
+            <circle cx="730" cy="600" r="8" fill="#00FF87" fill-opacity=".85"/>
+            <circle cx="730" cy="600" r="3" fill="#FFFFFF"/>
+
+            <circle cx="890" cy="490" r="13" fill="#60EFFF" fill-opacity=".15"/>
+            <circle cx="890" cy="490" r="6.5" fill="#60EFFF" fill-opacity=".8"/>
+
+            <circle cx="340" cy="620" r="11" fill="#8A2BE2" fill-opacity=".2"/>
+            <circle cx="340" cy="620" r="5" fill="#8A2BE2" fill-opacity=".8"/>
+
+            <circle cx="1660" cy="270" r="14" fill="#60EFFF" fill-opacity=".15"/>
+            <circle cx="1660" cy="270" r="6.5" fill="#60EFFF" fill-opacity=".75"/>
+
+            <circle cx="1920" cy="370" r="11" fill="#00FF87" fill-opacity=".14"/>
+            <circle cx="1920" cy="370" r="5" fill="#00FF87" fill-opacity=".8"/>
+          </g>
+
+          <!-- Constelaciones y conectores de datos sutiles -->
+          <g stroke="rgba(96, 239, 255, 0.25)" stroke-width="1" stroke-dasharray="3 6">
+            <line x1="340" y1="620" x2="480" y2="750"/>
+            <line x1="730" y1="600" x2="890" y2="490"/>
+            <line x1="1660" y1="270" x2="1920" y2="370"/>
+          </g>
+        </svg>
+
+        <!-- ================= ZONA SEGURA (1236 x 338) ================= -->
+        <div class="safe-zone">
+          <!-- MARCA: Superior izquierda -->
+          <div class="lockup">
+            <div class="row">
+              <svg viewBox="-140 -140 280 280" aria-hidden="true">
+                <defs>
+                  <linearGradient id="cosmicI" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00FF87"/>
+                    <stop offset="50%" stop-color="#60EFFF"/>
+                    <stop offset="100%" stop-color="#8A2BE2"/>
+                  </linearGradient>
+                  <linearGradient id="planetI" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#2563EB"/>
+                    <stop offset="45%" stop-color="#4C1D95"/>
+                    <stop offset="100%" stop-color="#1E1B4B"/>
+                  </linearGradient>
+                </defs>
+                <g transform="rotate(-18)">
+                  <path d="M -68,0 A 68,19 0 0,1 68,0" fill="none" stroke="url(#cosmicI)" stroke-width="2.5" stroke-opacity=".35"/>
+                  <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="url(#cosmicI)" stroke-width="11" stroke-opacity=".4"/>
+                  <path d="M -92,0 A 92,26 0 0,1 92,0" fill="none" stroke="#60EFFF" stroke-width="2" stroke-opacity=".6"/>
+                  <path d="M -114,0 A 114,32 0 0,1 114,0" fill="none" stroke="url(#cosmicI)" stroke-width="3.5" stroke-opacity=".3"/>
+                </g>
+                <circle cx="0" cy="0" r="46" fill="url(#planetI)" stroke="#3B82F6" stroke-width="1.5" stroke-opacity=".5"/>
+                <path d="M -40,-22 Q 0,-10 40,-22" fill="none" stroke="#60EFFF" stroke-width="1.5" stroke-opacity=".4"/>
+                <path d="M -45,12 Q 0,26 45,12" fill="none" stroke="#00FF87" stroke-width="1.5" stroke-opacity=".5"/>
+                <g transform="rotate(-18)">
+                  <path d="M 68,0 A 68,19 0 0,1 -68,0" fill="none" stroke="url(#cosmicI)" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="url(#cosmicI)" stroke-width="11" stroke-linecap="round"/>
+                  <path d="M 92,0 A 92,26 0 0,1 -92,0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-opacity=".85" stroke-linecap="round"/>
+                  <path d="M 114,0 A 114,32 0 0,1 -114,0" fill="none" stroke="url(#cosmicI)" stroke-width="3.5" stroke-linecap="round"/>
+                </g>
+                <circle cx="-80" cy="-45" r="12" fill="#00FF87" fill-opacity=".30"/>
+                <circle cx="-80" cy="-45" r="9" fill="#00FF87"/>
+                <circle cx="-80" cy="-45" r="4" fill="#FFFFFF"/>
+                <circle cx="104" cy="12" r="10" fill="#60EFFF" fill-opacity=".30"/>
+                <circle cx="104" cy="12" r="7.5" fill="#60EFFF"/>
+                <circle cx="15" cy="58" r="11" fill="#8A2BE2" fill-opacity=".32"/>
+                <circle cx="15" cy="58" r="8.5" fill="#8A2BE2"/>
+                <circle cx="15" cy="58" r="3" fill="#60EFFF"/>
+              </svg>
+              <div class="wordmark"><span class="a">Sooni</span><span class="b">verse</span></div>
+            </div>
+            <div class="site">sooniverse.co</div>
+          </div>
+
+          <!-- CONTENIDO: Alineado a la derecha -->
+          <div class="content">
+            <h1 class="headline">
+              Deja de alquilar inteligencia artificial.<br>
+              <span class="grad">Ten la tuya.</span>
+            </h1>
+
+            <div class="metrics">
+              <div class="metric m-save">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 7l7.5 7.5 4-4L21 18"/><path d="M21 18v-5"/><path d="M21 18h-5"/>
+                </svg>
+                <div class="n">74%</div>
+                <div class="l">de ahorro<br>en IA</div>
+              </div>
+
+              <div class="metric m-priv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2.5l7.5 3v5.6c0 4.6-3.1 8.2-7.5 9.4-4.4-1.2-7.5-4.8-7.5-9.4V5.5z"/>
+                  <path d="M9.4 12.1l1.9 1.9 3.4-3.7"/>
+                </svg>
+                <div class="n">100%</div>
+                <div class="l">privacidad<br>de datos</div>
+              </div>
+            </div>
+
+            <div class="cta-line">
+              <span class="cta-q">¿Listo para tu IA privada?</span>
+              <span class="cta-call">Escríbeme:</span>
+              <span class="cta-email">contacto@sooniverse.co</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capa de Guías de recortes de YouTube -->
+        <div class="guides">
+          <div class="g-crop-top"></div>
+          <div class="g-crop-bottom"></div>
+          <div class="g-crop-left"></div>
+          <div class="g-crop-right"></div>
+          <div class="g-safe-box"></div>
+
+          <span class="label" style="left:48px; top:48px; color:#FF6B8A">
+            Smart TV (2048 × 1152) — Se recorta en Escritorio y Móvil
+          </span>
+          <span class="label" style="left:54px; top:420px; color:#FFAA00">
+            Escritorio (2048 × 338) — Se recorta en Móvil
+          </span>
+          <span class="label" style="left:420px; top:420px; color:#00FF87">
+            Zona Segura Universal Móvil & PC (1236 × 338)
+          </span>
+          <span class="label" style="right:54px; top:420px; color:#FFAA00">
+            Escritorio (2048 × 338)
+          </span>
+        </div>
+
+        <div class="noise"></div>
+        <div class="edge"></div>
+      </div>
+      <!-- ================= FIN BANNER ================= -->
+
+    </div>
+  </div>
+
+  <!-- Simulaciones en vivo según dispositivo -->
+  <div class="sims">
+    <div class="sim">
+      <h3>1. Escritorio / Desktop · 2048 × 338 (Ventana activa)</h3>
+      <div class="win desktop"><div class="fit" data-sim="desktop"></div></div>
+      <p>YouTube recorta 407 px arriba y 407 px abajo. Las alas laterales muestran las órbitas y el fondo cósmico, con el contenido central intacto.</p>
+    </div>
+
+    <div class="sim">
+      <h3>2. Móvil / Smartphones · 1236 × 338 (Zona Segura Universal)</h3>
+      <div class="win mobile"><div class="fit" data-sim="mobile"></div></div>
+      <p>En teléfonos inteligentes, YouTube recorta los lados. Toda la marca, titular, 74% de ahorro, 100% privacidad y correo se leen con total nitidez.</p>
+    </div>
+
+    <div class="sim">
+      <h3>3. Smart TV / Pantallas 16:9 · 2048 × 1152 (Lienzo Completo)</h3>
+      <div class="win tv"><div class="fit" data-sim="tv"></div></div>
+      <p>En televisores y consolas, se aprecia el universo estelar completo con nebulosas cósmicas y atmósfera tecnológica.</p>
+    </div>
+  </div>
+
+  <script>
+    const banner = document.getElementById('banner');
+    const scaler = document.getElementById('scaler');
+    const vp = document.querySelector('.viewport');
+    const bF = document.getElementById('btnFit');
+    const bU = document.getElementById('btnFull');
+    const bG = document.getElementById('btnGuides');
+    let fit = true;
+
+    function applyScale() {
+      if (fit) {
+        const s = Math.min(1, (vp.clientWidth - 20) / 2048);
+        scaler.style.transform = 'scale(' + s + ')';
+        scaler.style.height = (1152 * s) + 'px';
+      } else {
+        scaler.style.transform = 'none';
+        scaler.style.height = 'auto';
+      }
+      bF.setAttribute('aria-pressed', String(fit));
+      bU.setAttribute('aria-pressed', String(!fit));
+    }
+
+    bF.onclick = () => { fit = true; applyScale(); };
+    bU.onclick = () => { fit = false; applyScale(); };
+    bG.onclick = () => {
+      const active = banner.classList.toggle('show-guides');
+      bG.setAttribute('aria-pressed', String(active));
+    };
+
+    window.addEventListener('resize', () => {
+      applyScale();
+      renderSims();
+    });
+
+    function renderSims() {
+      document.querySelectorAll('[data-sim]').forEach(slot => {
+        const type = slot.getAttribute('data-sim');
+        if (!slot.firstChild) {
+          const c = banner.cloneNode(true);
+          c.id = '';
+          c.classList.remove('show-guides');
+          const g = c.querySelector('.guides');
+          if (g) g.remove();
+          slot.appendChild(c);
+        }
+        const win = slot.parentElement;
+        
+        if (type === 'desktop') {
+          const s = win.clientWidth / 2048;
+          slot.style.transform = 'scale(' + s + ')';
+          slot.style.top = (-407 * s) + 'px';
+          slot.style.left = '0px';
+        } else if (type === 'mobile') {
+          const s = win.clientWidth / 1236;
+          slot.style.transform = 'scale(' + s + ')';
+          slot.style.top = (-407 * s) + 'px';
+          slot.style.left = (-406 * s) + 'px';
+        } else if (type === 'tv') {
+          const s = win.clientWidth / 2048;
+          slot.style.transform = 'scale(' + s + ')';
+          slot.style.top = '0px';
+          slot.style.left = '0px';
+        }
+      });
+    }
+
+    applyScale();
+    renderSims();
+  </script>
+</body>
+</html>
