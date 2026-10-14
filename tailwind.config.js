@@ -7,24 +7,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        space: { DEFAULT: '#090A17', surface: '#0F1526', border: '#1F2940', steel: '#1A2238' },
-        ink: { heading: '#FFFFFF', primary: '#EDF2FA', secondary: '#A0AEC6', tertiary: '#7E8BA3', badge: '#C9D6EA' },
-        sky: { DEFAULT: '#8CBFF9', hover: '#A8D0FB', soft: '#D6E8FD' },
-        state: { success: '#4ADE80', error: '#F87171', warning: '#FBBF24' },
-        /* Backwards-compatibility aliases mapped to v3.0 */
-        deep: '#090A17',
-        surface: '#0F1526',
-        border: '#1F2940',
-        slate: '#A0AEC6',
-        neon: '#8CBFF9',
-        cyan: '#8CBFF9',
-        void: { DEFAULT: '#090A17', surface: '#0F1526', border: '#1F2940', indigo: '#1E1B4B' },
-        violet: { accent: '#8CBFF9', hover: '#A8D0FB', soft: '#D6E8FD', highlight: '#8CBFF9', badge: '#1A2238', 'badge-text': '#C9D6EA', nebula: '#5B21B6' },
+        space: { DEFAULT: '#070A12', surface: '#0F172A', border: '#1E293B', steel: '#1E293B' },
+        ink: { heading: '#FFFFFF', primary: '#F1F5F9', secondary: '#94A3B8', tertiary: '#64748B', badge: '#94A3B8' },
+        sky: { DEFAULT: '#60EFFF', hover: '#7AF2FF', soft: 'rgba(96, 239, 255, 0.15)' },
+        state: { success: '#00FF87', error: '#F87171', warning: '#FBBF24' },
+        /* Backwards-compatibility aliases and brand colors */
+        deep: '#070A12',
+        surface: '#0F172A',
+        border: '#1E293B',
+        slate: '#94A3B8',
+        neon: '#00FF87',
+        cyan: '#60EFFF',
+        void: { DEFAULT: '#070A12', surface: '#0F172A', border: '#1E293B', indigo: '#15132B' },
+        violet: { accent: '#8A2BE2', hover: '#9d42f5', soft: 'rgba(138, 43, 226, 0.15)', highlight: '#8A2BE2', badge: '#1E293B', 'badge-text': '#94A3B8', nebula: '#8A2BE2' },
       },
       borderRadius: { card: '12px', button: '10px', badge: '6px' },
       boxShadow: {
-        glow: '0 0 24px rgba(140, 191, 249, 0.35)',
-        'btn-glow': '0 0 28px rgba(140, 191, 249, 0.45)',
+        glow: '0 0 24px rgba(96, 239, 255, 0.35)',
+        'btn-glow': '0 0 28px rgba(0, 255, 135, 0.45)',
       },
       fontFamily: {
         sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
@@ -35,7 +35,7 @@ module.exports = {
       },
       backgroundImage: {
         'cosmic-gradient': 'linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%)',
-        'highlight-gradient': 'linear-gradient(135deg, #8CBFF9 0%, #B794F6 50%, #A855F7 100%)',
+        'highlight-gradient': 'linear-gradient(135deg, #00FF87 0%, #60EFFF 60%, #8A2BE2 100%)',
       }
     }
   },

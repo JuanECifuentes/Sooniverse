@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 240" class="diagram w-full rounded-2xl bg-[#0F1526]/90 p-2" style="border: 1px solid #1F2940;" role="img" aria-label="Diagrama de arquitectura Sooniverse: red privada aislada con perímetro que cubre documentos, bases de datos y usuarios, conectados directamente al LLM privado dedicado con retorno seguro">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 240" class="diagram w-full rounded-2xl bg-[#0F172A]/90 p-2" style="border: 1px solid #1E293B;" role="img" aria-label="Diagrama de arquitectura Sooniverse: red privada aislada con perímetro que cubre documentos, bases de datos y usuarios, conectados directamente al LLM privado dedicado con retorno seguro">
     <defs>
         <linearGradient id="solPurpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#A855F7"/>
-            <stop offset="50%" stop-color="#8CBFF9"/>
-            <stop offset="100%" stop-color="#A855F7"/>
+            <stop offset="0%" stop-color="#00FF87"/>
+            <stop offset="50%" stop-color="#60EFFF"/>
+            <stop offset="100%" stop-color="#8A2BE2"/>
         </linearGradient>
         <linearGradient id="solModelBorder" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#A855F7"/>
-            <stop offset="50%" stop-color="#8CBFF9"/>
-            <stop offset="100%" stop-color="#B794F6"/>
+            <stop offset="0%" stop-color="#60EFFF"/>
+            <stop offset="50%" stop-color="#60EFFF"/>
+            <stop offset="100%" stop-color="#8A2BE2"/>
         </linearGradient>
         <linearGradient id="cosmicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#00FF87" />
@@ -39,69 +39,69 @@
     <!-- PERÍMETRO EN RED PRIVADA: VIBRANTE, DESTACADO EN MORADO Y AZUL CIELO -->
     <g transform="translate(10, 10)">
         <!-- Fondo del perímetro con sutil resplandor púrpura -->
-        <rect x="0" y="0" width="480" height="220" rx="16" fill="#A855F7" opacity="0.04"/>
+        <rect x="0" y="0" width="480" height="220" rx="16" fill="#60EFFF" opacity="0.04"/>
         <!-- Borde punteado que delimita la red privada -->
         <rect x="0" y="0" width="480" height="220" rx="16" fill="none" stroke="url(#solPurpleGrad)" stroke-opacity="0.65" stroke-width="1.8" stroke-dasharray="6 6"/>
         
         <!-- Cabecera del perímetro privado -->
         <g transform="translate(16, 18)">
-            <rect x="0" y="-8" width="9" height="8" rx="1.5" fill="none" stroke="#A855F7" stroke-width="1.4"/>
-            <path d="M1.5,-8 a3,3 0 0 1 6,0" fill="none" stroke="#A855F7" stroke-width="1.4"/>
-            <text x="15" y="-1" fill="#D6E8FD" font-size="9" font-weight="700" letter-spacing="1.2" font-family="JetBrains Mono, monospace">SU PERÍMETRO · RED PRIVADA</text>
+            <rect x="0" y="-8" width="9" height="8" rx="1.5" fill="none" stroke="#60EFFF" stroke-width="1.4"/>
+            <path d="M1.5,-8 a3,3 0 0 1 6,0" fill="none" stroke="#60EFFF" stroke-width="1.4"/>
+            <text x="15" y="-1" fill="#60EFFF" font-size="9" font-weight="700" letter-spacing="1.2" font-family="JetBrains Mono, monospace">SU PERÍMETRO · RED PRIVADA</text>
         </g>
 
         <!-- Badge de cumplimiento auditado en púrpura / cielo -->
         <g transform="translate(382, 18)">
-            <rect x="-8" y="-12" width="96" height="18" rx="5" fill="#1A2238" stroke="#A855F7" stroke-width="1.2"/>
-            <path d="M-1,-4 l2.5,2.5 l5,-5" fill="none" stroke="#8CBFF9" stroke-width="1.5"/>
-            <text x="12" y="-1" fill="#EDF2FA" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace">100% AISLADO</text>
+            <rect x="-8" y="-12" width="96" height="18" rx="5" fill="#0F172A" stroke="#00FF87" stroke-width="1.2"/>
+            <path d="M-1,-4 l2.5,2.5 l5,-5" fill="none" stroke="#00FF87" stroke-width="1.5"/>
+            <text x="12" y="-1" fill="#00FF87" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace">100% AISLADO</text>
         </g>
     </g>
 
     <!-- SUB-CARDS DEL ENTORNO EMPRESARIAL (DENTRO DEL PERÍMETRO) -->
     <g transform="translate(22, 28)">
-        <text x="56" y="10" fill="#A0AEC6" font-size="8" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace">TU EMPRESA</text>
+        <text x="56" y="10" fill="#94A3B8" font-size="8" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace">TU EMPRESA</text>
         
         <!-- Documentos -->
         <g transform="translate(0, 18)">
-            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"/>
-            <rect x="10" y="9" width="12" height="15" rx="1.5" fill="#1A2238" stroke="#8CBFF9" stroke-width="1"/>
-            <line x1="13" y1="13" x2="19" y2="13" stroke="#8CBFF9" stroke-width="0.8"/>
-            <line x1="13" y1="17" x2="19" y2="17" stroke="#8CBFF9" stroke-width="0.8"/>
-            <text x="63" y="21" fill="#EDF2FA" font-size="8.5" font-weight="500" text-anchor="middle">Documentos</text>
+            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+            <rect x="10" y="9" width="12" height="15" rx="1.5" fill="#1E293B" stroke="#60EFFF" stroke-width="1"/>
+            <line x1="13" y1="13" x2="19" y2="13" stroke="#60EFFF" stroke-width="0.8"/>
+            <line x1="13" y1="17" x2="19" y2="17" stroke="#60EFFF" stroke-width="0.8"/>
+            <text x="63" y="21" fill="#F1F5F9" font-size="8.5" font-weight="500" text-anchor="middle">Documentos</text>
         </g>
 
         <!-- Bases de datos -->
         <g transform="translate(0, 60)">
-            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"/>
-            <ellipse cx="16" cy="12" rx="6" ry="2.5" fill="#1A2238" stroke="#8CBFF9" stroke-width="1"/>
-            <path d="M10,12 v8 a6,2.5 0 0 0 12,0 v-8" fill="#1A2238" stroke="#8CBFF9" stroke-width="1"/>
-            <text x="63" y="21" fill="#EDF2FA" font-size="8.5" font-weight="500" text-anchor="middle">Bases de datos</text>
+            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+            <ellipse cx="16" cy="12" rx="6" ry="2.5" fill="#1E293B" stroke="#60EFFF" stroke-width="1"/>
+            <path d="M10,12 v8 a6,2.5 0 0 0 12,0 v-8" fill="#1E293B" stroke="#60EFFF" stroke-width="1"/>
+            <text x="63" y="21" fill="#F1F5F9" font-size="8.5" font-weight="500" text-anchor="middle">Bases de datos</text>
         </g>
 
         <!-- Usuarios / Apps -->
         <g transform="translate(0, 102)">
-            <rect x="0" y="0" width="108" height="32" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"/>
-            <circle cx="16" cy="16" r="5" fill="#1A2238" stroke="#8CBFF9" stroke-width="1"/>
-            <text x="63" y="20" fill="#EDF2FA" font-size="8" font-weight="500" text-anchor="middle">Tu equipo / Apps</text>
+            <rect x="0" y="0" width="108" height="32" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1"/>
+            <circle cx="16" cy="16" r="5" fill="#1E293B" stroke="#60EFFF" stroke-width="1"/>
+            <text x="63" y="20" fill="#F1F5F9" font-size="8" font-weight="500" text-anchor="middle">Tu equipo / Apps</text>
         </g>
     </g>
 
     <!-- 2 LÍNEAS DIRECTAS AL LLM PRIVADO (EN VIBRANTE PÚRPURA Y AZUL CIELO) -->
     <!-- Línea 1 (Documentos a LLM Privado) -->
-    <path id="solDocDirect" d="M130,63 C185,63 215,74 265,74" fill="none" stroke="#A855F7" stroke-width="1.8" opacity="0.4"/>
-    <path d="M130,63 C185,63 215,74 265,74" fill="none" stroke="#A855F7" stroke-width="2" stroke-dasharray="6 8" class="flow-dash" filter="url(#purpleFlowGlow)"/>
+    <path id="solDocDirect" d="M130,63 C185,63 215,74 265,74" fill="none" stroke="#60EFFF" stroke-width="1.8" opacity="0.4"/>
+    <path d="M130,63 C185,63 215,74 265,74" fill="none" stroke="#60EFFF" stroke-width="2" stroke-dasharray="6 8" class="flow-dash" filter="url(#purpleFlowGlow)"/>
 
     <!-- Línea 2 (Bases de datos a LLM Privado) -->
-    <path id="solDbDirect" d="M130,105 C185,105 215,96 265,96" fill="none" stroke="#8CBFF9" stroke-width="1.8" opacity="0.4"/>
-    <path d="M130,105 C185,105 215,96 265,96" fill="none" stroke="#8CBFF9" stroke-width="2" stroke-dasharray="6 8" class="flow-dash-slow"/>
+    <path id="solDbDirect" d="M130,105 C185,105 215,96 265,96" fill="none" stroke="#60EFFF" stroke-width="1.8" opacity="0.4"/>
+    <path d="M130,105 C185,105 215,96 265,96" fill="none" stroke="#60EFFF" stroke-width="2" stroke-dasharray="6 8" class="flow-dash-slow"/>
 
     <!-- Icono animado de Documento viajando directamente al LLM Privado -->
     <g>
         <animateMotion dur="4.5s" repeatCount="indefinite" begin="0s">
             <mpath href="#solDocDirect" xlink:href="#solDocDirect"/>
         </animateMotion>
-        <rect x="-4.5" y="-5.5" width="9" height="11" rx="1.5" fill="#1A2238" stroke="#A855F7" stroke-width="1.5"/>
+        <rect x="-4.5" y="-5.5" width="9" height="11" rx="1.5" fill="#1E293B" stroke="#60EFFF" stroke-width="1.5"/>
         <line x1="-2.5" y1="-2" x2="2.5" y2="-2" stroke="#FFFFFF" stroke-width="0.8"/>
         <line x1="-2.5" y1="1" x2="2.5" y2="1" stroke="#FFFFFF" stroke-width="0.8"/>
     </g>
@@ -111,13 +111,13 @@
         <animateMotion dur="4.5s" repeatCount="indefinite" begin="0.9s">
             <mpath href="#solDbDirect" xlink:href="#solDbDirect"/>
         </animateMotion>
-        <ellipse cx="0" cy="-3" rx="4.5" ry="1.8" fill="#1A2238" stroke="#8CBFF9" stroke-width="1.5"/>
-        <path d="M-4.5,-3 L-4.5,3 A4.5,1.8 0 0 0 4.5,3 L4.5,-3" fill="#1A2238" stroke="#8CBFF9" stroke-width="1.5"/>
+        <ellipse cx="0" cy="-3" rx="4.5" ry="1.8" fill="#1E293B" stroke="#60EFFF" stroke-width="1.5"/>
+        <path d="M-4.5,-3 L-4.5,3 A4.5,1.8 0 0 0 4.5,3 L4.5,-3" fill="#1E293B" stroke="#60EFFF" stroke-width="1.5"/>
     </g>
 
     <!-- BLOQUE LLM PRIVADO DEDICADO (DESTACADO CON BORDE EN DEGRADADO MORADO-CIELO Y RESPLANDOR) -->
     <g transform="translate(265, 46)">
-        <rect x="0" y="0" width="205" height="84" rx="14" fill="#0F1526" stroke="#1F2940" stroke-width="1.2"/>
+        <rect x="0" y="0" width="205" height="84" rx="14" fill="#0F172A" stroke="#1E293B" stroke-width="1.2"/>
         <rect x="0" y="0" width="205" height="84" rx="14" fill="none" stroke="url(#solModelBorder)" stroke-width="1.8" opacity="0.9"/>
         
         <!-- Logo Planetario Oficial Sooniverse -->
@@ -147,30 +147,30 @@
 
         <!-- Texto del LLM Privado -->
         <text x="102" y="58" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle">LLM Privado Dedicado</text>
-        <text x="102" y="70" fill="#D6E8FD" font-size="7.5" font-weight="600" text-anchor="middle">Nodo Seguro en tu VPC</text>
+        <text x="102" y="70" fill="#60EFFF" font-size="7.5" font-weight="600" text-anchor="middle">Nodo Seguro en tu VPC</text>
         
-        <circle cx="190" cy="16" r="4" fill="#A855F7" filter="url(#purpleFlowGlow)"/>
+        <circle cx="190" cy="16" r="4" fill="#60EFFF" filter="url(#purpleFlowGlow)"/>
     </g>
 
     <!-- LÍNEA DE RESPUESTA: DIRECTA AL EQUIPO/APPS EN PÚRPURA BRILLANTE -->
-    <path id="solRetLine" d="M367,130 C367,172 215,172 130,146" fill="none" stroke="#A855F7" stroke-width="1.8" opacity="0.35"/>
-    <path d="M367,130 C367,172 215,172 130,146" fill="none" stroke="#A855F7" stroke-width="2" stroke-dasharray="4 8" class="flow-dash-ret" filter="url(#purpleFlowGlow)"/>
+    <path id="solRetLine" d="M367,130 C367,172 215,172 130,146" fill="none" stroke="#60EFFF" stroke-width="1.8" opacity="0.35"/>
+    <path d="M367,130 C367,172 215,172 130,146" fill="none" stroke="#60EFFF" stroke-width="2" stroke-dasharray="4 8" class="flow-dash-ret" filter="url(#purpleFlowGlow)"/>
     
     <!-- Partícula animada de respuesta regresando al equipo/apps -->
-    <circle r="4" fill="#FFFFFF" stroke="#A855F7" stroke-width="1.5">
+    <circle r="4" fill="#FFFFFF" stroke="#60EFFF" stroke-width="1.5">
         <animateMotion dur="4.8s" repeatCount="indefinite" begin="1.2s">
             <mpath href="#solRetLine" xlink:href="#solRetLine"/>
         </animateMotion>
     </circle>
     <g transform="translate(248, 166)">
-        <rect x="-88" y="-7.5" width="176" height="15" rx="4" fill="#1A2238" stroke="#A855F7" stroke-width="1"/>
-        <text x="0" y="3.5" fill="#D6E8FD" font-size="7.5" font-weight="700" text-anchor="middle">Respuesta segura (canal aislado) ➔</text>
+        <rect x="-88" y="-7.5" width="176" height="15" rx="4" fill="#1E293B" stroke="#60EFFF" stroke-width="1"/>
+        <text x="0" y="3.5" fill="#60EFFF" font-size="7.5" font-weight="700" text-anchor="middle">Respuesta segura (canal aislado) ➔</text>
     </g>
 
     <!-- BARRA INFERIOR DENTRO DEL PERÍMETRO: AUDITORÍA Y AISLAMIENTO -->
     <g transform="translate(24, 186)">
-        <rect x="0" y="0" width="452" height="26" rx="6" fill="#1A2238" stroke="#A855F7" stroke-width="1" stroke-opacity="0.4"/>
-        <circle cx="16" cy="13" r="3.5" fill="#8CBFF9"/>
-        <text x="28" y="16.5" fill="#C9D6EA" font-size="8" font-family="JetBrains Mono, monospace">Cero conexión con nubes públicas · 100% privado y auditable</text>
+        <rect x="0" y="0" width="452" height="26" rx="6" fill="#1E293B" stroke="#60EFFF" stroke-width="1" stroke-opacity="0.4"/>
+        <circle cx="16" cy="13" r="3.5" fill="#60EFFF"/>
+        <text x="28" y="16.5" fill="#94A3B8" font-size="8" font-family="JetBrains Mono, monospace">Cero conexión con nubes públicas · 100% privado y auditable</text>
     </g>
 </svg>

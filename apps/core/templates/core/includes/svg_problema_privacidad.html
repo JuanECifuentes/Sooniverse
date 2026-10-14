@@ -1,48 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 240" class="diagram w-full rounded-2xl bg-[#0F1526]/90 p-2" style="border: 1px solid #1F2940;" role="img" aria-label="Diagrama de fuga de datos en APIs públicas: sin perímetro, tus documentos y bases de datos se envían a servidores de terceros y se replican hacia nubes públicas, mientras tu equipo recibe una respuesta básica">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 240" class="diagram w-full rounded-2xl bg-[#0F172A]/90 p-2" style="border: 1px solid #1E293B;" role="img" aria-label="Diagrama de fuga de datos en APIs públicas: sin perímetro, tus documentos y bases de datos se envían a servidores de terceros y se replican hacia nubes públicas, mientras tu equipo recibe una respuesta básica">
     <defs>
         <linearGradient id="prbRiskGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#A0AEC6"></stop>
-            <stop offset="100%" stop-color="#7E8BA3"></stop>
+            <stop offset="0%" stop-color="#FB7185"></stop>
+            <stop offset="100%" stop-color="#F87171"></stop>
         </linearGradient>
+        <filter id="redRiskGlow" x="-20%" y="-50%" width="140%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
     </defs>
 
     <!-- CLIENTE / ENTORNO EXTERNO (IZQUIERDA) -->
     <g transform="translate(14, 28)">
-        <text x="54" y="10" fill="#A0AEC6" font-size="8" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace">TU EMPRESA</text>
+        <text x="54" y="10" fill="#CBD5E1" font-size="8" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace">TU EMPRESA</text>
         
         <!-- Documentos -->
         <g transform="translate(0, 18)">
-            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"></rect>
-            <rect x="10" y="9" width="12" height="15" rx="1.5" fill="#1A2238" stroke="#7E8BA3" stroke-width="1"></rect>
-            <line x1="13" y1="13" x2="19" y2="13" stroke="#7E8BA3" stroke-width="0.8"></line>
-            <line x1="13" y1="17" x2="19" y2="17" stroke="#7E8BA3" stroke-width="0.8"></line>
-            <text x="63" y="21" fill="#EDF2FA" font-size="8.5" font-weight="500" text-anchor="middle">Documentos</text>
+            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"></rect>
+            <rect x="10" y="9" width="12" height="15" rx="1.5" fill="#1E293B" stroke="#94A3B8" stroke-width="1"></rect>
+            <line x1="13" y1="13" x2="19" y2="13" stroke="#94A3B8" stroke-width="0.8"></line>
+            <line x1="13" y1="17" x2="19" y2="17" stroke="#94A3B8" stroke-width="0.8"></line>
+            <text x="63" y="21" fill="#FFFFFF" font-size="8.5" font-weight="600" text-anchor="middle">Documentos</text>
         </g>
 
         <!-- Bases de datos -->
         <g transform="translate(0, 68)">
-            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"></rect>
-            <ellipse cx="16" cy="12" rx="6" ry="2.5" fill="#1A2238" stroke="#7E8BA3" stroke-width="1"></ellipse>
-            <path d="M10,12 v8 a6,2.5 0 0 0 12,0 v-8" fill="#1A2238" stroke="#7E8BA3" stroke-width="1"></path>
-            <text x="63" y="21" fill="#EDF2FA" font-size="8.5" font-weight="500" text-anchor="middle">Bases de datos</text>
+            <rect x="0" y="0" width="108" height="34" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"></rect>
+            <ellipse cx="16" cy="12" rx="6" ry="2.5" fill="#1E293B" stroke="#94A3B8" stroke-width="1"></ellipse>
+            <path d="M10,12 v8 a6,2.5 0 0 0 12,0 v-8" fill="#1E293B" stroke="#94A3B8" stroke-width="1"></path>
+            <text x="63" y="21" fill="#FFFFFF" font-size="8.5" font-weight="600" text-anchor="middle">Bases de datos</text>
         </g>
     </g>
 
     <!-- RUTAS DE ENTRADA: DE TU EMPRESA A LA API DE TERCEROS -->
-    <path id="prbInDoc" d="M122,63 C150,63 162,74 182,74" fill="none" stroke="#7E8BA3" stroke-width="1.3" opacity="0.3"></path>
-    <path d="M122,63 C150,63 162,74 182,74" fill="none" stroke="#7E8BA3" stroke-width="1.3" stroke-dasharray="6 8" class="flow-dash"></path>
+    <path id="prbInDoc" d="M122,63 C150,63 162,74 182,74" fill="none" stroke="#94A3B8" stroke-width="1.3" opacity="0.3"></path>
+    <path d="M122,63 C150,63 162,74 182,74" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="6 8" class="flow-dash"></path>
 
-    <path id="prbInDb" d="M122,113 C150,113 162,96 182,96" fill="none" stroke="#7E8BA3" stroke-width="1.3" opacity="0.3"></path>
-    <path d="M122,113 C150,113 162,96 182,96" fill="none" stroke="#7E8BA3" stroke-width="1.3" stroke-dasharray="6 8" class="flow-dash-slow"></path>
+    <path id="prbInDb" d="M122,113 C150,113 162,96 182,96" fill="none" stroke="#94A3B8" stroke-width="1.3" opacity="0.3"></path>
+    <path d="M122,113 C150,113 162,96 182,96" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="6 8" class="flow-dash-slow"></path>
 
     <!-- Icono animado de Documento entrando -->
     <g>
         <animateMotion dur="5.0s" repeatCount="indefinite" begin="0s">
             <mpath href="#prbInDoc" xlink:href="#prbInDoc"></mpath>
         </animateMotion>
-        <rect x="-4" y="-5" width="8" height="10" rx="1.2" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></rect>
-        <line x1="-2" y1="-2" x2="2" y2="-2" stroke="#7E8BA3" stroke-width="0.8"></line>
-        <line x1="-2" y1="1" x2="2" y2="1" stroke="#7E8BA3" stroke-width="0.8"></line>
+        <rect x="-4" y="-5" width="8" height="10" rx="1.2" fill="#0F172A" stroke="#CBD5E1" stroke-width="1.2"></rect>
+        <line x1="-2" y1="-2" x2="2" y2="-2" stroke="#CBD5E1" stroke-width="0.8"></line>
+        <line x1="-2" y1="1" x2="2" y2="1" stroke="#CBD5E1" stroke-width="0.8"></line>
     </g>
 
     <!-- Icono animado de Base de Datos entrando -->
@@ -50,96 +57,96 @@
         <animateMotion dur="5.0s" repeatCount="indefinite" begin="1.0s">
             <mpath href="#prbInDb" xlink:href="#prbInDb"></mpath>
         </animateMotion>
-        <ellipse cx="0" cy="-3" rx="4" ry="1.6" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></ellipse>
-        <path d="M-4,-3 L-4,3 A4,1.6 0 0 0 4,3 L4,-3" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></path>
+        <ellipse cx="0" cy="-3" rx="4" ry="1.6" fill="#0F172A" stroke="#CBD5E1" stroke-width="1.2"></ellipse>
+        <path d="M-4,-3 L-4,3 A4,1.6 0 0 0 4,3 L4,-3" fill="#0F172A" stroke="#CBD5E1" stroke-width="1.2"></path>
     </g>
 
     <!-- NODO CENTRAL: API DE TERCEROS (EXPUESTA, SIN PERÍMETRO) -->
     <g transform="translate(182, 48)">
-        <rect x="0" y="0" width="108" height="74" rx="12" fill="#1A2238" stroke="#1F2940" stroke-width="1.2"></rect>
+        <rect x="0" y="0" width="108" height="74" rx="12" fill="#0F172A" stroke="#F87171" stroke-opacity="0.5" stroke-width="1.4"></rect>
         
         <!-- Candado abierto de advertencia -->
-        <path d="M50,11 a3,3 0 0 1 6,0 v2" fill="none" stroke="#7E8BA3" stroke-width="1.2"></path>
-        <rect x="47" y="13" width="12" height="8" rx="1.5" fill="#1F2940" stroke="#7E8BA3" stroke-width="1"></rect>
+        <path d="M50,11 a3,3 0 0 1 6,0 v2" fill="none" stroke="#F87171" stroke-width="1.4"></path>
+        <rect x="47" y="13" width="12" height="8" rx="1.5" fill="#1E293B" stroke="#F87171" stroke-width="1.2"></rect>
         
-        <text x="54" y="34" fill="#EDF2FA" font-size="9.5" font-weight="700" text-anchor="middle">API de terceros</text>
-        <text x="54" y="47" fill="#7E8BA3" font-size="7.5" text-anchor="middle">Servidor externo</text>
-        <text x="54" y="59" fill="#A0AEC6" font-size="7" font-weight="600" text-anchor="middle">pago por token</text>
+        <text x="54" y="34" fill="#FFFFFF" font-size="9.5" font-weight="700" text-anchor="middle">API de terceros</text>
+        <text x="54" y="47" fill="#94A3B8" font-size="7.5" text-anchor="middle">Servidor externo</text>
+        <text x="54" y="59" fill="#FB7185" font-size="7" font-weight="700" text-anchor="middle">pago por token</text>
         
-        <circle cx="108" cy="37" r="3.5" fill="#7E8BA3"></circle>
+        <circle cx="108" cy="37" r="3.5" fill="#F87171"></circle>
     </g>
 
     <!-- LÍNEA DE RESPUESTA BÁSICA CONECTADA A 'TU EQUIPO / APPS' -->
-    <path id="prbRetLine" d="M290,85 H362" fill="none" stroke="#7E8BA3" stroke-width="1.3" opacity="0.3"></path>
-    <path d="M290,85 H362" fill="none" stroke="#7E8BA3" stroke-width="1.3" stroke-dasharray="4 8" class="flow-dash-ret"></path>
-    <circle r="2.8" fill="#7E8BA3">
+    <path id="prbRetLine" d="M290,85 H362" fill="none" stroke="#64748B" stroke-width="1.3" opacity="0.3"></path>
+    <path d="M290,85 H362" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="4 8" class="flow-dash-ret"></path>
+    <circle r="2.8" fill="#94A3B8">
         <animateMotion dur="5.0s" repeatCount="indefinite" begin="1.4s">
             <mpath href="#prbRetLine" xlink:href="#prbRetLine"></mpath>
         </animateMotion>
     </circle>
     <g transform="translate(326, 76)">
-        <rect x="-36" y="-6" width="72" height="12" rx="3" fill="#090A17" stroke="#1F2940" stroke-width="0.8"></rect>
-        <text x="0" y="2.5" fill="#A0AEC6" font-size="6.5" font-weight="600" text-anchor="middle">Respuesta ➔</text>
+        <rect x="-36" y="-6" width="72" height="12" rx="3" fill="#070A12" stroke="#334155" stroke-width="0.8"></rect>
+        <text x="0" y="2.5" fill="#CBD5E1" font-size="6.5" font-weight="600" text-anchor="middle">Respuesta ➔</text>
     </g>
 
     <!-- COLUMNA DERECHA: NUBE PÚBLICA, TU EQUIPO/APPS Y REENTRENAMIENTO -->
     <!-- 1. Nube pública (arriba) -->
     <g transform="translate(362, 18)">
-        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"></rect>
-        <path d="M12,24 a6,6 0 0 1 3,-12 a8,8 0 0 1 15,1 a5,5 0 0 1 -1,11 z" fill="none" stroke="#7E8BA3" stroke-width="1.2"></path>
-        <text x="36" y="16" fill="#EDF2FA" font-size="8" font-weight="600">Nube pública</text>
-        <text x="36" y="26" fill="#7E8BA3" font-size="7">Datacenter externo</text>
-        <text x="114" y="18" fill="#7E8BA3" font-size="11" font-weight="800">!</text>
+        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F172A" stroke="#F87171" stroke-opacity="0.4" stroke-width="1"></rect>
+        <path d="M12,24 a6,6 0 0 1 3,-12 a8,8 0 0 1 15,1 a5,5 0 0 1 -1,11 z" fill="none" stroke="#F87171" stroke-width="1.2"></path>
+        <text x="36" y="16" fill="#FFFFFF" font-size="8" font-weight="600">Nube pública</text>
+        <text x="36" y="26" fill="#94A3B8" font-size="7">Datacenter externo</text>
+        <text x="114" y="20" fill="#F87171" font-size="12" font-weight="800">!</text>
     </g>
 
     <!-- 2. Tu equipo / Apps -->
     <g transform="translate(362, 68)">
-        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"></rect>
-        <circle cx="16" cy="17" r="5" fill="#1A2238" stroke="#7E8BA3" stroke-width="1"></circle>
-        <text x="36" y="16" fill="#EDF2FA" font-size="8" font-weight="600">Tu equipo / Apps</text>
-        <text x="36" y="26" fill="#7E8BA3" font-size="7">Receptor respuesta</text>
+        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"></rect>
+        <circle cx="16" cy="17" r="5" fill="#1E293B" stroke="#94A3B8" stroke-width="1"></circle>
+        <text x="36" y="16" fill="#FFFFFF" font-size="8" font-weight="600">Tu equipo / Apps</text>
+        <text x="36" y="26" fill="#94A3B8" font-size="7">Receptor respuesta</text>
     </g>
 
     <!-- 3. Reentrenamiento (abajo) -->
     <g transform="translate(362, 118)">
-        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F1526" stroke="#1F2940" stroke-width="1"></rect>
-        <path d="M12,24 a6,6 0 0 1 3,-12 a8,8 0 0 1 15,1 a5,5 0 0 1 -1,11 z" fill="none" stroke="#7E8BA3" stroke-width="1.2"></path>
-        <text x="36" y="16" fill="#EDF2FA" font-size="8" font-weight="600">Reentrenamiento</text>
-        <text x="36" y="26" fill="#7E8BA3" font-size="7">Modelos del proveedor</text>
-        <text x="114" y="18" fill="#7E8BA3" font-size="11" font-weight="800">!</text>
+        <rect x="0" y="0" width="124" height="34" rx="8" fill="#0F172A" stroke="#F87171" stroke-opacity="0.4" stroke-width="1"></rect>
+        <path d="M12,24 a6,6 0 0 1 3,-12 a8,8 0 0 1 15,1 a5,5 0 0 1 -1,11 z" fill="none" stroke="#F87171" stroke-width="1.2"></path>
+        <text x="36" y="16" fill="#FFFFFF" font-size="8" font-weight="600">Reentrenamiento</text>
+        <text x="36" y="26" fill="#94A3B8" font-size="7">Modelos del proveedor</text>
+        <text x="114" y="20" fill="#F87171" font-size="12" font-weight="800">!</text>
     </g>
 
     <!-- LÍNEAS DE FUGA HACIA LAS NUBES -->
     <!-- Fuga 1: a Nube Pública -->
-    <path id="prbLeak1" d="M290,62 C320,48 335,35 362,35" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.3" opacity="0.4"></path>
-    <path d="M290,62 C320,48 335,35 362,35" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.3" stroke-dasharray="6 8" class="flow-dash"></path>
+    <path id="prbLeak1" d="M290,62 C320,48 335,35 362,35" fill="none" stroke="#F87171" stroke-width="1.5" opacity="0.4"></path>
+    <path d="M290,62 C320,48 335,35 362,35" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.8" stroke-dasharray="6 8" class="flow-dash" filter="url(#redRiskGlow)"></path>
 
     <!-- Fuga 2: a Reentrenamiento -->
-    <path id="prbLeak3" d="M290,108 C320,122 335,135 362,135" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.3" opacity="0.4"></path>
-    <path d="M290,108 C320,122 335,135 362,135" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.3" stroke-dasharray="6 8" class="flow-dash"></path>
+    <path id="prbLeak3" d="M290,108 C320,122 335,135 362,135" fill="none" stroke="#F87171" stroke-width="1.5" opacity="0.4"></path>
+    <path d="M290,108 C320,122 335,135 362,135" fill="none" stroke="url(#prbRiskGrad)" stroke-width="1.8" stroke-dasharray="6 8" class="flow-dash" filter="url(#redRiskGlow)"></path>
 
     <!-- Iconos animados de datos fugándose hacia las nubes -->
     <g>
         <animateMotion dur="5.5s" repeatCount="indefinite" begin="2.0s">
             <mpath href="#prbLeak1" xlink:href="#prbLeak1"></mpath>
         </animateMotion>
-        <rect x="-4" y="-5" width="8" height="10" rx="1" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></rect>
-        <line x1="-2" y1="-2" x2="2" y2="-2" stroke="#7E8BA3" stroke-width="0.8"></line>
-        <line x1="-2" y1="1" x2="2" y2="1" stroke="#7E8BA3" stroke-width="0.8"></line>
+        <rect x="-4" y="-5" width="8" height="10" rx="1" fill="#0F172A" stroke="#F87171" stroke-width="1.2"></rect>
+        <line x1="-2" y1="-2" x2="2" y2="-2" stroke="#F87171" stroke-width="0.8"></line>
+        <line x1="-2" y1="1" x2="2" y2="1" stroke="#F87171" stroke-width="0.8"></line>
     </g>
 
     <g>
         <animateMotion dur="5.5s" repeatCount="indefinite" begin="3.0s">
             <mpath href="#prbLeak3" xlink:href="#prbLeak3"></mpath>
         </animateMotion>
-        <ellipse cx="0" cy="-2.5" rx="3.5" ry="1.5" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></ellipse>
-        <path d="M-3.5,-2.5 L-3.5,2.5 A3.5,1.5 0 0 0 3.5,2.5 L3.5,-2.5" fill="#0F1526" stroke="#7E8BA3" stroke-width="1"></path>
+        <ellipse cx="0" cy="-2.5" rx="3.5" ry="1.5" fill="#0F172A" stroke="#F87171" stroke-width="1.2"></ellipse>
+        <path d="M-3.5,-2.5 L-3.5,2.5 A3.5,1.5 0 0 0 3.5,2.5 L3.5,-2.5" fill="#0F172A" stroke="#F87171" stroke-width="1.2"></path>
     </g>
 
     <!-- BARRA INFERIOR DE ADVERTENCIA -->
     <g transform="translate(14, 186)">
-        <rect x="0" y="0" width="472" height="24" rx="6" fill="#1A2238" stroke="#1F2940" stroke-width="1"></rect>
-        <circle cx="16" cy="12" r="3.5" fill="#7E8BA3"></circle>
-        <text x="28" y="15.5" fill="#A0AEC6" font-size="8.5" font-weight="700" font-family="JetBrains Mono, monospace">⚠ RIESGO DE SEGURIDAD Y CUMPLIMIENTO (SIN PERÍMETRO PRIVADO)</text>
+        <rect x="0" y="0" width="472" height="24" rx="6" fill="#0F172A" stroke="#F87171" stroke-opacity="0.5" stroke-width="1.2"></rect>
+        <circle cx="16" cy="12" r="3.5" fill="#F87171" filter="url(#redRiskGlow)"></circle>
+        <text x="28" y="15.5" fill="#F87171" font-size="8.5" font-weight="700" font-family="JetBrains Mono, monospace">⚠ RIESGO DE SEGURIDAD Y CUMPLIMIENTO (SIN PERÍMETRO PRIVADO)</text>
     </g>
 </svg>
