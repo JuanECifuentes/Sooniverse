@@ -66,11 +66,11 @@
     }
     .booking-side-logo { height: 27px; width: auto; margin-bottom: 0; }
     .side-badge {
-        display: inline-flex; align-items: center; gap: 5px;
-        font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
-        letter-spacing: 1.5px; text-transform: uppercase; color: #00FF87;
-        padding: 4px 8px; border: 1px solid rgba(0, 255, 135, 0.25); border-radius: 6px;
-        background: rgba(0, 255, 135, 0.06); margin-bottom: 0;
+        display: inline-flex; align-items: center; gap: 6px;
+        font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700;
+        letter-spacing: 1.5px; text-transform: uppercase; color: #60EFFF;
+        padding: 4px 10px; border: 1px solid rgba(96, 239, 255, 0.35); border-radius: 6px;
+        background: rgba(96, 239, 255, 0.08); margin-bottom: 0;
         white-space: nowrap;
     }
     .booking-side-title {
@@ -92,8 +92,8 @@
     }
     .booking-side li::before {
         content: ''; position: absolute; left: 0; top: 0.45em;
-        width: 4.5px; height: 4.5px; border-radius: 50%; background: #00FF87;
-        box-shadow: 0 0 5px rgba(0, 255, 135, 0.6);
+        width: 5px; height: 5px; border-radius: 50%; background: #60EFFF;
+        box-shadow: 0 0 8px rgba(96, 239, 255, 0.8);
     }
     .booking-side .closing { color: #FFFFFF; font-weight: 600; margin-top: 10px; font-size: 13px; }
 
@@ -117,8 +117,8 @@
     .progress-track { height: 6px; background: #1E293B; border-radius: 999px; overflow: hidden; width: 100%; }
     .progress-fill {
         height: 100%; width: 50%;
-        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
-        border-radius: 999px; transition: width 0.45s ease; filter: drop-shadow(0 0 6px rgba(0,255,135,.5));
+        background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%);
+        border-radius: 999px; transition: width 0.45s ease; filter: drop-shadow(0 0 8px rgba(96,239,255,.5));
     }
     .step-panel { display: none; margin-top: 16px; width: 100%; box-sizing: border-box; }
     .step-panel.active { display: block; }
@@ -219,7 +219,7 @@
         background: rgba(96, 239, 255, 0.12); outline: none;
     }
     .phone-dropdown-item.selected {
-        background: rgba(0, 255, 135, 0.12); color: #00FF87; font-weight: 600;
+        background: rgba(96, 239, 255, 0.15); color: #60EFFF; font-weight: 600;
     }
     .phone-dropdown-item .item-flag {
         width: 18px; height: 13px; border-radius: 2px; object-fit: cover; flex-shrink: 0;
@@ -251,9 +251,9 @@
     }
     .date-chip:hover { border-color: rgba(96, 239, 255, 0.5); transform: translateY(-2px); }
     .date-chip.selected {
-        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
-        border-color: transparent; color: #070A12; font-weight: 700;
-        filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.45));
+        background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%);
+        border-color: rgba(255, 255, 255, 0.35); color: #FFFFFF; font-weight: 700;
+        box-shadow: 0 0 16px rgba(96, 239, 255, 0.5), 0 0 25px rgba(138, 43, 226, 0.35);
     }
     .date-chip .dow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
     .date-chip .dnum { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; line-height: 1.1; }
@@ -275,9 +275,9 @@
     }
     .slot-btn:hover { border-color: rgba(96, 239, 255, 0.55); color: #FFFFFF; transform: translateY(-2px); }
     .slot-btn.selected {
-        background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
-        border-color: transparent; color: #070A12; font-weight: 700;
-        filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.5));
+        background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%);
+        border-color: rgba(255, 255, 255, 0.35); color: #FFFFFF; font-weight: 700;
+        box-shadow: 0 0 16px rgba(96, 239, 255, 0.5), 0 0 25px rgba(138, 43, 226, 0.35);
     }
     .empty-state { color: #94A3B8; font-size: 13px; text-align: center; padding: 20px 10px; }
 
@@ -287,13 +287,13 @@
         background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(30, 41, 59, 0.7); border-radius: 6px;
         cursor: pointer; transition: border-color .2s ease; width: 100%; box-sizing: border-box;
     }
-    .consent-box:hover { border-color: rgba(0, 255, 135, 0.4); }
+    .consent-box:hover { border-color: rgba(96, 239, 255, 0.4); }
     .consent-box input[type="checkbox"] {
         appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 15px; height: 15px; margin-top: 1px;
         border: 1.5px solid #475569; border-radius: 3.5px; background: #070A12; cursor: pointer; position: relative;
         transition: all .2s ease;
     }
-    .consent-box input[type="checkbox"]:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 6px rgba(0,255,135,0.4); }
+    .consent-box input[type="checkbox"]:checked { background: #60EFFF; border-color: #60EFFF; box-shadow: 0 0 8px rgba(96,239,255,0.5); }
     .consent-box input[type="checkbox"]:checked::after {
         content: ''; position: absolute; left: 4px; top: 1.5px; width: 4px; height: 7.5px;
         border: solid #070A12; border-width: 0 2px 2px 0; transform: rotate(45deg);
@@ -307,24 +307,87 @@
     .form-message.err { display: block; background: rgba(239,68,68,.08); color: #EF4444; border: 1px solid rgba(239,68,68,.35); }
     .form-message.info { display: block; background: rgba(96,239,255,.08); color: #60EFFF; border: 1px solid rgba(96,239,255,.35); }
 
-    /* Botones de acción compactos */
+    /* Botones de acción compactos Sooniverse v4.0 */
     .btn-next {
-        width: 100%; margin-top: 14px; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
-        color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.8px; font-size: 12.5px; border: 0; border-radius: 8px; padding: 11px 18px;
-        cursor: pointer; transition: all .3s ease; display: inline-flex; align-items: center; justify-content: center;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        margin-top: 14px;
+        background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%);
+        background-size: 200% 100%;
+        background-position: 0% 50%;
+        color: #FFFFFF !important;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 12.5px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 10px;
+        padding: 11px 18px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(96, 239, 255, 0.25), 0 2px 12px rgba(138, 43, 226, 0.25);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-position 0.5s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        text-shadow: 0 1px 2px rgba(7, 10, 18, 0.5);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         box-sizing: border-box;
     }
-    .btn-next:hover:not(:disabled) { transform: translateY(-2px); filter: drop-shadow(0 0 10px rgba(0,255,135,0.6)); }
-    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-next::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+        transform: skewX(-20deg);
+        transition: left 0.75s ease;
+        pointer-events: none;
+    }
+    .btn-next:hover:not(:disabled) {
+        background-position: 100% 50%;
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 0 25px rgba(96, 239, 255, 0.55), 0 0 40px rgba(138, 43, 226, 0.45);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+    .btn-next:hover:not(:disabled)::after {
+        left: 140%;
+    }
+    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.5); }
+
     .btn-back {
-        flex: 0 0 auto; width: auto; background: transparent; border: 1.5px solid #60EFFF;
-        color: #FFFFFF; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; font-size: 11px;
-        border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all .25s ease;
-        display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;
+        flex: 0 0 auto;
+        width: auto;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1.5px solid rgba(96, 239, 255, 0.45);
+        color: #FFFFFF;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 11px;
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-sizing: border-box;
         margin: 0;
     }
-    .btn-back:hover { transform: translateY(-2px); box-shadow: 0 0 14px rgba(96,239,255,0.35); }
+    .btn-back:hover {
+        border-color: #60EFFF;
+        background: rgba(96, 239, 255, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 0 16px rgba(96, 239, 255, 0.35);
+    }
     .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; width: 100%; box-sizing: border-box; }
     .btn-row .btn-back { margin-top: 0; }
     .btn-row .btn-next { flex: 1 1 auto; width: 100%; min-width: 0; margin-top: 0; padding: 11px 18px; font-size: 12.5px; }
@@ -341,18 +404,18 @@
     .success-panel { text-align: center; padding: 30px 10px 16px; }
     .success-panel .check {
         width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%;
-        background: rgba(0,255,135,0.1); border: 1px solid rgba(0,255,135,0.4);
+        background: rgba(96, 239, 255, 0.1); border: 1px solid rgba(96, 239, 255, 0.4);
         display: flex; align-items: center; justify-content: center;
-        filter: drop-shadow(0 0 14px rgba(0,255,135,0.4));
+        filter: drop-shadow(0 0 14px rgba(96, 239, 255, 0.45));
     }
     .success-panel h2 { color: #FFFFFF; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 10px; }
     .success-panel p { color: #94A3B8; font-size: 13.5px; line-height: 1.5; margin: 0 0 10px; }
-    .success-panel .dt { font-family: 'JetBrains Mono', monospace; color: #00FF87; font-size: 16px; font-weight: 700; }
+    .success-panel .dt { font-family: 'JetBrains Mono', monospace; color: #60EFFF; font-size: 16px; font-weight: 700; }
 
     /* Spinners de carga */
     .spinner-ring {
-        width: 28px; height: 28px; border: 3px solid rgba(0, 255, 135, 0.18);
-        border-top-color: #00FF87; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block;
+        width: 28px; height: 28px; border: 3px solid rgba(96, 239, 255, 0.2);
+        border-top-color: #60EFFF; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block;
     }
     .spinner {
         width: 16px; height: 16px; border: 2.5px solid rgba(7,10,18,0.35);
@@ -524,12 +587,12 @@
                 <div class="step-panel" id="step-done">
                     <div class="success-panel">
                         <div class="check">
-                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00FF87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#60EFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
                         </div>
                         <h2>¡Reunión agendada con éxito!</h2>
                         <p>Tu llamada exploratoria quedó agendada para:</p>
                         <p class="dt" id="done-datetime"></p>
-                        <p id="done-msg">En un lapso máximo de <strong style="color:#00FF87">24 horas</strong> recibirás por correo la invitación con el enlace de la reunión (Google Meet).</p>
+                        <p id="done-msg">En un lapso máximo de <strong style="color:#60EFFF">24 horas</strong> recibirás por correo la invitación con el enlace de la reunión (Google Meet).</p>
                         <a href="/" style="display:inline-block; margin-top:14px; border:1.5px solid #60EFFF; color:#FFFFFF; text-transform:uppercase; font-weight:700; font-size:12px; padding:12px 24px; border-radius:10px; text-decoration:none; letter-spacing:1px; transition:all .2s ease;">Volver al inicio</a>
                     </div>
                 </div>

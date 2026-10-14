@@ -9,7 +9,10 @@
     <!-- Header -->
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <div class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2">Booking público</div>
+            <div class="inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.25em] text-[#60EFFF] mb-2 font-semibold">
+                <span class="bullet bullet-cyan"></span>
+                <span>Booking público</span>
+            </div>
             <h1 class="text-3xl font-bold tracking-[-1px] text-white">Agenda de reuniones</h1>
             <p class="mt-2 text-sm text-slate">Configura el calendario que verán los visitantes en
                 <a href="{% url 'core:booking_publico' %}" target="_blank" rel="noopener" class="text-cyan hover:underline">/agendar/</a>
@@ -23,7 +26,7 @@
     {% if messages %}
         {% for message in messages %}
             <div class="px-4 py-3 rounded-lg text-sm font-semibold border
-                {% if message.tags == 'success' %}bg-neon/10 text-neon border border-neon/30
+                {% if message.tags == 'success' %}bg-[#60EFFF]/10 text-[#60EFFF] border border-[#60EFFF]/30
                 {% elif message.tags == 'error' %}text-red-500 border border-red-500 bg-red-500/10
                 {% else %}bg-surface text-slate border border-border{% endif %}">
                 {{ message }}
@@ -90,7 +93,7 @@
                                class="time-input rounded-lg bg-surface border border-border px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan transition"
                                value="{{ fila.fin }}">
                     </div>
-                    <span class="day-status ml-auto font-mono text-[10px] uppercase tracking-widest {% if fila.activo %}text-neon{% else %}text-slate{% endif %}">
+                    <span class="day-status ml-auto font-mono text-[10px] uppercase tracking-widest {% if fila.activo %}text-[#60EFFF]{% else %}text-slate{% endif %}">
                         {% if fila.activo %}Disponible{% else %}Libre{% endif %}
                     </span>
                 </div>
@@ -98,7 +101,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn-primary px-7 py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">
+        <button type="submit" class="btn-primary px-7 py-3 rounded-xl text-sm font-bold text-white uppercase tracking-wide">
             Guardar configuración
         </button>
     </form>
@@ -107,7 +110,7 @@
     <div class="card p-4 sm:p-6 md:p-8">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold text-white">Próximas citas</h2>
-            <span class="font-mono text-[10px] uppercase tracking-brand text-neon">{{ citas_json|length }} reservada(s)</span>
+            <span class="font-mono text-[10px] uppercase tracking-brand text-[#60EFFF]">{{ citas_json|length }} reservada(s)</span>
         </div>
         {% if citas_json %}
         <div class="overflow-x-auto">
@@ -152,7 +155,7 @@
         border: 1.5px solid #475569; background: #070A12; cursor: pointer; position: relative;
         transition: all .2s ease; flex-shrink: 0;
     }
-    .day-toggle:checked { background: #00FF87; border-color: #00FF87; box-shadow: 0 0 8px rgba(0,255,135,0.45); }
+    .day-toggle:checked { background: #60EFFF; border-color: #60EFFF; box-shadow: 0 0 10px rgba(96,239,255,0.45); }
     .day-toggle:checked::after {
         content: ''; position: absolute; left: 5px; top: 2px; width: 4px; height: 9px;
         border: solid #070A12; border-width: 0 2px 2px 0; transform: rotate(45deg);
@@ -171,11 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (toggle.checked) {
                 estado.textContent = 'Disponible';
                 estado.classList.remove('text-slate');
-                estado.classList.add('text-neon');
+                estado.classList.add('text-[#60EFFF]');
             } else {
                 estado.textContent = 'Libre';
                 estado.classList.add('text-slate');
-                estado.classList.remove('text-neon');
+                estado.classList.remove('text-[#60EFFF]');
             }
         });
     });

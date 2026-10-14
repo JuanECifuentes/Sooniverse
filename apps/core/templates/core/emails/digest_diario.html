@@ -12,8 +12,8 @@
 </p>
 
 {% if leads_nuevos %}
-<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 18px; margin-bottom: 18px;">
-    <h3 style="color: #00FF87; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
+<div style="background-color: #0A101D; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; margin-bottom: 18px;">
+    <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
         Leads nuevos sin gestionar
     </h3>
     <ul style="margin: 0; padding-left: 18px; color: #94A3B8; font-size: 13px; line-height: 1.7;">
@@ -25,7 +25,7 @@
 {% endif %}
 
 {% if reuniones %}
-<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 18px; margin-bottom: 18px;">
+<div style="background-color: #0A101D; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; margin-bottom: 18px;">
     <h3 style="color: #60EFFF; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
         Reuniones próximas
     </h3>
@@ -38,7 +38,7 @@
 {% endif %}
 
 {% if mantenimientos %}
-<div style="background-color: #0c1220; border: 1px solid #1E293B; border-radius: 8px; padding: 18px; margin-bottom: 24px;">
+<div style="background-color: #0A101D; border: 1px solid #1E293B; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
     <h3 style="color: #8A2BE2; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
         Mantenimientos programados
     </h3>
@@ -51,7 +51,7 @@
 {% endif %}
 
 <div style="text-align: center; margin-top: 10px;">
-    <a href="{{ base_url }}{% url 'core:internal_leads' %}" class="btn-email-primary" style="display: inline-block; background: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%); color: #070A12; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; padding: 12px 24px; text-decoration: none; border-radius: 6px; letter-spacing: 1px;">
+    <a href="{{ base_url }}{% url 'core:internal_leads' %}" class="btn-email-primary" style="display: inline-block; background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%); color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; padding: 13px 28px; text-decoration: none; border-radius: 10px; letter-spacing: 0.8px; box-shadow: 0 4px 16px rgba(96, 239, 255, 0.25);">
         Abrir el CRM
     </a>
 </div>

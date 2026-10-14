@@ -178,6 +178,7 @@
     </script>
 
     <link href="{% static 'css/dist/tailwind.css' %}?v=1.2" rel="stylesheet">
+    <link href="{% static 'css/sooniverse-v4.css' %}?v=4.5" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -340,45 +341,86 @@
         .btn-primary {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #60EFFF 0%, #6366F1 50%, #8A2BE2 100%);
+            background: linear-gradient(135deg, #60EFFF 0%, #6366F1 45%, #8A2BE2 100%);
             background-size: 200% 100%;
             background-position: 0% 50%;
             color: #FFFFFF !important;
             font-family: 'Inter', system-ui, sans-serif;
             font-weight: 700;
-            border-radius: var(--sv-radius-button);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 4px 16px rgba(96, 239, 255, 0.25), 0 2px 12px rgba(138, 43, 226, 0.25);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-position 0.5s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+            border-radius: var(--sv-radius-button, 12px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 18px rgba(96, 239, 255, 0.28), 0 2px 12px rgba(138, 43, 226, 0.28);
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), background-position 0.52s ease, box-shadow 0.45s ease, border-color 0.35s ease;
             text-shadow: 0 1px 2px rgba(7, 10, 18, 0.5);
+            cursor: pointer;
             z-index: 1;
+            will-change: transform, background-position, box-shadow;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none !important;
+            -webkit-font-smoothing: antialiased;
+        }
+        .btn-primary > * {
+            position: relative;
+            z-index: 3;
+            pointer-events: none;
         }
         .btn-primary::after {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 60%;
+            left: -120%;
+            width: 70%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
             transform: skewX(-20deg);
-            transition: left 0.75s ease;
+            -webkit-transform: skewX(-20deg);
+            transition: left 0.65s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
-            z-index: -1;
+            z-index: 2;
         }
-        .btn-primary:hover {
+        .btn-primary:hover,
+        a.btn-primary:hover,
+        button.btn-primary:hover {
             color: #FFFFFF !important;
-            background-position: 100% 50%;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 0 25px rgba(96, 239, 255, 0.55), 0 0 45px rgba(138, 43, 226, 0.45), 0 10px 24px -5px rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.45);
+            background-position: 100% 50% !important;
+            transform: translateY(-4px) scale(1.03) translateZ(0);
+            -webkit-transform: translateY(-4px) scale(1.03) translateZ(0);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.75), 0 0 55px rgba(96, 239, 255, 0.50), 0 14px 28px -4px rgba(0, 0, 0, 0.70);
+            border-color: rgba(255, 255, 255, 0.85);
+            animation: btnPurplePulse 2.4s ease-in-out infinite alternate;
+            -webkit-animation: btnPurplePulse 2.4s ease-in-out infinite alternate;
         }
-        .btn-primary:hover::after {
+        .btn-primary:hover::after,
+        a.btn-primary:hover::after,
+        button.btn-primary:hover::after {
             left: 140%;
         }
-        .btn-primary:active {
-            transform: translateY(-1px) scale(0.99);
-            box-shadow: 0 2px 10px rgba(96, 239, 255, 0.35);
+        .btn-primary:active,
+        a.btn-primary:active,
+        button.btn-primary:active {
+            transform: translateY(-1px) scale(0.99) translateZ(0);
+            -webkit-transform: translateY(-1px) scale(0.99) translateZ(0);
+            box-shadow: 0 2px 12px rgba(138, 43, 226, 0.45);
+        }
+
+        @keyframes btnPurplePulse {
+            0%, 100% {
+                box-shadow: 0 0 28px rgba(138, 43, 226, 0.70), 0 0 50px rgba(96, 239, 255, 0.45), 0 12px 24px -4px rgba(0, 0, 0, 0.65);
+            }
+            50% {
+                box-shadow: 0 0 42px rgba(138, 43, 226, 0.90), 0 0 68px rgba(96, 239, 255, 0.65), 0 16px 32px -4px rgba(0, 0, 0, 0.75);
+            }
+        }
+        @-webkit-keyframes btnPurplePulse {
+            0%, 100% {
+                box-shadow: 0 0 28px rgba(138, 43, 226, 0.70), 0 0 50px rgba(96, 239, 255, 0.45), 0 12px 24px -4px rgba(0, 0, 0, 0.65);
+            }
+            50% {
+                box-shadow: 0 0 42px rgba(138, 43, 226, 0.90), 0 0 68px rgba(96, 239, 255, 0.65), 0 16px 32px -4px rgba(0, 0, 0, 0.75);
+            }
         }
 
         .btn-secondary {
@@ -730,42 +772,82 @@
             position: relative;
         }
         .chart-bar {
-            transform-origin: bottom;
+            transform-origin: 50% 100% !important;
+            -webkit-transform-origin: 50% 100% !important;
             will-change: transform;
         }
         .hero-bar {
             height: var(--bar-height);
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease, box-shadow 0.4s ease;
+            transform: scaleY(0) translateZ(0);
+            -webkit-transform: scaleY(0) translateZ(0);
+            transform-origin: 50% 100% !important;
+            -webkit-transform-origin: 50% 100% !important;
+            transition: transform 1.0s cubic-bezier(0.16, 1, 0.3, 1), -webkit-transform 1.0s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease, box-shadow 0.4s ease;
             will-change: transform;
             cursor: pointer;
         }
         .hero-bar.loaded {
-            transform: scaleY(1);
+            transform: scaleY(1) translateZ(0);
+            -webkit-transform: scaleY(1) translateZ(0);
         }
 
-        /* Animación continua: Ondas suaves en barras variables (Antes) */
-        .hero-bar[data-bar-index="0"].wave,
-        .hero-bar[data-bar-index="1"].wave,
+        /* Animación continua: Ondas fluidas no uniformes en barras variables (Antes) */
+        .hero-bar[data-bar-index="0"].wave {
+            transition: filter 0.4s ease, box-shadow 0.4s ease;
+            animation: heroBarWave0 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+            -webkit-animation: heroBarWave0 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+        }
+        .hero-bar[data-bar-index="1"].wave {
+            transition: filter 0.4s ease, box-shadow 0.4s ease;
+            animation: heroBarWave1 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+            -webkit-animation: heroBarWave1 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+        }
         .hero-bar[data-bar-index="2"].wave {
             transition: filter 0.4s ease, box-shadow 0.4s ease;
-            animation: heroBarWaveVariable 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+            animation: heroBarWave2 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+            -webkit-animation: heroBarWave2 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
         }
-        .hero-bar[data-bar-index="0"].wave { animation-delay: 0s; }
-        .hero-bar[data-bar-index="1"].wave { animation-delay: 0.35s; }
-        .hero-bar[data-bar-index="2"].wave { animation-delay: 0.70s; }
 
-        @keyframes heroBarWaveVariable {
-            0%, 100% {
-                transform: scaleY(1);
-            }
-            30% {
-                transform: scaleY(1.08);
-            }
-            70% {
-                transform: scaleY(0.93);
-            }
+        /* Barra 0 (Enero - 85%): Inicia suave desde 1.00, cresta al 22%, valle al 72% */
+        @keyframes heroBarWave0 {
+            0%, 100% { transform: scaleY(1.00) translateZ(0); }
+            22% { transform: scaleY(1.085) translateZ(0); }
+            48% { transform: scaleY(0.985) translateZ(0); }
+            72% { transform: scaleY(0.915) translateZ(0); }
+        }
+        @-webkit-keyframes heroBarWave0 {
+            0%, 100% { -webkit-transform: scaleY(1.00) translateZ(0); }
+            22% { -webkit-transform: scaleY(1.085) translateZ(0); }
+            48% { -webkit-transform: scaleY(0.985) translateZ(0); }
+            72% { -webkit-transform: scaleY(0.915) translateZ(0); }
+        }
+
+        /* Barra 1 (Febrero - 78%): Inicia suave desde 1.00, valle suave al 20%, cresta al 50% */
+        @keyframes heroBarWave1 {
+            0%, 100% { transform: scaleY(1.00) translateZ(0); }
+            20% { transform: scaleY(0.965) translateZ(0); }
+            50% { transform: scaleY(1.095) translateZ(0); }
+            76% { transform: scaleY(0.935) translateZ(0); }
+        }
+        @-webkit-keyframes heroBarWave1 {
+            0%, 100% { -webkit-transform: scaleY(1.00) translateZ(0); }
+            20% { -webkit-transform: scaleY(0.965) translateZ(0); }
+            50% { -webkit-transform: scaleY(1.095) translateZ(0); }
+            76% { -webkit-transform: scaleY(0.935) translateZ(0); }
+        }
+
+        /* Barra 2 (Marzo - 92%): Inicia suave desde 1.00, valle al 28%, cresta al 78% */
+        @keyframes heroBarWave2 {
+            0%, 100% { transform: scaleY(1.00) translateZ(0); }
+            28% { transform: scaleY(0.940) translateZ(0); }
+            52% { transform: scaleY(0.970) translateZ(0); }
+            78% { transform: scaleY(1.080) translateZ(0); }
+        }
+        @-webkit-keyframes heroBarWave2 {
+            0%, 100% { -webkit-transform: scaleY(1.00) translateZ(0); }
+            28% { -webkit-transform: scaleY(0.940) translateZ(0); }
+            52% { -webkit-transform: scaleY(0.970) translateZ(0); }
+            78% { -webkit-transform: scaleY(1.080) translateZ(0); }
         }
 
         /* Animación continua: Barras cyan (Con Sooniverse) en bloque conjunto, al mismo tiempo, con movimiento casi nulo (Precio fijo) */
@@ -773,16 +855,26 @@
         .hero-bar[data-bar-index="4"].wave,
         .hero-bar[data-bar-index="5"].wave {
             transition: filter 0.4s ease, box-shadow 0.4s ease;
-            animation: heroBarFixedPrice 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+            animation: heroBarFixedPrice 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+            -webkit-animation: heroBarFixedPrice 3.2s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
             animation-delay: 0s;
+            -webkit-animation-delay: 0s;
         }
 
         @keyframes heroBarFixedPrice {
             0%, 100% {
-                transform: scaleY(1);
+                transform: scaleY(1) translateZ(0);
             }
             50% {
-                transform: scaleY(1.018);
+                transform: scaleY(1.022) translateZ(0);
+            }
+        }
+        @-webkit-keyframes heroBarFixedPrice {
+            0%, 100% {
+                -webkit-transform: scaleY(1) translateZ(0);
+            }
+            50% {
+                -webkit-transform: scaleY(1.022) translateZ(0);
             }
         }
 
@@ -1021,10 +1113,7 @@
         .grecaptcha-badge { visibility: hidden; }
 
         @media (prefers-reduced-motion: reduce) {
-            .animate-pulse-slow,
-            .node,
             .cosmic-bg::before, .cosmic-bg::after { animation: none !important; }
-            .hero-bar, .hero-bar.loaded, .hero-bar.wave { transition: none !important; animation: none !important; transform: scaleY(1) !important; }
             html { scroll-behavior: auto; }
         }
     </style>
@@ -2269,28 +2358,23 @@
                 const heroAfter = document.getElementById('hero-after');
                 const heroBars = document.querySelectorAll('.hero-bar');
 
-                // Asegurar que el navegador pinte el estado inicial (scaleY 0) antes de iniciar la subida
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        // Carga progresiva de números de antes y con Sooniverse (commit 9cde107)
-                        if (heroBefore) animateCountUp(heroBefore, parseFloat(heroBefore.dataset.target) || 0, 1500);
-                        if (heroAfter) animateCountUp(heroAfter, parseFloat(heroAfter.dataset.target) || 0, 1500);
+                // Carga progresiva de números de antes y con Sooniverse (commit 9cde107)
+                if (heroBefore) animateCountUp(heroBefore, parseFloat(heroBefore.dataset.target) || 0, 1500);
+                if (heroAfter) animateCountUp(heroAfter, parseFloat(heroAfter.dataset.target) || 0, 1500);
 
-                        // Carga progresiva de barras correspondientes (restaurado de commit 9cde107)
-                        heroBars.forEach((bar, index) => {
-                            setTimeout(() => {
-                                bar.classList.add('loaded');
-                            }, index * 150);
-                        });
-
-                        // Animación continua de ondas suaves sin interacción del cursor
-                        setTimeout(() => {
-                            heroBars.forEach(bar => {
-                                bar.classList.add('wave');
-                            });
-                        }, 2100);
-                    });
+                // Carga progresiva de barras correspondientes (subida secuencial suave desde la base)
+                heroBars.forEach((bar, index) => {
+                    setTimeout(() => {
+                        bar.classList.add('loaded');
+                    }, 80 + index * 120);
                 });
+
+                // Inicio perfectamente continuo de la onda viajera tras asentarse todas las barras en scaleY(1)
+                setTimeout(() => {
+                    heroBars.forEach(bar => {
+                        bar.classList.add('wave');
+                    });
+                }, 1900);
 
                 // Cálculo dinámico en tiempo real de línea de tendencia SVG sobre los puntos
                 const trendSvg = document.getElementById('hero-trend-svg');

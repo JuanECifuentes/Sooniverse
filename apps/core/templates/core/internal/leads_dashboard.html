@@ -17,15 +17,15 @@
   }
   .lead-table-row.prio-reunion {
     border-left: 4px solid #60EFFF;
-    background: linear-gradient(90deg, rgba(96, 239, 255, 0.05) 0%, transparent 40%);
+    background: linear-gradient(90deg, rgba(96, 239, 255, 0.06) 0%, transparent 40%);
   }
   .lead-table-row.prio-nuevo {
-    border-left: 4px solid #00FF87;
-    background: linear-gradient(90deg, rgba(0, 255, 135, 0.05) 0%, transparent 40%);
-  }
-  .lead-table-row.prio-diag {
     border-left: 4px solid #60EFFF;
     background: linear-gradient(90deg, rgba(96, 239, 255, 0.04) 0%, transparent 40%);
+  }
+  .lead-table-row.prio-diag {
+    border-left: 4px solid #8A2BE2;
+    background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 40%);
   }
   .lead-table-row.prio-mant {
     border-left: 4px solid #00FF87;
@@ -60,12 +60,12 @@
     background: linear-gradient(180deg, rgba(96, 239, 255, 0.08) 0%, rgba(15, 23, 42, 0.65) 45%);
   }
   .lead-card.prio-nuevo {
-    border-top: 3px solid #00FF87;
-    background: linear-gradient(180deg, rgba(0, 255, 135, 0.08) 0%, rgba(15, 23, 42, 0.65) 45%);
-  }
-  .lead-card.prio-diag {
     border-top: 3px solid #60EFFF;
     background: linear-gradient(180deg, rgba(96, 239, 255, 0.06) 0%, rgba(15, 23, 42, 0.65) 45%);
+  }
+  .lead-card.prio-diag {
+    border-top: 3px solid #8A2BE2;
+    background: linear-gradient(180deg, rgba(138, 43, 226, 0.06) 0%, rgba(15, 23, 42, 0.65) 45%);
   }
   .lead-card.prio-mant {
     border-top: 3px solid #00FF87;
@@ -128,7 +128,7 @@
       background: rgba(96, 239, 255, 0.12); outline: none;
   }
   .phone-dropdown-item.selected {
-      background: rgba(0, 255, 135, 0.12); color: #00FF87; font-weight: 600;
+      background: rgba(96, 239, 255, 0.15); color: #60EFFF; font-weight: 600;
   }
   .phone-dropdown-item .item-flag {
       width: 18px; height: 13px; border-radius: 2px; object-fit: cover; flex-shrink: 0;
@@ -177,10 +177,13 @@
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Leads registrados</h1>
-      <p class="font-mono text-[11px] uppercase tracking-widest text-slate mt-1">Módulo de gestión de prospectos</p>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-[#60EFFF] mt-1 flex items-center gap-1.5 font-semibold">
+        <span class="bullet bullet-cyan"></span>
+        <span>Módulo de gestión de prospectos</span>
+      </p>
     </div>
     <button type="button" onclick="openCreateLeadModal()"
-            class="btn-primary px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-bold text-deep uppercase tracking-wide inline-flex items-center justify-center gap-2 self-start sm:self-auto shadow-[0_0_16px_rgba(0,255,135,0.3)]">
+            class="btn-primary px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-bold text-white uppercase tracking-wide inline-flex items-center justify-center gap-2 self-start sm:self-auto shadow-[0_0_20px_rgba(96,239,255,0.3)]">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
       Crear Lead
     </button>
@@ -229,7 +232,7 @@
             <th class="px-4 py-3.5 hover:text-white hover:bg-white/[0.02] transition cursor-pointer" onclick="handleColumnSort('estado')" title="Ordenar por Prioridad de Estado">
               <div class="flex items-center gap-1.5">
                 <span>Estado</span>
-                <span class="sort-icon text-neon font-bold text-[10px]" id="sort-icon-estado">▲</span>
+                <span class="sort-icon text-[#60EFFF] font-bold text-[10px]" id="sort-icon-estado">▲</span>
               </div>
             </th>
             <th class="px-4 py-3.5 hover:text-white hover:bg-white/[0.02] transition cursor-pointer" onclick="handleColumnSort('dias_en_estado')" title="Ordenar por Tiempo en Estado">
@@ -339,7 +342,7 @@
           {{ form.estado }}
           {% if form.estado.errors %}<p class="text-xs text-cyan mt-1">{{ form.estado.errors|join:" // " }}</p>{% endif %}
         </div>
-        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-bold text-deep uppercase tracking-wide">Crear Lead</button>
+        <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-bold text-white uppercase tracking-wide">Crear Lead</button>
       </form>
     </div>
   </div>
@@ -418,7 +421,7 @@
             Cancelar
           </button>
           <button type="submit" id="edit-lead-submit-btn"
-                  class="btn-primary px-6 py-2.5 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">
+                  class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white uppercase tracking-wide">
             Guardar Cambios
           </button>
         </div>
@@ -443,8 +446,8 @@
     </div>
     <div class="px-6 py-4 border-t border-border bg-surface/80 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
       <button id="q-create-btn" onclick="generateNewQuestionnaire()"
-              class="btn-primary px-4 py-2.5 rounded-lg text-xs font-bold text-deep uppercase tracking-wide">Generar Nuevo Link de Cuestionario</button>
-      <button onclick="closeQuestionnairesModal()" class="btn-secondary px-4 py-2.5 rounded-lg text-xs font-bold text-white uppercase tracking-wide">Cerrar</button>
+              class="btn-primary px-4 py-2.5 rounded-xl text-xs font-bold text-white uppercase tracking-wide">Generar Nuevo Link de Cuestionario</button>
+      <button onclick="closeQuestionnairesModal()" class="btn-secondary px-4 py-2.5 rounded-xl text-xs font-bold text-white uppercase tracking-wide">Cerrar</button>
     </div>
   </div>
 </div>
@@ -559,7 +562,7 @@
       if (!icon) return;
       if (currentSort.column === col) {
         icon.textContent = currentSort.direction === 'asc' ? '▲' : '▼';
-        icon.className = 'sort-icon text-neon font-bold text-[10px] ml-1 transition-transform';
+        icon.className = 'sort-icon text-[#60EFFF] font-bold text-[10px] ml-1 transition-transform';
       } else {
         icon.textContent = '↕';
         icon.className = 'sort-icon text-slate/40 text-[10px] ml-1';
@@ -682,7 +685,7 @@
           <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-cyan/10 border border-cyan/30 text-cyan text-xs font-mono whitespace-nowrap">
             <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             <span>${lead.meeting_at_display}</span>
-            ${lead.meeting_link ? `<a href="${lead.meeting_link}" target="_blank" rel="noopener" class="text-neon hover:underline font-bold text-[10px] ml-1">LINK</a>` : ''}
+            ${lead.meeting_link ? `<a href="${lead.meeting_link}" target="_blank" rel="noopener" class="text-[#60EFFF] hover:underline font-bold text-[10px] ml-1">LINK</a>` : ''}
           </div>`;
 
         meetingCard = `
@@ -691,7 +694,7 @@
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <span class="truncate">${lead.meeting_at_display}</span>
             </div>
-            ${lead.meeting_link ? `<a href="${lead.meeting_link}" target="_blank" rel="noopener" class="text-neon hover:underline text-[11px] font-mono flex-shrink-0 ml-2">Enlace</a>` : ''}
+            ${lead.meeting_link ? `<a href="${lead.meeting_link}" target="_blank" rel="noopener" class="text-[#60EFFF] hover:underline text-[11px] font-mono flex-shrink-0 ml-2">Enlace</a>` : ''}
           </div>`;
       }
 
