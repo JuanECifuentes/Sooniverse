@@ -550,20 +550,20 @@
 
         /* Variantes de color según predominancia */
         .card-legacy, .card-danger {
-            --card-spotlight: rgba(148, 163, 184, 0.15);
-            --card-glow-shadow: rgba(148, 163, 184, 0.25);
-            --card-border-hover: rgba(148, 163, 184, 0.60);
+            --card-spotlight: rgba(248, 113, 113, 0.25);
+            --card-glow-shadow: rgba(248, 113, 113, 0.50);
+            --card-border-hover: #F87171;
             border: 1px solid var(--sv-border) !important;
         }
         .card-legacy:hover, .card-danger:hover {
-            border-color: rgba(148, 163, 184, 0.60) !important;
-            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(148, 163, 184, 0.25) !important;
+            border-color: #F87171 !important;
+            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(248, 113, 113, 0.45), 0 0 65px rgba(248, 113, 113, 0.25) !important;
         }
 
-        /* Cards de Solución con Borde Verde y Resplandor Marcado */
+        /* Cards de Solución con Borde y Resplandor Marcado */
         .card-solution, .card-success {
-            --card-spotlight: rgba(0, 255, 135, 0.22);
-            --card-glow-shadow: rgba(0, 255, 135, 0.50);
+            --card-spotlight: rgba(0, 255, 135, 0.28);
+            --card-glow-shadow: rgba(0, 255, 135, 0.60);
             --card-border-hover: #00FF87;
             border: 1.5px solid rgba(0, 255, 135, 0.50) !important;
             box-shadow: 0 0 25px rgba(0, 255, 135, 0.12);
@@ -571,7 +571,73 @@
         .card-solution:hover, .card-success:hover {
             border-color: #00FF87 !important;
             transform: translateY(-6px);
-            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75), 0 0 45px rgba(0, 255, 135, 0.45), 0 0 20px rgba(96, 239, 255, 0.25) !important;
+            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 255, 135, 0.55), 0 0 75px rgba(0, 255, 135, 0.30) !important;
+        }
+
+        /* ── Efecto Glow Card INTENSIFICADO en Privacidad y Ahorro (Problema y Solución) ── */
+        #privacidad .card-legacy,
+        #ahorro .card-legacy {
+            --card-spotlight: rgba(248, 113, 113, 0.32);
+            --card-glow-shadow: rgba(248, 113, 113, 0.65);
+            --card-border-hover: #F87171;
+            border: 1.5px solid rgba(248, 113, 113, 0.35) !important;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        #privacidad .card-legacy:hover,
+        #ahorro .card-legacy:hover {
+            border-color: #F87171 !important;
+            transform: translateY(-6px);
+            box-shadow:
+                0 24px 50px -12px rgba(0, 0, 0, 0.85),
+                0 0 40px rgba(248, 113, 113, 0.50),
+                0 0 80px rgba(248, 113, 113, 0.30),
+                inset 0 0 25px rgba(248, 113, 113, 0.10) !important;
+        }
+
+        #privacidad .card-solution {
+            --card-spotlight: rgba(96, 239, 255, 0.32);
+            --card-glow-shadow: rgba(96, 239, 255, 0.70);
+            --card-border-hover: #60EFFF;
+            border: 1.5px solid rgba(96, 239, 255, 0.45) !important;
+            box-shadow: 0 0 25px rgba(96, 239, 255, 0.15);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        #privacidad .card-solution:hover {
+            border-color: #60EFFF !important;
+            transform: translateY(-6px);
+            box-shadow:
+                0 24px 50px -12px rgba(0, 0, 0, 0.85),
+                0 0 45px rgba(96, 239, 255, 0.65),
+                0 0 85px rgba(96, 239, 255, 0.35),
+                inset 0 0 25px rgba(96, 239, 255, 0.10) !important;
+        }
+
+        #ahorro .card-solution {
+            --card-spotlight: rgba(0, 255, 135, 0.32);
+            --card-glow-shadow: rgba(0, 255, 135, 0.70);
+            --card-border-hover: #00FF87;
+            border: 1.5px solid rgba(0, 255, 135, 0.45) !important;
+            box-shadow: 0 0 25px rgba(0, 255, 135, 0.15);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        #ahorro .card-solution:hover {
+            border-color: #00FF87 !important;
+            transform: translateY(-6px);
+            box-shadow:
+                0 24px 50px -12px rgba(0, 0, 0, 0.85),
+                0 0 45px rgba(0, 255, 135, 0.65),
+                0 0 85px rgba(0, 255, 135, 0.35),
+                inset 0 0 25px rgba(0, 255, 135, 0.10) !important;
+        }
+
+        #privacidad .glow-card::before,
+        #ahorro .glow-card::before {
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-spotlight), transparent 65%);
+        }
+        #privacidad .glow-card::after,
+        #ahorro .glow-card::after {
+            padding: 2px;
+            background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-border-hover), transparent 65%);
         }
 
         /* Card Calculadora Con Sooniverse (Borde y Hover Cyan) */
@@ -1688,7 +1754,7 @@
                         <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#60EFFF]">Preguntas Frecuentes</span>
                     </div>
                         <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Preguntas Frecuentes sobre nuestros servicios</h2>
-                        <p class="mt-4 text-[#94A3B8] text-sm sm:text-base leading-relaxed">Respuestas estructuradas sobre costos, rendimiento y seguridad de datos.</p>
+                        <p class="mt-4 text-[#94A3B8] text-sm sm:text-base leading-relaxed">Respuestas directas estructuradas para resolver tus inquietudes sobre costos, rendimiento y seguridad de datos.</p>
                     </div>
 
                     <div class="space-y-3 mt-8">
@@ -1699,7 +1765,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Migrando a una plataforma privada de IA con costo fijo mensual. En un caso real de 200.000 ejecuciones/mes con 10.000 tokens, redujo costos un <strong class="text-white">74,2%</strong> frente a modelos de pago por token.
+                                    Una empresa puede reducir el gasto en tokens migrando sus automatizaciones a una plataforma privada de IA con capacidad de procesamiento fija. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por procesamiento, esta alternativa redujo el costo un <strong class="text-white">74.2%</strong> frente a un proveedor premium de pago por token.
                                 </p>
                             </div>
                         </div>
@@ -1711,7 +1777,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Sí, para alto volumen de uso. Con 200.000 ejecuciones/mes, una GPU dedicada costó <strong class="text-white">US$579,46/mes</strong>, ahorrando <strong class="text-[#60EFFF]">74,2%</strong> frente a proveedores premium y <strong class="text-[#60EFFF]">39,3%</strong> frente a económicos.
+                                    Sí, para cargas de alto volumen la infraestructura dedicada resulta significativamente más económica. En un caso real de 200,000 ejecuciones mensuales con 10,000 tokens por procesamiento, el despliegue de una GPU dedicada representó un costo mensual de <strong class="text-white">US$579.46</strong>, logrando un ahorro del <strong class="text-[#60EFFF]">74.2%</strong> frente a un proveedor premium de pago por token y del <strong class="text-[#60EFFF]">39.3%</strong> frente a proveedores económicos.
                                 </p>
                             </div>
                         </div>
@@ -1723,7 +1789,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Desplegando modelos en servidores dedicados bajo tu control directo. Esto elimina intermediarios externos y garantiza trazabilidad, gobierno y estricto control de accesos.
+                                    Para proteger la información sensible, las organizaciones deben desplegar un LLM privado en servidores dedicados bajo su propio control. Al implementar una infraestructura de inferencia privada, se elimina la dependencia de terceros, garantizando trazabilidad total, gobierno de datos, y un estricto control de accesos.
                                 </p>
                             </div>
                         </div>
@@ -1735,7 +1801,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Un modelo propio en infraestructura dedicada. Mantiene el 100% del procesamiento confidencial dentro de tu red corporativa, previniendo cualquier filtración de datos a terceros.
+                                    Un modelo propio desplegado en infraestructura privada ofrece un estándar de seguridad muy superior. A diferencia del envío de datos sensibles a APIs comerciales externas, una plataforma privada mantiene el 100% del procesamiento (contratos, tickets y reportes financieros) bajo la gobernanza y red interna de la propia empresa, impidiendo fugas de información.
                                 </p>
                             </div>
                         </div>
@@ -1747,7 +1813,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Entre 1 y 3 semanas desde la auditoría inicial hasta tráfico en producción, con estrategias de despliegue prácticamente sin tiempo de inactividad.
+                                    Una implementación típica tarda 1–3 semanas desde la auditoría hasta el tráfico de producción en su propia infraestructura. El cronograma escala con la complejidad de la arquitectura. Utilizamos estrategias de implementación prácticamente sin tiempo de inactividad.
                                 </p>
                             </div>
                         </div>
@@ -1759,7 +1825,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    El diagnóstico inicial entrega pronósticos financieros claros. Si los números no favorecen la migración a servidores propios, te lo diremos directamente antes de asumir cualquier compromiso.
+                                    Esa es exactamente la pregunta que responde el diagnóstico. Recibirá una recomendación estricta de ir o no ir con pronósticos financieros precisos antes de la implementación. Si los números no le dan, se lo decimos. Preferimos eso a venderle una infraestructura que no va a aprovechar.
                                 </p>
                             </div>
                         </div>
@@ -1771,7 +1837,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    No. Tus flujos y automatizaciones solo actualizan el endpoint de conexión. Cambia el destino de red, no la lógica de tu código.
+                                    No. Sus automatizaciones actuales solo cambian la dirección a la que se conectan. Cambia el destino, no el código.
                                 </p>
                             </div>
                         </div>
@@ -1783,7 +1849,7 @@
                             </button>
                             <div class="accordion-body">
                                 <p class="text-[#94A3B8] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1E293B]/60">
-                                    Se ejecuta en servidores dedicados bajo tu control exclusivo. Tus peticiones, documentos y resultados nunca viajan a servidores públicos, cumpliendo con regulaciones de privacidad empresarial.
+                                    Un LLM privado se ejecuta en la infraestructura que usted controla, en su propia cuenta en la nube o en la nuestra — en lugar de enviar datos a un servicio de terceros. Sus indicaciones, documentos y resultados nunca abandonan su entorno, lo que hace que la IA sea viable para cargas de trabajo reguladas y sensibles.
                                 </p>
                             </div>
                         </div>
