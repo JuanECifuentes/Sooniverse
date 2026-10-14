@@ -158,24 +158,116 @@
         }
     }
 
-    /* Selector de zona horaria descriptivo */
-    .select-wrap { position: relative; width: 100%; }
-    .select-wrap::after {
-        content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-        color: #94A3B8; pointer-events: none; font-size: 12px;
+    /* ── Dropdown personalizado de Zona Horaria con Búsqueda en tiempo real ── */
+    .tz-dropdown-wrap { position: relative; width: 100%; }
+    .tz-trigger-btn {
+        display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        width: 100%; min-height: 40px; height: 40px; background: #070A12;
+        border: 1px solid #1E293B; border-radius: 8px; padding: 0 12px;
+        cursor: pointer; color: #FFFFFF; box-sizing: border-box;
+        transition: border-color .2s ease, box-shadow .2s ease; text-align: left;
     }
-    .select-brand { appearance: none; -webkit-appearance: none; padding-right: 38px !important; cursor: pointer; }
-    .select-brand option { background: #070A12; color: #FFFFFF; padding: 6px; }
+    .tz-trigger-btn:focus, .tz-trigger-btn.open {
+        outline: none; border-color: #60EFFF; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.12);
+    }
+    .tz-trigger-flag { font-size: 14px; flex-shrink: 0; line-height: 1; }
+    .tz-trigger-text {
+        flex: 1 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        font-size: 12.5px; color: #F1F5F9; font-weight: 500;
+    }
+    .tz-caret {
+        color: #94A3B8; font-size: 11px; margin-left: 6px; pointer-events: none;
+        transition: transform .2s ease; flex-shrink: 0;
+    }
+    .tz-trigger-btn.open .tz-caret { transform: rotate(180deg); }
+    .tz-dropdown-menu {
+        position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+        width: 100%; max-height: 310px; background: #0B1120;
+        border: 1px solid #1E293B; border-radius: 8px;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.85); z-index: 80;
+        display: flex; flex-direction: column; overflow: hidden;
+        box-sizing: border-box;
+    }
+    .tz-search-box {
+        position: relative; display: flex; align-items: center; gap: 8px;
+        padding: 8px 10px; background: #070A12; border-bottom: 1px solid #1E293B;
+        flex-shrink: 0;
+    }
+    .tz-search-icon { color: #64748B; flex-shrink: 0; }
+    .tz-search-input {
+        flex: 1 1 auto; background: #0F172A; border: 1px solid #1E293B;
+        border-radius: 6px; padding: 6px 10px; color: #FFFFFF; font-size: 12px;
+        outline: none; transition: border-color .15s ease, box-shadow .15s ease;
+        font-family: inherit;
+    }
+    .tz-search-input:focus {
+        border-color: #60EFFF; box-shadow: 0 0 0 2px rgba(96, 239, 255, 0.14);
+    }
+    .tz-search-input::placeholder { color: #64748B; }
+    .tz-search-clear {
+        background: transparent; border: 0; color: #94A3B8; cursor: pointer;
+        font-size: 12px; padding: 2px 6px; border-radius: 4px; line-height: 1;
+    }
+    .tz-search-clear:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.08); }
+    .tz-options-list {
+        flex: 1 1 auto; overflow-y: auto; max-height: 250px;
+        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+        padding: 4px 0; margin: 0; list-style: none;
+    }
+    .tz-options-list::-webkit-scrollbar { width: 5px; }
+    .tz-options-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .tz-group-title {
+        padding: 8px 12px 4px 12px; font-size: 10px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 1px; color: #60EFFF;
+        background: #0B1120; position: sticky; top: 0; z-index: 1;
+    }
+    .tz-item {
+        display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        padding: 7px 12px; cursor: pointer; transition: background .15s ease;
+        font-size: 12px; color: #E2E8F0; width: 100%; box-sizing: border-box;
+        background: transparent; border: 0; text-align: left;
+    }
+    .tz-item:hover, .tz-item:focus {
+        background: rgba(96, 239, 255, 0.10); outline: none; color: #FFFFFF;
+    }
+    .tz-item.selected {
+        background: rgba(96, 239, 255, 0.16); color: #60EFFF; font-weight: 600;
+    }
+    .tz-item-main {
+        display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto;
+    }
+    .tz-item-flag { font-size: 13px; flex-shrink: 0; }
+    .tz-item-text { display: flex; flex-direction: column; min-width: 0; }
+    .tz-item-title {
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        font-size: 12px; color: #F1F5F9;
+    }
+    .tz-item.selected .tz-item-title { color: #60EFFF; font-weight: 600; }
+    .tz-item-subtitle {
+        font-size: 10.5px; color: #94A3B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tz-item-meta {
+        display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 1px;
+    }
+    .tz-item-time {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #60EFFF; font-weight: 600;
+    }
+    .tz-item-offset {
+        font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: #64748B;
+    }
+    .tz-empty {
+        padding: 24px 16px; text-align: center; color: #64748B; font-size: 12px;
+    }
     .tz-preview {
         display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
         color: #60EFFF; background: rgba(96, 239, 255, 0.06); border: 1px solid rgba(96, 239, 255, 0.2);
         border-radius: 6px; padding: 5px 10px; margin-top: 5px; line-height: 1.4;
     }
 
-    /* Teléfono con selector de prefijo con bandera gráfica y dropdown */
+    /* ── Teléfono con selector de prefijo, banderas gráficas y buscador numérico ── */
     .phone-row { display: flex; gap: 8px; width: 100%; box-sizing: border-box; align-items: stretch; position: relative; }
     .phone-prefix-wrap {
-        position: relative; flex: 0 0 106px; min-width: 98px; max-width: 114px;
+        position: relative; flex: 0 0 114px; min-width: 108px; max-width: 120px;
         box-sizing: border-box;
     }
     .phone-prefix-btn {
@@ -188,6 +280,7 @@
     .phone-prefix-btn:focus, .phone-prefix-btn.open {
         outline: none; border-color: #60EFFF; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.12);
     }
+    .phone-prefix-btn.open .phone-caret { transform: rotate(180deg); }
     .phone-flag {
         width: 20px; height: 14px; border-radius: 2px; object-fit: cover;
         flex-shrink: 0; filter: drop-shadow(0 0 2px rgba(0,0,0,.6));
@@ -198,17 +291,44 @@
     }
     .phone-caret {
         color: #94A3B8; font-size: 11px; margin-left: 4px; pointer-events: none;
+        transition: transform .2s ease; flex-shrink: 0;
     }
     .phone-dropdown-menu {
         position: absolute; top: calc(100% + 4px); left: 0;
-        width: 240px; max-height: 210px; overflow-y: auto;
+        width: 280px; max-height: 310px;
         background: #0B1120; border: 1px solid #1E293B; border-radius: 8px;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75); z-index: 60;
-        padding: 4px 0; margin: 0; list-style: none;
-        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.85); z-index: 80;
+        display: flex; flex-direction: column; overflow: hidden;
+        margin: 0; list-style: none; box-sizing: border-box;
     }
-    .phone-dropdown-menu::-webkit-scrollbar { width: 4px; }
-    .phone-dropdown-menu::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .phone-search-box {
+        position: relative; display: flex; align-items: center; gap: 8px;
+        padding: 8px 10px; background: #070A12; border-bottom: 1px solid #1E293B;
+        flex-shrink: 0;
+    }
+    .phone-search-icon { color: #64748B; flex-shrink: 0; }
+    .phone-search-input {
+        flex: 1 1 auto; background: #0F172A; border: 1px solid #1E293B;
+        border-radius: 6px; padding: 6px 10px; color: #FFFFFF; font-size: 12px;
+        outline: none; transition: border-color .15s ease, box-shadow .15s ease;
+        font-family: inherit;
+    }
+    .phone-search-input:focus {
+        border-color: #60EFFF; box-shadow: 0 0 0 2px rgba(96, 239, 255, 0.14);
+    }
+    .phone-search-input::placeholder { color: #64748B; }
+    .phone-search-clear {
+        background: transparent; border: 0; color: #94A3B8; cursor: pointer;
+        font-size: 12px; padding: 2px 6px; border-radius: 4px; line-height: 1;
+    }
+    .phone-search-clear:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.08); }
+    .phone-options-list {
+        flex: 1 1 auto; overflow-y: auto; max-height: 250px;
+        scrollbar-width: thin; scrollbar-color: #334155 transparent;
+        padding: 4px 0; margin: 0; list-style: none;
+    }
+    .phone-options-list::-webkit-scrollbar { width: 5px; }
+    .phone-options-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     .phone-dropdown-item {
         display: flex; align-items: center; gap: 8px; padding: 7px 12px;
         cursor: pointer; transition: background .15s ease;
@@ -216,7 +336,7 @@
         box-sizing: border-box; background: transparent; border: 0;
     }
     .phone-dropdown-item:hover, .phone-dropdown-item:focus {
-        background: rgba(96, 239, 255, 0.12); outline: none;
+        background: rgba(96, 239, 255, 0.12); outline: none; color: #FFFFFF;
     }
     .phone-dropdown-item.selected {
         background: rgba(96, 239, 255, 0.15); color: #60EFFF; font-weight: 600;
@@ -229,6 +349,9 @@
     }
     .phone-dropdown-item .item-dial {
         font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #60EFFF; font-weight: 600;
+    }
+    .phone-empty {
+        padding: 20px 12px; text-align: center; color: #64748B; font-size: 12px;
     }
     .phone-number-wrap { flex: 1 1 auto; min-width: 0; }
 
@@ -484,9 +607,26 @@
                 <!-- Paso 1: fecha y hora -->
                 <div class="step-panel active" id="step-1">
                     <div style="margin-bottom: 14px;">
-                        <label class="field-label" for="id_tz">Zona horaria</label>
-                        <div class="select-wrap">
-                            <select id="id_tz" class="input-brand select-brand"></select>
+                        <label class="field-label" id="lbl_tz">Zona horaria</label>
+                        <div class="tz-dropdown-wrap" id="tz-dropdown-wrap">
+                            <button type="button" class="tz-trigger-btn" id="tz-trigger-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl_tz">
+                                <span class="tz-trigger-flag" id="tz-trigger-flag">📍</span>
+                                <span class="tz-trigger-text" id="tz-trigger-text">Cargando zona horaria…</span>
+                                <span class="tz-caret">▾</span>
+                            </button>
+                            <div class="tz-dropdown-menu" id="tz-dropdown-menu" role="listbox" style="display:none;">
+                                <div class="tz-search-box">
+                                    <svg class="tz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="tz-search-input" class="tz-search-input" placeholder="Buscar zona horaria, ciudad o país (ej: Bogotá, Madrid)..." autocomplete="off" spellcheck="false">
+                                    <button type="button" id="tz-search-clear" class="tz-search-clear" title="Limpiar búsqueda" style="display:none;">✕</button>
+                                </div>
+                                <div class="tz-options-list" id="tz-options-list"></div>
+                                <div class="tz-empty" id="tz-empty" style="display:none;">No se encontraron zonas horarias</div>
+                            </div>
+                            <select id="id_tz" style="display:none;" tabindex="-1" aria-hidden="true"></select>
                         </div>
                         <div id="tz-preview" class="tz-preview">
                             <span id="tz-preview-text"></span>
@@ -537,7 +677,18 @@
                                         <span id="phone-dial-val" class="phone-dial-val">+57</span>
                                         <span class="phone-caret">▾</span>
                                     </button>
-                                    <div class="phone-dropdown-menu" id="phone-dropdown-menu" role="listbox" style="display:none;"></div>
+                                    <div class="phone-dropdown-menu" id="phone-dropdown-menu" role="listbox" style="display:none;">
+                                        <div class="phone-search-box">
+                                            <svg class="phone-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="11" cy="11" r="8"></circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                            </svg>
+                                            <input type="text" id="phone-search-input" class="phone-search-input" placeholder="Buscar por número o país (ej: +57, 34, México)..." autocomplete="off" spellcheck="false">
+                                            <button type="button" id="phone-search-clear" class="phone-search-clear" title="Limpiar búsqueda" style="display:none;">✕</button>
+                                        </div>
+                                        <div class="phone-options-list" id="phone-options-list"></div>
+                                        <div class="phone-empty" id="phone-empty" style="display:none;">No se encontraron países</div>
+                                    </div>
                                     <input type="hidden" id="id_telefono_prefijo" name="prefijo" value="CO|+57" data-dial="+57">
                                 </div>
                                 <div class="phone-number-wrap">
@@ -664,26 +815,68 @@
         } catch (e) { /* noop */ }
     }
 
+    /* ── Helper de normalización para búsquedas ───────────────────── */
+    function normStr(str) {
+        return (str || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+    }
+
     /* ── Zonas horarias descriptivas con hora actual ───────────────── */
     const ZONAS_PRINCIPALES = [
+        // Latinoamérica (Todas las capitales y regiones principales)
         { tz: 'America/Bogota', flag: '🇨🇴', pais: 'Colombia / Perú / Ecuador', desc: 'Bogotá, Lima, Quito' },
-        { tz: 'America/Mexico_City', flag: '🇲🇽', pais: 'México Central', desc: 'CDMX, Guadalajara, Monterrey' },
+        { tz: 'America/Mexico_City', flag: '🇲🇽', pais: 'México (Central)', desc: 'CDMX, Guadalajara, Monterrey' },
+        { tz: 'America/Tijuana', flag: '🇲🇽', pais: 'México (Pacífico / Noroeste)', desc: 'Tijuana, Mexicali' },
+        { tz: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', pais: 'Argentina', desc: 'Buenos Aires, Córdoba' },
+        { tz: 'America/Santiago', flag: '🇨🇱', pais: 'Chile', desc: 'Santiago' },
+        { tz: 'America/Lima', flag: '🇵🇪', pais: 'Perú', desc: 'Lima, Arequipa' },
+        { tz: 'America/Guayaquil', flag: '🇪🇨', pais: 'Ecuador', desc: 'Quito, Guayaquil' },
+        { tz: 'America/Caracas', flag: '🇻🇪', pais: 'Venezuela', desc: 'Caracas' },
+        { tz: 'America/La_Paz', flag: '🇧🇴', pais: 'Bolivia', desc: 'La Paz, Santa Cruz' },
+        { tz: 'America/Montevideo', flag: '🇺🇾', pais: 'Uruguay', desc: 'Montevideo' },
+        { tz: 'America/Asuncion', flag: '🇵🇾', pais: 'Paraguay', desc: 'Asunción' },
+        { tz: 'America/Sao_Paulo', flag: '🇧🇷', pais: 'Brasil (Brasilia)', desc: 'São Paulo, Río de Janeiro' },
+        { tz: 'America/Panama', flag: '🇵🇦', pais: 'Panamá', desc: 'Ciudad de Panamá' },
+        { tz: 'America/Costa_Rica', flag: '🇨🇷', pais: 'Costa Rica', desc: 'San José' },
+        { tz: 'America/Guatemala', flag: '🇬🇹', pais: 'Guatemala', desc: 'Ciudad de Guatemala' },
+        { tz: 'America/El_Salvador', flag: '🇸🇻', pais: 'El Salvador', desc: 'San Salvador' },
+        { tz: 'America/Tegucigalpa', flag: '🇭🇳', pais: 'Honduras', desc: 'Tegucigalpa' },
+        { tz: 'America/Managua', flag: '🇳🇮', pais: 'Nicaragua', desc: 'Managua' },
+        { tz: 'America/Santo_Domingo', flag: '🇩🇴', pais: 'República Dominicana', desc: 'Santo Domingo' },
+        { tz: 'America/Puerto_Rico', flag: '🇵🇷', pais: 'Puerto Rico', desc: 'San Juan' },
+        { tz: 'America/Havana', flag: '🇨🇺', pais: 'Cuba', desc: 'La Habana' },
+
+        // España y Europa
+        { tz: 'Europe/Madrid', flag: '🇪🇸', pais: 'España (Península)', desc: 'Madrid, Barcelona' },
+        { tz: 'Atlantic/Canary', flag: '🇪🇸', pais: 'España (Canarias)', desc: 'Las Palmas, Santa Cruz' },
+        { tz: 'Europe/London', flag: '🇬🇧', pais: 'Reino Unido', desc: 'Londres' },
+        { tz: 'Europe/Paris', flag: '🇫🇷', pais: 'Francia', desc: 'París' },
+        { tz: 'Europe/Berlin', flag: '🇩🇪', pais: 'Alemania', desc: 'Berlín, Frankfurt' },
+        { tz: 'Europe/Rome', flag: '🇮🇹', pais: 'Italia', desc: 'Roma, Milán' },
+        { tz: 'Europe/Lisbon', flag: '🇵🇹', pais: 'Portugal', desc: 'Lisboa' },
+        { tz: 'Europe/Amsterdam', flag: '🇳🇱', pais: 'Países Bajos', desc: 'Ámsterdam' },
+        { tz: 'Europe/Zurich', flag: '🇨🇭', pais: 'Suiza', desc: 'Zúrich, Ginebra' },
+        { tz: 'Europe/Brussels', flag: '🇧🇪', pais: 'Bélgica', desc: 'Bruselas' },
+        { tz: 'Europe/Dublin', flag: '🇮🇪', pais: 'Irlanda', desc: 'Dublín' },
+        { tz: 'Europe/Vienna', flag: '🇦🇹', pais: 'Austria', desc: 'Viena' },
+        { tz: 'Europe/Stockholm', flag: '🇸🇪', pais: 'Suecia', desc: 'Estocolmo' },
+        { tz: 'Europe/Oslo', flag: '🇳🇴', pais: 'Noruega', desc: 'Oslo' },
+        { tz: 'Europe/Copenhagen', flag: '🇩🇰', pais: 'Dinamarca', desc: 'Copenhague' },
+        { tz: 'Europe/Warsaw', flag: '🇵🇱', pais: 'Polonia', desc: 'Varsovia' },
+        { tz: 'Europe/Prague', flag: '🇨🇿', pais: 'República Checa', desc: 'Praga' },
+        { tz: 'Europe/Athens', flag: '🇬🇷', pais: 'Grecia', desc: 'Atenas' },
+
+        // Norteamérica
         { tz: 'America/New_York', flag: '🇺🇸', pais: 'EE. UU. (Este)', desc: 'Miami, Nueva York, Atlanta' },
         { tz: 'America/Chicago', flag: '🇺🇸', pais: 'EE. UU. (Central)', desc: 'Chicago, Dallas, Houston' },
         { tz: 'America/Denver', flag: '🇺🇸', pais: 'EE. UU. (Montaña)', desc: 'Denver, Phoenix' },
         { tz: 'America/Los_Angeles', flag: '🇺🇸', pais: 'EE. UU. (Pacífico)', desc: 'Los Ángeles, San Francisco' },
-        { tz: 'Europe/Madrid', flag: '🇪🇸', pais: 'España', desc: 'Madrid, Barcelona' },
-        { tz: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', pais: 'Argentina / Uruguay', desc: 'Buenos Aires, Montevideo' },
-        { tz: 'America/Santiago', flag: '🇨🇱', pais: 'Chile', desc: 'Santiago' },
-        { tz: 'America/Sao_Paulo', flag: '🇧🇷', pais: 'Brasil', desc: 'São Paulo, Río de Janeiro' },
-        { tz: 'America/Panama', flag: '🇵🇦', pais: 'Panamá', desc: 'Ciudad de Panamá' },
-        { tz: 'America/Costa_Rica', flag: '🇨🇷', pais: 'Centroamérica', desc: 'San José, Guatemala, El Salvador' },
-        { tz: 'America/Caracas', flag: '🇻🇪', pais: 'Venezuela', desc: 'Caracas' },
-        { tz: 'America/La_Paz', flag: '🇧🇴', pais: 'Bolivia', desc: 'La Paz' },
-        { tz: 'America/Santo_Domingo', flag: '🇩🇴', pais: 'República Dominicana', desc: 'Santo Domingo' },
-        { tz: 'Europe/London', flag: '🇬🇧', pais: 'Reino Unido', desc: 'Londres' },
-        { tz: 'Europe/Paris', flag: '🇪🇺', pais: 'Europa Central', desc: 'París, Berlín, Roma' },
     ];
+
+    let tzCatalogo = [];
 
     function offsetDe(tz) {
         try {
@@ -715,60 +908,255 @@
         preview.textContent = `📍 Tu hora seleccionada: ${horaVisitante} (${offset})`;
     }
 
-    function llenarTimezones() {
-        const sel = $('id_tz');
-        sel.innerHTML = '';
+    function actualizarTriggerTz() {
+        const triggerFlag = $('tz-trigger-flag');
+        const triggerText = $('tz-trigger-text');
+        if (!triggerText) return;
 
-        const optGroupPrincipal = document.createElement('optgroup');
-        optGroupPrincipal.label = 'Zonas horarias frecuentes';
+        const encontrado = tzCatalogo.find((item) => item.tz === state.tz);
+        const hora = horaActualEn(state.tz);
+        const off = offsetDe(state.tz);
 
-        const agregados = new Set();
-        ZONAS_PRINCIPALES.forEach((item) => {
-            agregados.add(item.tz);
-            const opt = document.createElement('option');
-            opt.value = item.tz;
-            const hora = horaActualEn(item.tz);
-            const off = offsetDe(item.tz);
-            opt.textContent = `${item.pais} (${item.desc}) · ${hora} [${off}]`;
-            if (item.tz === state.tz) opt.selected = true;
-            optGroupPrincipal.appendChild(opt);
-        });
-        sel.appendChild(optGroupPrincipal);
-
-        // Si la zona detectada no está en la lista principal, se añade como primera opción
-        if (state.tz && !agregados.has(state.tz)) {
-            const optPropia = document.createElement('option');
-            optPropia.value = state.tz;
-            optPropia.textContent = `Tu zona: ${state.tz.replaceAll('_', ' ')} · ${horaActualEn(state.tz)} [${offsetDe(state.tz)}]`;
-            optPropia.selected = true;
-            sel.prepend(optPropia);
-            agregados.add(state.tz);
+        if (encontrado) {
+            if (triggerFlag) triggerFlag.textContent = encontrado.flag;
+            triggerText.textContent = `${encontrado.titulo} (${encontrado.subtitulo}) · ${hora} [${off}]`;
+        } else {
+            if (triggerFlag) triggerFlag.textContent = '📍';
+            triggerText.textContent = `${state.tz.replaceAll('_', ' ')} · ${hora} [${off}]`;
         }
 
-        // Otras zonas del sistema
+        const sel = $('id_tz');
+        if (sel) sel.value = state.tz;
+        actualizarPreviewTz();
+    }
+
+    function construirCatalogoTz() {
+        tzCatalogo = [];
+        const agregados = new Set();
+
+        // 1. Zonas principales
+        ZONAS_PRINCIPALES.forEach((item) => {
+            agregados.add(item.tz);
+            const hora = horaActualEn(item.tz);
+            const off = offsetDe(item.tz);
+            tzCatalogo.push({
+                tz: item.tz,
+                flag: item.flag,
+                titulo: item.pais,
+                subtitulo: item.desc,
+                hora,
+                offset: off,
+                grupo: 'frecuentes',
+                searchNorm: normStr(`${item.tz} ${item.pais} ${item.desc} ${off} ${item.tz.replaceAll('_', ' ')}`),
+            });
+        });
+
+        // Si la zona detectada no está en principales, añadirla al inicio
+        if (state.tz && !agregados.has(state.tz)) {
+            agregados.add(state.tz);
+            const hora = horaActualEn(state.tz);
+            const off = offsetDe(state.tz);
+            tzCatalogo.unshift({
+                tz: state.tz,
+                flag: '📍',
+                titulo: 'Tu zona detectada',
+                subtitulo: state.tz.replaceAll('_', ' '),
+                hora,
+                offset: off,
+                grupo: 'frecuentes',
+                searchNorm: normStr(`${state.tz} tu zona ${off} ${state.tz.replaceAll('_', ' ')}`),
+            });
+        }
+
+        // 2. Otras zonas del mundo disponibles en el sistema Intl
         let todasTz = [];
         try { todasTz = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : []; } catch (e) { todasTz = []; }
         const restantes = todasTz.filter(t => !agregados.has(t)).sort();
-        if (restantes.length) {
-            const optGroupOtras = document.createElement('optgroup');
-            optGroupOtras.label = 'Otras zonas del mundo';
-            restantes.forEach((tz) => {
-                const opt = document.createElement('option');
-                opt.value = tz;
-                opt.textContent = `${tz.replaceAll('_', ' ')} · ${horaActualEn(tz)} [${offsetDe(tz)}]`;
-                optGroupOtras.appendChild(opt);
+        restantes.forEach((tz) => {
+            const hora = horaActualEn(tz);
+            const off = offsetDe(tz);
+            const limpio = tz.replaceAll('_', ' ');
+            tzCatalogo.push({
+                tz,
+                flag: '🌐',
+                titulo: limpio,
+                subtitulo: tz,
+                hora,
+                offset: off,
+                grupo: 'otras',
+                searchNorm: normStr(`${tz} ${limpio} ${off}`),
             });
-            sel.appendChild(optGroupOtras);
+        });
+
+        // Sincronizar select nativo oculto
+        const sel = $('id_tz');
+        if (sel) {
+            sel.innerHTML = '';
+            tzCatalogo.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.tz;
+                opt.textContent = `${item.titulo} (${item.subtitulo})`;
+                if (item.tz === state.tz) opt.selected = true;
+                sel.appendChild(opt);
+            });
+        }
+    }
+
+    function renderTzList(filtro = '') {
+        const list = $('tz-options-list');
+        const empty = $('tz-empty');
+        if (!list) return;
+
+        list.innerHTML = '';
+        const q = normStr(filtro);
+        const filtrados = q ? tzCatalogo.filter(item => item.searchNorm.includes(q)) : tzCatalogo;
+
+        if (!filtrados.length) {
+            if (empty) {
+                empty.textContent = `No se encontraron zonas horarias para «${filtro}»`;
+                empty.style.display = 'block';
+            }
+            return;
         }
 
-        actualizarPreviewTz();
+        if (empty) empty.style.display = 'none';
 
-        sel.addEventListener('change', () => {
-            state.tz = sel.value;
-            state.slot = null;
-            actualizarPreviewTz();
-            cargarDisponibilidad();
+        let grupoActual = null;
+        filtrados.forEach((item) => {
+            if (item.grupo !== grupoActual && !q) {
+                grupoActual = item.grupo;
+                const header = document.createElement('div');
+                header.className = 'tz-group-title';
+                header.textContent = grupoActual === 'frecuentes' ? 'Zonas horarias frecuentes' : 'Otras zonas del mundo';
+                list.appendChild(header);
+            }
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tz-item' + (item.tz === state.tz ? ' selected' : '');
+            btn.dataset.tz = item.tz;
+            btn.innerHTML = `
+                <div class="tz-item-main">
+                    <span class="tz-item-flag">${item.flag}</span>
+                    <div class="tz-item-text">
+                        <span class="tz-item-title">${item.titulo}</span>
+                        <span class="tz-item-subtitle">${item.subtitulo}</span>
+                    </div>
+                </div>
+                <div class="tz-item-meta">
+                    <span class="tz-item-time">${item.hora}</span>
+                    <span class="tz-item-offset">${item.offset}</span>
+                </div>
+            `;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                seleccionarTz(item.tz);
+                cerrarTzDropdown();
+            });
+            list.appendChild(btn);
         });
+    }
+
+    function seleccionarTz(tz, recargar = true) {
+        state.tz = tz;
+        actualizarTriggerTz();
+
+        const items = document.querySelectorAll('.tz-item');
+        items.forEach((it) => it.classList.toggle('selected', it.dataset.tz === tz));
+
+        if (recargar) {
+            state.slot = null;
+            cargarDisponibilidad();
+        }
+    }
+
+    function abrirTzDropdown() {
+        cerrarPhoneDropdown();
+        const menu = $('tz-dropdown-menu');
+        const btn = $('tz-trigger-btn');
+        const input = $('tz-search-input');
+        const clearBtn = $('tz-search-clear');
+        if (!menu || !btn) return;
+
+        menu.style.display = 'flex';
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+
+        if (input) {
+            input.value = '';
+            if (clearBtn) clearBtn.style.display = 'none';
+            renderTzList('');
+            setTimeout(() => input.focus(), 40);
+        }
+
+        setTimeout(() => {
+            const selEl = menu.querySelector('.tz-item.selected');
+            if (selEl) selEl.scrollIntoView({ block: 'nearest' });
+        }, 60);
+    }
+
+    function cerrarTzDropdown() {
+        const menu = $('tz-dropdown-menu');
+        const btn = $('tz-trigger-btn');
+        if (menu && btn) {
+            menu.style.display = 'none';
+            btn.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function llenarTimezones() {
+        construirCatalogoTz();
+        actualizarTriggerTz();
+
+        const trigger = $('tz-trigger-btn');
+        const menu = $('tz-dropdown-menu');
+        const searchInput = $('tz-search-input');
+        const clearBtn = $('tz-search-clear');
+
+        if (trigger) {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = menu && menu.style.display === 'flex';
+                if (isOpen) cerrarTzDropdown();
+                else abrirTzDropdown();
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (clearBtn) clearBtn.style.display = val ? 'inline-block' : 'none';
+                renderTzList(val);
+            });
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    cerrarTzDropdown();
+                    trigger && trigger.focus();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const primerItem = menu.querySelector('.tz-item');
+                    if (primerItem) primerItem.click();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const primerItem = menu.querySelector('.tz-item');
+                    if (primerItem) primerItem.focus();
+                }
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (searchInput) {
+                    searchInput.value = '';
+                    clearBtn.style.display = 'none';
+                    renderTzList('');
+                    searchInput.focus();
+                }
+            });
+        }
     }
 
     /* ── Formato de fechas y horas ─────────────────────────────────── */
@@ -810,6 +1198,7 @@
             if (!data.success) throw new Error(data.message || 'Error de disponibilidad');
 
             state.tz = data.zona_horaria || state.tz;
+            actualizarTriggerTz();
             state.duracion = data.duracion_min || 30;
             state.fechas = data.fechas_disponibles || [];
             state.slotsPorFecha = data.slots_por_fecha || {};
@@ -902,25 +1291,36 @@
         actualizarUI();
     }
 
-    /* ── Teléfono: Prefijos con banderas emoji (cero peticiones) ───── */
+    /* ── Teléfono: Prefijos con banderas y buscador por número y país ── */
     const PAIS_DATOS = [
+        // ── Latinoamérica (Todos los países y territorios) ──
         ['CO', '+57', 'Colombia'],
         ['MX', '+52', 'México'],
-        ['US', '+1', 'EE. UU. / Canadá'],
-        ['ES', '+34', 'España'],
         ['AR', '+54', 'Argentina'],
         ['CL', '+56', 'Chile'],
         ['PE', '+51', 'Perú'],
         ['EC', '+593', 'Ecuador'],
         ['VE', '+58', 'Venezuela'],
-        ['PA', '+507', 'Panamá'],
-        ['CR', '+506', 'Costa Rica'],
         ['GT', '+502', 'Guatemala'],
-        ['DO', '+1809', 'Rep. Dominicana'],
+        ['CR', '+506', 'Costa Rica'],
+        ['PA', '+507', 'Panamá'],
+        ['DO', '+1809', 'República Dominicana'],
         ['BO', '+591', 'Bolivia'],
         ['UY', '+598', 'Uruguay'],
         ['PY', '+595', 'Paraguay'],
+        ['SV', '+503', 'El Salvador'],
+        ['HN', '+504', 'Honduras'],
+        ['NI', '+505', 'Nicaragua'],
+        ['CU', '+53', 'Cuba'],
+        ['PR', '+1787', 'Puerto Rico'],
         ['BR', '+55', 'Brasil'],
+        ['HT', '+509', 'Haití'],
+
+        // ── España y Norteamérica ──
+        ['ES', '+34', 'España'],
+        ['US', '+1', 'Estados Unidos / Canadá'],
+
+        // ── Europa ──
         ['GB', '+44', 'Reino Unido'],
         ['FR', '+33', 'Francia'],
         ['DE', '+49', 'Alemania'],
@@ -928,19 +1328,61 @@
         ['PT', '+351', 'Portugal'],
         ['NL', '+31', 'Países Bajos'],
         ['CH', '+41', 'Suiza'],
+        ['BE', '+32', 'Bélgica'],
+        ['IE', '+353', 'Irlanda'],
+        ['AT', '+43', 'Austria'],
         ['SE', '+46', 'Suecia'],
-        ['JP', '+81', 'Japón'],
+        ['NO', '+47', 'Noruega'],
+        ['DK', '+45', 'Dinamarca'],
+        ['FI', '+358', 'Finlandia'],
+        ['PL', '+48', 'Polonia'],
+        ['CZ', '+420', 'República Checa'],
+        ['GR', '+30', 'Grecia'],
+        ['RO', '+40', 'Rumanía'],
+
+        // ── Otros globales ──
         ['AE', '+971', 'Emiratos Árabes'],
+        ['JP', '+81', 'Japón'],
         ['AU', '+61', 'Australia'],
     ];
 
-    function llenarPaises() {
-        const menu = $('phone-dropdown-menu');
-        const btn = $('phone-prefix-btn');
-        if (!menu || !btn) return;
-        menu.innerHTML = '';
+    function coincideFiltroTelefono(item, q) {
+        if (!q) return true;
+        const cleanQ = q.trim().toLowerCase();
+        const digitsOnlyQ = cleanQ.replace(/\D/g, '');
+        const dialDigits = item[1].replace(/\D/g, '');
 
-        PAIS_DATOS.forEach(([iso2, dial, nombre]) => {
+        // 1. Si el usuario escribe dígitos (ej: "57", "+57", "34", "503"), coincide por número de prefijo
+        if (digitsOnlyQ.length > 0 && dialDigits.includes(digitsOnlyQ)) {
+            return true;
+        }
+
+        // 2. Si escribe texto o letras (ej: "colombia", "españa", "mexico")
+        const normQ = normStr(cleanQ);
+        const normNombre = normStr(item[2]);
+        const normIso = item[0].toLowerCase();
+        return normNombre.includes(normQ) || normIso.includes(normQ);
+    }
+
+    function renderPaises(filtro = '') {
+        const list = $('phone-options-list');
+        const empty = $('phone-empty');
+        if (!list) return;
+
+        list.innerHTML = '';
+        const filtrados = PAIS_DATOS.filter(item => coincideFiltroTelefono(item, filtro));
+
+        if (!filtrados.length) {
+            if (empty) {
+                empty.textContent = `No se encontró ningún país para «${filtro}»`;
+                empty.style.display = 'block';
+            }
+            return;
+        }
+
+        if (empty) empty.style.display = 'none';
+
+        filtrados.forEach(([iso2, dial, nombre]) => {
             const item = document.createElement('button');
             item.type = 'button';
             item.className = 'phone-dropdown-item' + (iso2 === (state.pais || 'CO') ? ' selected' : '');
@@ -953,46 +1395,40 @@
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 seleccionarPais(iso2, dial);
-                cerrarDropdown();
+                cerrarPhoneDropdown();
+                const telInput = $('id_telefono_numero');
+                if (telInput) telInput.focus();
             });
-            menu.appendChild(item);
+            list.appendChild(item);
         });
-
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isOpen = menu.style.display !== 'none';
-            if (isOpen) {
-                cerrarDropdown();
-            } else {
-                abrirDropdown();
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            const wrap = $('phone-prefix-wrap');
-            if (wrap && !wrap.contains(e.target)) {
-                cerrarDropdown();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') cerrarDropdown();
-        });
-
-        setPais(state.pais || 'CO');
     }
 
-    function abrirDropdown() {
+    function abrirPhoneDropdown() {
+        cerrarTzDropdown();
         const menu = $('phone-dropdown-menu');
         const btn = $('phone-prefix-btn');
-        if (menu && btn) {
-            menu.style.display = 'block';
-            btn.classList.add('open');
-            btn.setAttribute('aria-expanded', 'true');
+        const input = $('phone-search-input');
+        const clearBtn = $('phone-search-clear');
+        if (!menu || !btn) return;
+
+        menu.style.display = 'flex';
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+
+        if (input) {
+            input.value = '';
+            if (clearBtn) clearBtn.style.display = 'none';
+            renderPaises('');
+            setTimeout(() => input.focus(), 40);
         }
+
+        setTimeout(() => {
+            const selEl = menu.querySelector('.phone-dropdown-item.selected');
+            if (selEl) selEl.scrollIntoView({ block: 'nearest' });
+        }, 60);
     }
 
-    function cerrarDropdown() {
+    function cerrarPhoneDropdown() {
         const menu = $('phone-dropdown-menu');
         const btn = $('phone-prefix-btn');
         if (menu && btn) {
@@ -1000,6 +1436,78 @@
             btn.classList.remove('open');
             btn.setAttribute('aria-expanded', 'false');
         }
+    }
+
+    function llenarPaises() {
+        const btn = $('phone-prefix-btn');
+        const menu = $('phone-dropdown-menu');
+        const searchInput = $('phone-search-input');
+        const clearBtn = $('phone-search-clear');
+        if (!btn || !menu) return;
+
+        renderPaises('');
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = menu.style.display === 'flex';
+            if (isOpen) cerrarPhoneDropdown();
+            else abrirPhoneDropdown();
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (clearBtn) clearBtn.style.display = val ? 'inline-block' : 'none';
+                renderPaises(val);
+            });
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    cerrarPhoneDropdown();
+                    btn.focus();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const primerItem = menu.querySelector('.phone-dropdown-item');
+                    if (primerItem) primerItem.click();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const primerItem = menu.querySelector('.phone-dropdown-item');
+                    if (primerItem) primerItem.focus();
+                }
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (searchInput) {
+                    searchInput.value = '';
+                    clearBtn.style.display = 'none';
+                    renderPaises('');
+                    searchInput.focus();
+                }
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = $('phone-prefix-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                cerrarPhoneDropdown();
+            }
+            const tzWrap = $('tz-dropdown-wrap');
+            if (tzWrap && !tzWrap.contains(e.target)) {
+                cerrarTzDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                cerrarPhoneDropdown();
+                cerrarTzDropdown();
+            }
+        });
+
+        setPais(state.pais || 'CO');
     }
 
     function seleccionarPais(iso2, dial) {
