@@ -55,6 +55,17 @@
     --sv-font-mono: 'JetBrains Mono', monospace;
 }
 
+/* ── Reset y Prevención Global de Scroll Horizontal ────────── */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /* ── Base y Utilidades Tipográficas ───────────────────────── */
 .font-sans { font-family: var(--sv-font-sans); }
 .font-mono { font-family: var(--sv-font-mono); }
@@ -736,4 +747,106 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 }
 .has-tooltip:hover .tooltip,
 .has-tooltip:focus-within .tooltip { opacity: 1; visibility: visible; }
+
+/* ==========================================================================
+   SISTEMA RESPONSIVO INTEGRAL PARA MÓVIL (< 768px y < 640px)
+   Garantiza que ningún elemento genere scroll horizontal y que los SVGs
+   y tarjetas nunca superen la altura del viewport.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    /* ── Ocultar botón CTA en barra de navegación móvil ─────── */
+    .btn-nav {
+        display: none !important;
+    }
+
+    /* ── SVGs de Problema y Solución en Landing ──────────────── */
+    /* Shrink de los diagramas para encajar perfectamente en el viewport móvil */
+    svg.diagram {
+        max-height: 125px !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding: 4px !important;
+    }
+    .box-legacy svg,
+    .box-solution svg {
+        max-height: 52px !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* ── Tarjetas Problema y Solución ────────────────────────── */
+    .card-legacy,
+    .card-solution {
+        padding: 1.1rem 1rem !important;
+        max-height: calc(100vh - 40px);
+        box-sizing: border-box;
+    }
+    .card-legacy .my-5,
+    .card-solution .my-5 {
+        margin-top: 0.65rem !important;
+        margin-bottom: 0.65rem !important;
+    }
+    .box-legacy,
+    .box-solution {
+        padding: 0.75rem 0.85rem !important;
+    }
+    .box-legacy .mb-4,
+    .box-solution .mb-4 {
+        margin-bottom: 0.4rem !important;
+    }
+    .card-legacy .space-y-3 > :not([hidden]) ~ :not([hidden]),
+    .card-solution .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 0.4rem !important;
+    }
+    .card-legacy .text-sm,
+    .card-solution .text-sm {
+        font-size: 0.8rem !important;
+        line-height: 1.35 !important;
+    }
+    .card-legacy h3,
+    .card-solution h3 {
+        font-size: 1.05rem !important;
+        line-height: 1.3 !important;
+    }
+
+    /* ── Flujo vertical de secciones 1-viewport en desktop ───── */
+    #privacidad.min-h-screen,
+    #ahorro.min-h-screen {
+        min-height: auto !important;
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
+    }
+
+    /* ── Hero en móvil ───────────────────────────────────────── */
+    #hero {
+        padding-top: 6.5rem !important;
+        padding-bottom: 3rem !important;
+        min-height: auto !important;
+    }
+    #hero h1 {
+        font-size: 1.95rem !important;
+        line-height: 1.18 !important;
+    }
+    .hero-chart-container {
+        height: 8.5rem !important;
+    }
+
+    /* ── Calculadora: Touch Friendly ─────────────────────────── */
+    input[type=range] {
+        touch-action: pan-y !important;
+    }
+
+    /* ── Evidencia Carousel ──────────────────────────────────── */
+    #evidence-carousel {
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+}
 

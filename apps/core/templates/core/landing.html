@@ -1139,7 +1139,6 @@
 
             <div class="flex items-center justify-end gap-3 md:gap-4 md:justify-self-end">
                 <a href="{% url 'core:internal_leads' %}" class="hidden md:inline nav-link text-sm font-medium text-[#94A3B8]">Login</a>
-                <a href="{% url 'core:internal_leads' %}" class="md:hidden px-3 py-1.5 rounded-lg border border-[#1E293B] bg-[#0F172A]/80 text-xs font-semibold text-[#94A3B8] hover:text-white transition">Login</a>
                 <a href="{% url 'core:booking_publico' %}" class="hidden md:inline-flex items-center gap-2 btn-nav px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all group">
                     <span>Reservar una reunión</span>
                     <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -1156,7 +1155,7 @@
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
-                <a href="{% url 'core:internal_leads' %}" class="btn-secondary px-4 py-2.5 rounded-xl text-center text-xs font-bold text-white uppercase tracking-wide">Iniciar Sesión (Login)</a>
+                <a href="{% url 'core:internal_leads' %}" class="btn-secondary px-4 py-2.5 rounded-xl text-center text-xs font-bold text-white uppercase tracking-wide">Login</a>
                 <a href="{% url 'core:booking_publico' %}" class="btn-primary mt-1 px-5 py-3 rounded-xl text-center text-sm font-bold uppercase tracking-wide inline-flex items-center justify-center gap-2 transition-all group">
                     <span>Reservar una reunión</span>
                     <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -1454,7 +1453,7 @@
                             <div>
                                 <div class="text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-semibold">COSTO FIJO MENSUAL</div>
                                 <div class="mt-1 flex items-baseline gap-2">
-                                    <span class="text-3xl font-extrabold text-[#00FF87] font-mono">US$ 579</span>
+                                    <span class="text-3xl font-extrabold text-[#00FF87]">US$ 579</span>
                                     <span class="text-xs text-[#64748B] font-mono font-normal">/ mes (fijo)</span>
                                 </div>
                             </div>
@@ -1741,19 +1740,19 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
                         <div class="glow-card card-legacy p-5 sm:p-6 rounded-2xl border border-[#1E293B] bg-[#0F172A]/70">
                             <div class="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-2">Costo base estimado</div>
-                            <div class="text-3xl sm:text-4xl font-mono font-bold text-white" id="base-cost">$0</div>
+                            <div class="text-3xl sm:text-4xl font-bold text-white" id="base-cost">$0</div>
                             <div class="text-xs text-[#64748B] mt-1">USD / mes</div>
                             <div class="text-xs text-[#94A3B8] mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
                         </div>
                         <div class="glow-card card-calculator-sooniverse p-5 sm:p-6 rounded-2xl border-2 border-[#60EFFF] bg-gradient-to-b from-[#0F172A] to-[#070A12] shadow-[0_0_25px_rgba(96,239,255,0.18)]">
                             <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] mb-2">Con Sooniverse</div>
-                            <div class="text-3xl sm:text-4xl font-mono font-extrabold text-[#60EFFF]" id="optimized-cost">$0</div>
+                            <div class="text-3xl sm:text-4xl font-extrabold text-[#60EFFF]" id="optimized-cost">$0</div>
                             <div class="text-xs text-[#64748B] mt-1">USD / mes</div>
                             <div class="text-xs text-[#60EFFF] mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
                         </div>
                         <div class="glow-card card-savings p-5 sm:p-6 sm:col-span-2 lg:col-span-1 rounded-2xl border border-[#1E293B] bg-[#0F172A]/70">
                             <div class="font-mono text-[10px] uppercase tracking-widest text-[#00FF87] mb-2">Ahorro mensual</div>
-                            <div class="text-3xl sm:text-4xl font-mono font-bold text-[#00FF87]" id="savings">$0</div>
+                            <div class="text-3xl sm:text-4xl font-bold text-[#00FF87]" id="savings">$0</div>
                             <div class="text-xs text-[#64748B] mt-1">Reducción estimada del <span id="savings-percent" class="text-white font-semibold">0</span>%</div>
                             <div class="text-xs text-[#94A3B8] mt-1 font-mono" id="savings-cop">~ $0 COP</div>
                         </div>
