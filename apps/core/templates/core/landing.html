@@ -183,41 +183,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Neutros */
-            --sv-bg-base: #0B0716;
-            --sv-bg-surface: #160F2B;
-            --sv-bg-glass: rgba(22, 15, 43, 0.72);
-            --sv-border: #2E2350;
+            /* Neutros v3.0 */
+            --sv-bg-base: #090A17;
+            --sv-bg-surface: #0F1526;
+            --sv-bg-glass: rgba(15, 21, 38, 0.72);
+            --sv-border: #1F2940;
+            --sv-badge-bg: #1A2238;
+            --sv-badge-text: #C9D6EA;
             --sv-text-heading: #FFFFFF;
-            --sv-text-primary: #ECE8F7;
-            --sv-text-secondary: #A99FC4;
-            --sv-text-tertiary: #8A80A8;
+            --sv-text-primary: #EDF2FA;
+            --sv-text-secondary: #A0AEC6;
+            --sv-text-tertiary: #7E8BA3;
 
-            /* Violetas */
-            --sv-accent: #7C3AED;
-            --sv-accent-hover: #8A2BE2;
-            --sv-accent-soft: #8B5CF6;
-            --sv-highlight: #C4B5FD;
-            --sv-badge-bg: #2E1065;
-            --sv-badge-text: #DDD6FE;
-            --sv-nebula: #5B21B6;
-            --sv-void-indigo: #1E1B4B;
+            /* Principal v3.0 (Sky Bridge) */
+            --sv-primary: #8CBFF9;
+            --sv-primary-hover: #A8D0FB;
+            --sv-on-primary: #090A17;
+            --sv-primary-soft: #D6E8FD;
 
-            /* Señal y estados */
-            --sv-signal: #60EFFF;
+            /* Ambientales (solo fondo y degradado) */
+            --sv-nebula: rgba(91, 33, 182, 0.32);
+            --sv-sky-glow: rgba(140, 191, 249, 0.10);
+            --sv-void-indigo: rgba(30, 27, 75, 0.7);
+            --sv-orbit-violet: #A78BFA;
+            --sv-node-violet: #B794F6;
+
+            /* Estados funcionales */
             --sv-success: #4ADE80;
-            --sv-error: #F87171;
             --sv-warning: #FBBF24;
 
             /* Degradados oficiales */
             --sv-gradient-logo: linear-gradient(135deg, #00FF87 0%, #60EFFF 50%, #8A2BE2 100%);
-            --sv-gradient-highlight: linear-gradient(135deg, #60EFFF 0%, #B794F6 50%, #A855F7 100%);
+            --sv-gradient-highlight: linear-gradient(135deg, #8CBFF9 0%, #B794F6 50%, #A855F7 100%);
 
             /* Forma y movimiento */
             --sv-radius-card: 12px;
             --sv-radius-button: 10px;
             --sv-radius-badge: 6px;
-            --sv-glow: 0 0 24px rgba(124, 58, 237, 0.45);
+            --sv-glow: 0 0 24px rgba(140, 191, 249, 0.35);
         }
 
         html { scroll-behavior: auto; background-color: var(--sv-bg-base); }
@@ -255,11 +258,11 @@
             margin-right: auto;
             border-radius: 14px;
             padding: 0.55rem 1.25rem;
-            background-color: rgba(22, 15, 43, 0.85);
+            background-color: rgba(15, 21, 38, 0.88);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--sv-border);
-            box-shadow: 0 10px 30px rgba(11, 7, 22, 0.7);
+            box-shadow: 0 10px 30px rgba(9, 10, 23, 0.7);
             transform: translateY(0.75rem);
         }
         #main-header .logo-img {
@@ -275,7 +278,7 @@
             margin-left: 0.75rem;
             margin-right: 0.75rem;
             padding: 1.25rem;
-            background-color: rgba(22, 15, 43, 0.96);
+            background-color: rgba(15, 21, 38, 0.96);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border-radius: 12px;
@@ -308,7 +311,7 @@
 
         /* ── Tipografía & Degradados ─────────────────────────── */
         .text-highlight {
-            background: linear-gradient(135deg, #60EFFF 0%, #B794F6 50%, #A855F7 100%);
+            background: linear-gradient(135deg, #8CBFF9 0%, #B794F6 50%, #A855F7 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -320,28 +323,47 @@
             color: transparent;
         }
 
-        /* ── Botones ─────────────────────────────────────────── */
+        /* ── Botones Interactivos con Efectos y Microanimaciones ── */
         .btn-primary {
-            background-color: var(--sv-accent);
-            color: #FFFFFF;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--sv-primary);
+            color: var(--sv-on-primary) !important;
             font-family: 'Inter', system-ui, sans-serif;
             font-weight: 700;
             border-radius: var(--sv-radius-button);
             border: 1px solid transparent;
+            box-shadow: 0 4px 14px rgba(140, 191, 249, 0.25);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: rotate(25deg);
+            transition: left 0.75s ease;
+            pointer-events: none;
         }
         .btn-primary:hover {
-            background-color: var(--sv-accent-hover);
+            background-color: var(--sv-primary-hover);
             transform: translateY(-2px);
-            box-shadow: var(--sv-glow);
+            box-shadow: 0 0 28px rgba(140, 191, 249, 0.45), 0 4px 20px rgba(140, 191, 249, 0.25);
+        }
+        .btn-primary:hover::before {
+            left: 140%;
         }
         .btn-primary:active {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.98);
         }
 
         .btn-secondary {
-            background-color: rgba(22, 15, 43, 0.6);
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(15, 21, 38, 0.7);
             border: 1px solid var(--sv-border);
             color: var(--sv-text-primary);
             font-family: 'Inter', system-ui, sans-serif;
@@ -349,30 +371,58 @@
             border-radius: var(--sv-radius-button);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
         }
         .btn-secondary:hover {
-            border-color: var(--sv-accent-soft);
-            background-color: rgba(139, 92, 246, 0.1);
+            border-color: var(--sv-primary);
+            background-color: rgba(140, 191, 249, 0.08);
+            color: #FFFFFF;
             transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 20px rgba(140, 191, 249, 0.25);
         }
         .btn-secondary:active {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.98);
         }
 
         .btn-nav {
-            background-color: transparent;
-            border: 1px solid var(--sv-accent);
-            color: var(--sv-text-primary);
-            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--sv-primary);
+            color: var(--sv-on-primary) !important;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
             border-radius: var(--sv-radius-button);
-            transition: all 0.25s ease;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 14px rgba(140, 191, 249, 0.25);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, box-shadow 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-nav::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transform: rotate(25deg);
+            transition: left 0.75s ease;
+            pointer-events: none;
         }
         .btn-nav:hover {
-            background-color: var(--sv-accent);
-            color: #FFFFFF;
-            box-shadow: 0 0 16px rgba(124, 58, 237, 0.35);
+            background-color: var(--sv-primary-hover);
+            color: var(--sv-on-primary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 0 28px rgba(140, 191, 249, 0.5), 0 4px 20px rgba(140, 191, 249, 0.3);
+        }
+        .btn-nav:hover::before {
+            left: 140%;
+        }
+        .btn-nav:active {
+            transform: translateY(0) scale(0.98);
         }
 
         .nav-link {
@@ -387,7 +437,7 @@
             bottom: -4px;
             width: 0;
             height: 1.5px;
-            background-color: var(--sv-accent-soft);
+            background-color: var(--sv-primary);
             transition: width 0.25s ease, left 0.25s ease;
         }
         .nav-link:hover {
@@ -398,7 +448,7 @@
             left: 0;
         }
 
-        /* ── Cards & Superficies ─────────────────────────────── */
+        /* ── Cards & Superficies v3.0 con Glow Dinámico ──────── */
         .spotlight-card {
             position: relative;
             background-color: var(--sv-bg-surface);
@@ -408,7 +458,7 @@
             transition: border-color 0.3s ease, transform 0.3s ease;
         }
         .spotlight-card:hover {
-            border-color: var(--sv-accent-soft);
+            border-color: rgba(140, 191, 249, 0.5);
             transform: translateY(-2px);
         }
         .spotlight-card::before {
@@ -418,7 +468,7 @@
             opacity: 0;
             transition: opacity 0.4s ease;
             pointer-events: none;
-            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.08), transparent 40%);
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(140, 191, 249, 0.12), transparent 45%);
         }
         .spotlight-card:hover::before { opacity: 1; }
 
@@ -429,11 +479,15 @@
             border-radius: var(--sv-radius-card);
             overflow: hidden;
             isolation: isolate;
-            transition: border-color 0.3s ease, transform 0.3s ease;
+            --card-spotlight: rgba(140, 191, 249, 0.22);
+            --card-glow-shadow: rgba(140, 191, 249, 0.35);
+            --card-border-hover: rgba(140, 191, 249, 0.70);
+            transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
         }
         .glow-card:hover {
-            border-color: var(--sv-accent-soft);
-            transform: translateY(-2px);
+            border-color: var(--card-border-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 32px var(--card-glow-shadow);
         }
         .glow-card > * { position: relative; z-index: 1; }
         .glow-card > .glow-ambient { position: absolute !important; pointer-events: none; z-index: 0; }
@@ -445,7 +499,7 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
-            background: radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 58, 237, 0.12), rgba(196, 181, 253, 0.05) 35%, transparent 60%);
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-spotlight), transparent 65%);
         }
         .glow-card:hover::before { opacity: 1; }
         .glow-card::after {
@@ -454,17 +508,40 @@
             inset: 0;
             z-index: 0;
             border-radius: inherit;
-            padding: 1px;
+            padding: 2px;
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
-            background: radial-gradient(280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(196, 181, 253, 0.7), rgba(124, 58, 237, 0.3) 25%, transparent 50%);
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-border-hover), transparent 68%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask-composite: exclude;
         }
         .glow-card:hover::after { opacity: 1; }
+
+        /* Variantes de color según predominancia */
+        .card-legacy, .card-danger {
+            --card-spotlight: rgba(160, 174, 198, 0.22);
+            --card-glow-shadow: rgba(160, 174, 198, 0.35);
+            --card-border-hover: rgba(160, 174, 198, 0.70);
+            border: 1px solid var(--sv-border) !important;
+        }
+        .card-legacy:hover, .card-danger:hover {
+            border-color: rgba(160, 174, 198, 0.70) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 32px rgba(160, 174, 198, 0.35) !important;
+        }
+
+        .card-solution, .card-success {
+            --card-spotlight: rgba(168, 85, 247, 0.28);
+            --card-glow-shadow: rgba(168, 85, 247, 0.45);
+            --card-border-hover: rgba(168, 85, 247, 0.85);
+            border: 1px solid var(--sv-border) !important;
+        }
+        .card-solution:hover, .card-success:hover {
+            border-color: rgba(168, 85, 247, 0.85) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 38px rgba(168, 85, 247, 0.45), 0 0 20px rgba(140, 191, 249, 0.35) !important;
+        }
 
         .glass-panel {
             background-color: var(--sv-bg-glass);
@@ -482,29 +559,29 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .carousel-dots .dot.active {
-            background-color: var(--sv-accent);
+            background-color: var(--sv-primary);
             transform: scale(1.25);
         }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ── Sliders & Inputs ────────────────────────────────── */
+        /* ── Sliders & Inputs v3.0 ───────────────────────────── */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 18px;
             width: 18px;
             border-radius: 50%;
-            background: var(--sv-accent);
-            border: 2px solid var(--sv-highlight);
+            background: var(--sv-primary);
+            border: 2px solid #EDF2FA;
             cursor: pointer;
             margin-top: -7px;
-            box-shadow: 0 0 14px rgba(124, 58, 237, 0.6);
+            box-shadow: 0 0 14px rgba(140, 191, 249, 0.6);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         input[type=range]::-webkit-slider-thumb:hover {
             transform: scale(1.15);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.85);
+            box-shadow: 0 0 20px rgba(140, 191, 249, 0.85);
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
@@ -514,7 +591,7 @@
             border-radius: 2px;
         }
         input[type=range]:focus::-webkit-slider-runnable-track {
-            background: rgba(139, 92, 246, 0.35);
+            background: rgba(140, 191, 249, 0.35);
         }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -539,14 +616,15 @@
             cursor: pointer;
         }
 
-        /* ── Sistema de fondo Órbitas ────────────────────────── */
+        /* ── Sistema de fondo Órbitas v3.0 ───────────────────── */
         .orbits {
             position: relative;
             overflow: hidden;
             background:
-                radial-gradient(ellipse 55% 60% at 82% 22%, rgba(91, 33, 182, 0.38), transparent 70%),
-                radial-gradient(ellipse 50% 45% at 0% 100%, rgba(30, 27, 75, 0.75), transparent 70%),
-                #0B0716;
+                radial-gradient(ellipse 45% 50% at 88% 14%, rgba(91, 33, 182, 0.32), transparent 70%),
+                radial-gradient(ellipse 45% 45% at 70% 48%, rgba(140, 191, 249, 0.10), transparent 70%),
+                radial-gradient(ellipse 50% 45% at 0% 100%, rgba(30, 27, 75, 0.7), transparent 70%),
+                #090A17;
         }
         .orbits__layer {
             position: absolute;
@@ -566,7 +644,7 @@
             animation: twinkle 4s ease-in-out infinite;
         }
 
-        /* ── Fondo cósmico en deriva ambiental ───────────────── */
+        /* ── Fondo cósmico en deriva ambiental (Neutro Deep Space) ── */
         .cosmic-bg {
             position: fixed;
             inset: -20%;
@@ -584,12 +662,12 @@
         }
         .cosmic-bg::before {
             background:
-                radial-gradient(42rem 42rem at 82% 18%, rgba(91, 33, 182, 0.2), transparent 65%),
-                radial-gradient(38rem 38rem at 12% 78%, rgba(30, 27, 75, 0.4), transparent 65%);
+                radial-gradient(42rem 42rem at 88% 14%, rgba(31, 41, 64, 0.22), transparent 65%),
+                radial-gradient(38rem 38rem at 12% 78%, rgba(15, 21, 38, 0.5), transparent 65%);
             animation: bgDriftA 46s ease-in-out infinite alternate;
         }
         .cosmic-bg::after {
-            background: radial-gradient(32rem 32rem at 50% 40%, rgba(124, 58, 237, 0.08), transparent 60%);
+            background: radial-gradient(32rem 32rem at 70% 48%, rgba(140, 191, 249, 0.04), transparent 60%);
             animation: bgDriftB 62s ease-in-out infinite alternate;
         }
         @keyframes bgDriftA { from { transform: translate3d(-3%, -2%, 0) scale(1); } to { transform: translate3d(3%, 2%, 0) scale(1.08); } }
@@ -617,37 +695,29 @@
             animation: pulseGlow 4.5s ease-in-out infinite;
         }
         @keyframes pulseGlow {
-            0%, 100% { opacity: .7; filter: drop-shadow(0 0 3px rgba(139, 92, 246, .4)); }
-            50%      { opacity: 1;  filter: drop-shadow(0 0 10px rgba(139, 92, 246, .7)); }
-        }
-        .pulse-glow-danger {
-            transform-box: fill-box; transform-origin: center;
-            animation: pulseGlowDanger 4.5s ease-in-out infinite;
-        }
-        @keyframes pulseGlowDanger {
-            0%, 100% { opacity: .6; filter: drop-shadow(0 0 2px rgba(248, 113, 113, .35)); }
-            50%      { opacity: 1;  filter: drop-shadow(0 0 10px rgba(248, 113, 113, .7)); }
+            0%, 100% { opacity: .7; filter: drop-shadow(0 0 3px rgba(140, 191, 249, .4)); }
+            50%      { opacity: 1;  filter: drop-shadow(0 0 10px rgba(140, 191, 249, .7)); }
         }
 
-        /* ── Badges, Tags y Viñetas v2.0 ──────────────────────── */
-        .card-danger {
-            border: 1px solid rgba(248, 113, 113, 0.25) !important;
-        }
-        .card-danger:hover {
-            border-color: rgba(248, 113, 113, 0.45) !important;
-        }
-        .card-success {
+        /* ── Badges, Tags y Viñetas v3.0 (Sin Rojo, Altamente Visibles) ── */
+        .card-legacy, .card-danger {
             border: 1px solid var(--sv-border) !important;
         }
-        .card-success:hover {
-            border-color: var(--sv-accent-soft) !important;
+        .card-legacy:hover, .card-danger:hover {
+            border-color: rgba(160, 174, 198, 0.45) !important;
         }
-        .box-danger {
-            background-color: rgba(22, 15, 43, 0.7) !important;
-            border: 1px solid rgba(248, 113, 113, 0.2) !important;
+        .card-success, .card-solution {
+            border: 1px solid var(--sv-border) !important;
         }
-        .box-success {
-            background-color: rgba(22, 15, 43, 0.7) !important;
+        .card-success:hover, .card-solution:hover {
+            border-color: rgba(168, 85, 247, 0.6) !important;
+        }
+        .box-legacy, .box-danger {
+            background-color: var(--sv-bg-surface) !important;
+            border: 1px solid var(--sv-border) !important;
+        }
+        .box-success, .box-solution {
+            background-color: var(--sv-bg-surface) !important;
             border: 1px solid var(--sv-border) !important;
         }
         .tag-pill {
@@ -669,46 +739,43 @@
                 padding: 2.5px 8px;
             }
         }
-        .tag-pill-danger {
-            background-color: rgba(248, 113, 113, 0.1) !important;
-            color: var(--sv-error) !important;
-            border: 1px solid rgba(248, 113, 113, 0.3) !important;
+        .tag-pill-legacy, .tag-pill-danger {
+            background-color: var(--sv-badge-bg) !important;
+            color: var(--sv-text-secondary) !important;
+            border: 1px solid var(--sv-border) !important;
         }
-        .tag-pill-success {
+        .tag-pill-success, .tag-pill-signal {
             background-color: var(--sv-badge-bg) !important;
             color: var(--sv-badge-text) !important;
-            border: 1px solid rgba(139, 92, 246, 0.3) !important;
+            border: 1px solid var(--sv-border) !important;
         }
-        .tag-pill-signal {
-            background-color: rgba(96, 239, 255, 0.08) !important;
-            color: var(--sv-signal) !important;
-            border: 1px solid rgba(96, 239, 255, 0.25) !important;
+        .tag-pill-sky, .tag-pill-purple {
+            background-color: var(--sv-badge-bg) !important;
+            color: var(--sv-primary) !important;
+            border: 1px solid rgba(140, 191, 249, 0.35) !important;
         }
-        .bullet-danger {
+
+        /* Viñetas con presencia destacada e interactiva */
+        .bullet-legacy, .bullet-danger {
             display: inline-block;
-            width: 6px;
-            height: 6px;
+            width: 9px;
+            height: 9px;
+            min-width: 9px;
+            min-height: 9px;
             border-radius: 9999px;
-            background-color: var(--sv-error);
-            box-shadow: 0 0 6px var(--sv-error);
+            background-color: #7E8BA3;
+            box-shadow: 0 0 8px rgba(126, 139, 163, 0.75);
             flex-shrink: 0;
         }
-        .bullet-violet {
+        .bullet-sky, .bullet-solution, .bullet-violet, .bullet-signal {
             display: inline-block;
-            width: 6px;
-            height: 6px;
+            width: 9px;
+            height: 9px;
+            min-width: 9px;
+            min-height: 9px;
             border-radius: 9999px;
-            background-color: var(--sv-accent-soft);
-            box-shadow: 0 0 6px var(--sv-accent-soft);
-            flex-shrink: 0;
-        }
-        .bullet-signal {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 9999px;
-            background-color: var(--sv-signal);
-            box-shadow: 0 0 6px var(--sv-signal);
+            background-color: #8CBFF9;
+            box-shadow: 0 0 10px rgba(140, 191, 249, 0.9), 0 0 16px rgba(168, 85, 247, 0.6);
             flex-shrink: 0;
         }
 
@@ -735,7 +802,7 @@
                 <img src="{% static 'logos_v1/animado.svg' %}" alt="Sooniverse" class="logo-img w-auto">
             </a>
 
-            <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-[#A99FC4]">
+            <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-[#A0AEC6]">
                 <a href="#evidencia" class="nav-link">Evidencia</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
                 <a href="#calculadora" class="nav-link">Calculadora</a>
@@ -743,11 +810,11 @@
             </div>
 
             <div class="flex items-center justify-end gap-3 md:gap-4 md:justify-self-end">
-                <a href="{% url 'core:internal_leads' %}" class="hidden md:inline nav-link text-sm font-medium text-[#A99FC4]">Login</a>
-                <a href="{% url 'core:internal_leads' %}" class="md:hidden px-3 py-1.5 rounded-lg border border-[#2E2350] bg-[#160F2B]/80 text-xs font-semibold text-[#A99FC4] hover:text-white transition">Login</a>
-                <a href="{% url 'core:booking_publico' %}" class="hidden md:inline-flex items-center gap-2 btn-nav px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-all group">
+                <a href="{% url 'core:internal_leads' %}" class="hidden md:inline nav-link text-sm font-medium text-[#A0AEC6]">Login</a>
+                <a href="{% url 'core:internal_leads' %}" class="md:hidden px-3 py-1.5 rounded-lg border border-[#1F2940] bg-[#0F1526]/80 text-xs font-semibold text-[#A0AEC6] hover:text-white transition">Login</a>
+                <a href="{% url 'core:booking_publico' %}" class="hidden md:inline-flex items-center gap-2 btn-nav px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all group">
                     <span>Reservar una reunión</span>
-                    <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
                 <button id="mobile-menu-btn" class="md:hidden text-white p-2" aria-label="Abrir menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -756,13 +823,13 @@
         </nav>
 
         <div id="mobile-menu" class="hidden md:hidden">
-            <div class="flex flex-col gap-3 text-sm font-medium text-[#A99FC4]">
+            <div class="flex flex-col gap-3 text-sm font-medium text-[#A0AEC6]">
                 <a href="#evidencia" class="hover:text-white transition">Evidencia</a>
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
                 <a href="{% url 'core:internal_leads' %}" class="btn-secondary px-4 py-2.5 rounded-xl text-center text-xs font-bold text-white uppercase tracking-wide">Iniciar Sesión (Login)</a>
-                <a href="{% url 'core:booking_publico' %}" class="btn-primary mt-1 px-5 py-3 rounded-xl text-center text-sm font-bold text-white uppercase tracking-wide inline-flex items-center justify-center gap-2 transition-all group">
+                <a href="{% url 'core:booking_publico' %}" class="btn-primary mt-1 px-5 py-3 rounded-xl text-center text-sm font-bold uppercase tracking-wide inline-flex items-center justify-center gap-2 transition-all group">
                     <span>Reservar una reunión</span>
                     <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
@@ -774,7 +841,7 @@
         <svg class="orbits__layer" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <defs>
                 <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
-                    <circle cx="11" cy="11" r="0.9" fill="#C4B5FD" opacity="0.16"/>
+                    <circle cx="11" cy="11" r="0.9" fill="#8CBFF9" opacity="0.15"/>
                 </pattern>
                 <radialGradient id="fade" cx="78%" cy="28%" r="65%">
                     <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#000"/>
@@ -782,17 +849,17 @@
                 <mask id="m"><rect width="100%" height="100%" fill="url(#fade)"/></mask>
             </defs>
             <rect width="100%" height="100%" fill="url(#dots)" mask="url(#m)"/>
-            <g transform="translate(940, 260) rotate(-18)" fill="none" stroke="#A78BFA">
-                <ellipse rx="360" ry="100" stroke-opacity="0.10" stroke-width="1"/>
-                <ellipse rx="260" ry="74" stroke-opacity="0.16" stroke-dasharray="2 6" stroke-width="1"/>
-                <ellipse rx="160" ry="46" stroke-opacity="0.14" stroke-width="1"/>
-                <circle r="52" fill="#1E1B4B" fill-opacity="0.35" stroke="#A78BFA" stroke-opacity="0.12"/>
+            <g transform="translate(940, 260) rotate(-18)" fill="none">
+                <ellipse rx="360" ry="100" stroke="#8CBFF9" stroke-opacity="0.10" stroke-width="1"/>
+                <ellipse rx="260" ry="74" stroke="#8CBFF9" stroke-opacity="0.16" stroke-dasharray="2 6" stroke-width="1"/>
+                <ellipse rx="160" ry="46" stroke="#A78BFA" stroke-opacity="0.14" stroke-width="1"/>
+                <circle r="52" fill="#1E1B4B" fill-opacity="0.35" stroke="#8CBFF9" stroke-opacity="0.10"/>
             </g>
             <g transform="translate(940, 260) rotate(-18)">
-                <circle cx="-255" cy="-14" r="9" fill="#C4B5FD" opacity="0.14"/>
-                <circle class="node" cx="-255" cy="-14" r="3" fill="#E9E3FF"/>
-                <circle cx="155" cy="16" r="8" fill="#60EFFF" opacity="0.12"/>
-                <circle class="node" style="animation-delay:1.3s" cx="155" cy="16" r="2.5" fill="#60EFFF"/>
+                <circle cx="-255" cy="-14" r="9" fill="#8CBFF9" opacity="0.14"/>
+                <circle class="node" cx="-255" cy="-14" r="3" fill="#D6E8FD"/>
+                <circle cx="155" cy="16" r="8" fill="#FFFFFF" opacity="0.08"/>
+                <circle class="node" style="animation-delay:1.3s" cx="155" cy="16" r="2.5" fill="#EDF2FA"/>
                 <circle cx="72" cy="100" r="9" fill="#8A2BE2" opacity="0.2"/>
                 <circle class="node" style="animation-delay:2.6s" cx="72" cy="100" r="3" fill="#B794F6"/>
             </g>
@@ -802,61 +869,61 @@
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <div class="inline-flex items-center gap-2 glass-panel px-3 py-1.5 mb-6">
-                        <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2.5px] text-[#C4B5FD]">ADVANCED TECH UNIVERSE</span>
+                        <span class="w-2 h-2 rounded-full bg-[#8CBFF9] shadow-[0_0_8px_#8CBFF9] animate-pulse-slow"></span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2.5px] text-[#A0AEC6]">ADVANCED TECH UNIVERSE</span>
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.05] tracking-[-1.5px] text-white">
                         Convierte tu gasto en IA en una <span class="text-highlight">plataforma privada</span> para toda tu empresa.
                     </h1>
-                    <p class="mt-6 text-lg text-[#A99FC4] leading-relaxed max-w-xl">
+                    <p class="mt-6 text-lg text-[#A0AEC6] leading-relaxed max-w-xl">
                         Obtén más capacidad de IA por cada dólar que inviertes. Sin sorpresas en la facturación y con privacidad absoluta de tu información.
                     </p>
                     <div class="mt-8 flex flex-wrap gap-4 items-center">
-                        <a href="{% url 'core:booking_publico' %}" class="btn-primary px-8 py-4 rounded-xl text-sm font-bold text-white uppercase tracking-wide inline-flex items-center justify-center gap-2 group">
+                        <a href="{% url 'core:booking_publico' %}" class="btn-primary px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wide inline-flex items-center justify-center gap-2 group">
                             <span>Reservar una reunión</span>
                             <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
-                        <a href="#calculadora" class="btn-secondary px-8 py-4 rounded-xl text-sm font-bold text-[#ECE8F7] uppercase tracking-wide inline-flex items-center justify-center gap-2.5 group">
+                        <a href="#calculadora" class="btn-secondary px-8 py-4 rounded-xl text-sm font-semibold text-[#EDF2FA] uppercase tracking-wide inline-flex items-center justify-center gap-2.5 group">
                             <span>Calcular ahorro</span>
-                            <svg class="w-4 h-4 text-[#C4B5FD] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <svg class="w-4 h-4 text-[#8CBFF9] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
                     </div>
-                    <div class="mt-4 font-mono text-xs uppercase tracking-wider text-[#8A80A8]">
+                    <div class="mt-4 font-mono text-xs uppercase tracking-wider text-[#7E8BA3]">
                         Sin compromiso · Para empresas con alto volumen de tokens
                     </div>
                 </div>
 
                 <div class="relative">
-                    <div class="absolute -inset-4 bg-[#5B21B6] opacity-20 blur-[80px] rounded-full pointer-events-none"></div>
+                    <div class="absolute -inset-4 bg-[#1F2940]/40 opacity-30 blur-[80px] rounded-full pointer-events-none"></div>
                     <div class="relative glass-panel p-6 sm:p-8">
                         <div class="flex items-center justify-between mb-6">
-                            <div class="font-mono text-xs uppercase tracking-widest text-[#8A80A8]">Costo mensual de inferencia</div>
+                            <div class="font-mono text-xs uppercase tracking-widest text-[#7E8BA3]">Costo mensual de inferencia</div>
                             <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span>
-                                <span class="text-xs text-[#ECE8F7]">Optimizado</span>
+                                <span class="w-2 h-2 rounded-full bg-[#8CBFF9] shadow-[0_0_8px_#8CBFF9]"></span>
+                                <span class="text-xs text-[#EDF2FA] font-medium">Optimizado</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="p-4 rounded-lg bg-[#160F2B] border border-[#2E2350]">
-                                <div class="font-mono text-[10px] uppercase tracking-widest text-[#8A80A8]">Antes</div>
+                            <div class="p-4 rounded-lg bg-[#0F1526] border border-[#1F2940]">
+                                <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3]">Antes</div>
                                 <div class="mt-1 text-2xl font-bold text-white"><span id="hero-before" data-target="48200">$0</span></div>
-                                <div class="text-xs text-[#8A80A8] mt-1">USD / mes</div>
+                                <div class="text-xs text-[#7E8BA3] mt-1">USD / mes</div>
                             </div>
-                            <div class="p-4 rounded-lg bg-[#160F2B] border border-[#2E2350]">
-                                <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD]">Con Sooniverse</div>
-                                <div class="mt-1 text-2xl font-bold text-[#C4B5FD] font-mono"><span id="hero-after" data-target="29100">$0</span></div>
-                                <div class="text-xs text-[#8A80A8] mt-1">USD / mes</div>
+                            <div class="p-4 rounded-lg bg-[#0F1526] border border-[#1F2940]">
+                                <div class="font-mono text-[10px] uppercase tracking-widest text-[#8CBFF9]">Con Sooniverse</div>
+                                <div class="mt-1 text-2xl font-bold text-[#8CBFF9] font-mono"><span id="hero-after" data-target="29100">$0</span></div>
+                                <div class="text-xs text-[#7E8BA3] mt-1">USD / mes</div>
                             </div>
                         </div>
                         <div class="h-40 flex items-end gap-2">
-                            <div class="hero-bar chart-bar flex-1 bg-[#2E2350] rounded-t-sm" style="--bar-height:85%"></div>
-                            <div class="hero-bar chart-bar flex-1 bg-[#2E2350] rounded-t-sm" style="--bar-height:78%"></div>
-                            <div class="hero-bar chart-bar flex-1 bg-[#2E2350] rounded-t-sm" style="--bar-height:92%"></div>
-                            <div class="hero-bar chart-bar flex-1 bg-[#7C3AED] rounded-t-sm shadow-[0_0_16px_rgba(124,58,237,0.45)]" style="--bar-height:55%"></div>
-                            <div class="hero-bar chart-bar flex-1 bg-[#7C3AED] rounded-t-sm shadow-[0_0_16px_rgba(124,58,237,0.45)]" style="--bar-height:55%"></div>
-                            <div class="hero-bar chart-bar flex-1 bg-[#7C3AED] rounded-t-sm shadow-[0_0_16px_rgba(124,58,237,0.45)]" style="--bar-height:55%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#1F2940] rounded-t-sm" style="--bar-height:85%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#1F2940] rounded-t-sm" style="--bar-height:78%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#1F2940] rounded-t-sm" style="--bar-height:92%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#8CBFF9] rounded-t-sm shadow-[0_0_18px_rgba(140,191,249,0.5)]" style="--bar-height:55%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#8CBFF9] rounded-t-sm shadow-[0_0_18px_rgba(140,191,249,0.5)]" style="--bar-height:55%"></div>
+                            <div class="hero-bar chart-bar flex-1 bg-[#8CBFF9] rounded-t-sm shadow-[0_0_18px_rgba(140,191,249,0.5)]" style="--bar-height:55%"></div>
                         </div>
-                        <div class="mt-4 flex justify-between font-mono text-[10px] uppercase tracking-widest text-[#8A80A8]"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
+                        <div class="mt-4 flex justify-between font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3]"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
                     </div>
                 </div>
             </div>
@@ -864,26 +931,26 @@
     </section>
 
     <!-- SECCIÓN 1: PRIVACIDAD (1 VIEWPORT) -->
-    <section id="privacidad" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#2E2350] bg-[#160F2B]/20">
+    <section id="privacidad" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1F2940] bg-[#090A17]">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
             <div class="max-w-3xl mb-8">
-                <span class="font-mono text-xs font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-2 block">Privacidad y Seguridad</span>
+                <span class="font-mono text-xs font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-2 block">Privacidad y Seguridad</span>
                 <h2 class="text-2xl sm:text-4xl font-bold tracking-[-1px] text-white">Tus datos jamás salen de tu red corporativa.</h2>
-                <p class="mt-2 text-sm sm:text-base text-[#A99FC4]">Compara la exposición hacia nubes públicas frente a una arquitectura privada aislada en tu propio perímetro.</p>
+                <p class="mt-2 text-sm sm:text-base text-[#A0AEC6]">Compara la exposición hacia nubes públicas frente a una arquitectura privada aislada en tu propio perímetro.</p>
             </div>
 
             <div class="grid lg:grid-cols-2 gap-8 items-stretch">
                 <!-- TARJETA: EL PROBLEMA (PRIVACIDAD) -->
-                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col bg-[#160F2B]/60 relative overflow-hidden h-full">
-                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-red-500/5 blur-[90px] rounded-full" style="position: absolute !important;"></div>
+                <div class="glow-card card-legacy p-6 sm:p-7 flex flex-col bg-[#0F1526]/80 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-[#1A2238]/30 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
                     <!-- Header de la tarjeta -->
                     <div class="flex items-center justify-between gap-3 mb-2">
-                        <span class="tag-pill tag-pill-danger">
-                            <span class="bullet-danger animate-pulse mr-2"></span>
+                        <span class="tag-pill tag-pill-legacy">
+                            <span class="bullet-legacy mr-2"></span>
                             EL PROBLEMA · APIS PÚBLICAS
                         </span>
-                        <span class="text-[11px] font-mono text-[#F87171] font-medium">Sin perímetro seguro</span>
+                        <span class="text-[11px] font-mono text-[#7E8BA3] font-medium">Sin perímetro seguro</span>
                     </div>
                     <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Datos expuestos a servidores de terceros</h3>
 
@@ -892,34 +959,34 @@
                         {% include "core/includes/svg_problema_privacidad.html" %}
                     </div>
 
-                    <!-- Viñetas simplificadas -->
+                    <!-- Viñetas con presencia destacada -->
                     <div class="mt-auto pt-2 space-y-3">
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Datos expuestos a servidores de terceros</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Replicación en nubes públicas y telemetría</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Uso de tu información para reentrenar modelos ajenos</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- TARJETA: SOLUCIÓN SOONIVERSE (PRIVACIDAD) -->
-                <div class="glow-card card-success p-6 sm:p-7 flex flex-col bg-[#160F2B]/60 relative overflow-hidden h-full">
-                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-[#7C3AED]/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
+                <div class="glow-card card-solution p-6 sm:p-7 flex flex-col bg-[#0F1526]/80 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-[#A855F7]/12 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
                     <!-- Header de la tarjeta -->
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="tag-pill tag-pill-success">
-                            <span class="bullet-signal animate-pulse mr-2"></span>
+                            <span class="bullet-sky animate-pulse mr-2"></span>
                             SOLUCIÓN SOONIVERSE · 100% AISLADA
                         </span>
-                        <span class="tag-pill tag-pill-signal">
+                        <span class="tag-pill tag-pill-sky">
                             Red Privada
                         </span>
                     </div>
@@ -930,18 +997,18 @@
                         {% include "core/includes/svg_solucion_privacidad.html" %}
                     </div>
 
-                    <!-- Viñetas simplificadas -->
+                    <!-- Viñetas con presencia destacada -->
                     <div class="mt-auto pt-2 space-y-3">
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Perímetro restringido en tu propia red privada</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Cero conexión con nubes públicas ni telemetría externa</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Seguridad y cumplimiento normativo absoluto</span>
                         </div>
                     </div>
@@ -951,40 +1018,40 @@
     </section>
 
     <!-- SECCIÓN 2: AHORRO (1 VIEWPORT) -->
-    <section id="ahorro" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#2E2350] bg-[#160F2B]/10">
+    <section id="ahorro" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1F2940] bg-[#090A17]">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
             <div class="max-w-3xl mb-8">
-                <span class="font-mono text-xs font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-2 block">Ahorro y Precios</span>
+                <span class="font-mono text-xs font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-2 block">Ahorro y Precios</span>
                 <h2 class="text-2xl sm:text-4xl font-bold tracking-[-1px] text-white">Hasta 74% de ahorro con costo fijo mensual.</h2>
-                <p class="mt-2 text-sm sm:text-base text-[#A99FC4]">Elimina la volatilidad del cobro por token y asegura tu presupuesto con infraestructura dedicada de tarifa plana.</p>
+                <p class="mt-2 text-sm sm:text-base text-[#A0AEC6]">Elimina la volatilidad del cobro por token y asegura tu presupuesto con infraestructura dedicada de tarifa plana.</p>
             </div>
 
             <div class="grid lg:grid-cols-2 gap-8 items-stretch">
                 <!-- TARJETA: EL PROBLEMA (COSTO VARIABLE) -->
-                <div class="glow-card card-danger p-6 sm:p-7 flex flex-col bg-[#160F2B]/60 relative overflow-hidden h-full">
-                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-red-500/5 blur-[90px] rounded-full" style="position: absolute !important;"></div>
+                <div class="glow-card card-legacy p-6 sm:p-7 flex flex-col bg-[#0F1526]/80 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -left-24 w-60 h-60 bg-[#1A2238]/30 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
                     <!-- Header de la tarjeta -->
                     <div class="flex items-center justify-between gap-3 mb-2">
-                        <span class="tag-pill tag-pill-danger">
-                            <span class="bullet-danger animate-pulse mr-2"></span>
+                        <span class="tag-pill tag-pill-legacy">
+                            <span class="bullet-legacy mr-2"></span>
                             EL PROBLEMA · PAGO POR CONSUMO
                         </span>
-                        <span class="text-[11px] font-mono text-[#F87171] font-medium">APIs de terceros</span>
+                        <span class="text-[11px] font-mono text-[#7E8BA3] font-medium">APIs de terceros</span>
                     </div>
                     <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Factura impredecible sin techo de gasto</h3>
 
                     <!-- Bloque de Costo y Gráfico con Ejes -->
-                    <div class="my-5 p-5 rounded-2xl box-danger">
+                    <div class="my-5 p-5 rounded-2xl box-legacy bg-[#0F1526] border border-[#1F2940]">
                         <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
                             <div>
-                                <div class="text-[10px] font-mono uppercase tracking-wider text-[#8A80A8] font-semibold">COSTO VARIABLE POR TOKEN</div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-[#7E8BA3] font-semibold">COSTO VARIABLE POR TOKEN</div>
                                 <div class="mt-1 flex items-baseline gap-2">
                                     <span class="text-3xl font-extrabold text-white">US$ 2,250</span>
-                                    <span class="text-xs text-[#8A80A8] font-mono font-normal">/ mes (estimado)</span>
+                                    <span class="text-xs text-[#7E8BA3] font-mono font-normal">/ mes (estimado)</span>
                                 </div>
                             </div>
-                            <span class="tag-pill tag-pill-danger">
+                            <span class="tag-pill tag-pill-legacy">
                                 ▲ Sin techo de gasto
                             </span>
                         </div>
@@ -992,50 +1059,50 @@
                         {% include "core/includes/svg_problema_costo.html" %}
                     </div>
 
-                    <!-- Viñetas simplificadas -->
+                    <!-- Viñetas con presencia destacada -->
                     <div class="mt-auto pt-2 space-y-3">
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Factura variable y creciente con cada token</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Cobros sorpresa ante picos de consultas o nuevos usuarios</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-danger"></span>
+                            <span class="bullet-legacy"></span>
                             <span class="text-sm font-semibold text-white">Coste marginal continuo que castiga la escala</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- TARJETA: SOLUCIÓN SOONIVERSE (COSTO FIJO) -->
-                <div class="glow-card card-success p-6 sm:p-7 flex flex-col bg-[#160F2B]/60 relative overflow-hidden h-full">
-                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-[#7C3AED]/10 blur-[90px] rounded-full" style="position: absolute !important;"></div>
+                <div class="glow-card card-solution p-6 sm:p-7 flex flex-col bg-[#0F1526]/80 relative overflow-hidden h-full">
+                    <div class="glow-ambient pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-[#A855F7]/12 blur-[90px] rounded-full" style="position: absolute !important;"></div>
 
                     <!-- Header de la tarjeta -->
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="tag-pill tag-pill-success">
-                            <span class="bullet-signal animate-pulse mr-2"></span>
+                            <span class="bullet-sky animate-pulse mr-2"></span>
                             SOLUCIÓN SOONIVERSE · DEDICADA
                         </span>
-                        <span class="tag-pill tag-pill-success">
+                        <span class="tag-pill tag-pill-sky">
                             74% de Ahorro
                         </span>
                     </div>
                     <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-1">Tarifa plana fija mensual sin sorpresas</h3>
 
                     <!-- Bloque de Costo Fijo y Gráfico con Ejes -->
-                    <div class="my-5 p-5 rounded-2xl box-success">
+                    <div class="my-5 p-5 rounded-2xl box-solution bg-[#0F1526] border border-[#1F2940]">
                         <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
                             <div>
-                                <div class="text-[10px] font-mono uppercase tracking-wider text-[#8A80A8] font-semibold">COSTO FIJO MENSUAL</div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-[#7E8BA3] font-semibold">COSTO FIJO MENSUAL</div>
                                 <div class="mt-1 flex items-baseline gap-2">
-                                    <span class="text-3xl font-extrabold text-[#C4B5FD] font-mono">US$ 579</span>
-                                    <span class="text-xs text-[#8A80A8] font-mono font-normal">/ mes (fijo)</span>
+                                    <span class="text-3xl font-extrabold text-[#8CBFF9] font-mono">US$ 579</span>
+                                    <span class="text-xs text-[#7E8BA3] font-mono font-normal">/ mes (fijo)</span>
                                 </div>
                             </div>
-                            <span class="tag-pill tag-pill-signal">
+                            <span class="tag-pill tag-pill-sky">
                                 ● Tarifa plana ilimitada
                             </span>
                         </div>
@@ -1043,18 +1110,18 @@
                         {% include "core/includes/svg_solucion_costo.html" %}
                     </div>
 
-                    <!-- Viñetas simplificadas -->
+                    <!-- Viñetas con presencia destacada -->
                     <div class="mt-auto pt-2 space-y-3">
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Costo fijo mensual predecible hasta 74% menor</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Consultas y tokens ilimitados a coste marginal cero</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="bullet-violet"></span>
+                            <span class="bullet-sky"></span>
                             <span class="text-sm font-semibold text-white">Capacidad dedicada reutilizable para múltiples procesos</span>
                         </div>
                     </div>
@@ -1064,58 +1131,58 @@
     </section>
 
     <!-- CTA → Banda transversal hacia el booking público (/agendar/) -->
-    <section id="contacto" class="relative py-24 sm:py-28 border-y border-[#2E2350] bg-[#0B0716] overflow-hidden">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(91,33,182,0.22),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(30,27,75,0.45),transparent_55%)] pointer-events-none"></div>
+    <section id="contacto" class="relative py-24 sm:py-28 border-y border-[#1F2940] bg-[#090A17] overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(140,191,249,0.06),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(15,21,38,0.7),transparent_55%)] pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
                 <div class="max-w-2xl">
                     <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-4">
-                        <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD]">Llamada exploratoria · 30 min</span>
+                        <span class="w-2 h-2 rounded-full bg-[#8CBFF9] shadow-[0_0_8px_#8CBFF9] animate-pulse-slow"></span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#A0AEC6]">Llamada exploratoria · 30 min</span>
                     </div>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-[-1px] text-white">¿Listo para tener tu propia plataforma de IA?</h2>
-                    <p class="mt-3 text-base sm:text-lg text-[#A99FC4] leading-relaxed">Habla sobre tu caso de uso con un especialista en IA de nuestro equipo.</p>
+                    <p class="mt-3 text-base sm:text-lg text-[#A0AEC6] leading-relaxed">Habla sobre tu caso de uso con un especialista en IA de nuestro equipo.</p>
                 </div>
                 <div class="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-3 shrink-0">
-                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold text-white uppercase tracking-wide group">
+                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wide group">
                         <span>Reservar una reunión</span>
                         <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
-                    <span class="text-xs text-[#8A80A8] font-mono tracking-wide">Sin compromiso · 30 min</span>
+                    <span class="text-xs text-[#7E8BA3] font-mono tracking-wide">Sin compromiso · 30 min</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="evidencia" class="py-24 border-b border-[#2E2350] bg-[#0B0716]">
+    <section id="evidencia" class="py-24 border-b border-[#1F2940] bg-[#090A17]">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-12">
-                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-3 block">Evidencia</span>
+                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-3 block">Evidencia</span>
                 <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Resultados medibles en producción.</h2>
-                <p class="mt-4 text-[#A99FC4] text-base sm:text-lg">Nuestros clientes reducen costos, blindan sus datos y escalan sin fricción.</p>
+                <p class="mt-4 text-[#A0AEC6] text-base sm:text-lg">Nuestros clientes reducen costos, blindan sus datos y escalan sin fricción.</p>
             </div>
 
             <div class="relative">
                 <div id="evidence-carousel" class="flex overflow-x-auto scrollbar-none gap-4 md:grid md:grid-cols-4 md:overflow-visible">
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-4">Privacidad Absoluta</div>
+                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-4">Privacidad Absoluta</div>
                         <div class="text-4xl font-mono font-bold text-white mb-2">100%</div>
-                        <p class="text-sm text-[#A99FC4] leading-relaxed">Blindaje total y privacidad garantizada en todos los datos de tu organización.</p>
+                        <p class="text-sm text-[#A0AEC6] leading-relaxed">Blindaje total y privacidad garantizada en todos los datos de tu organización.</p>
                     </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-4">Costo por token</div>
+                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-4">Costo por token</div>
                         <div class="text-4xl font-mono font-bold text-white mb-2">-74%</div>
-                        <p class="text-sm text-[#A99FC4] leading-relaxed">Infraestructura privada donde el costo no escala con el volumen de tokens consumidos.</p>
+                        <p class="text-sm text-[#A0AEC6] leading-relaxed">Infraestructura privada donde el costo no escala con el volumen de tokens consumidos.</p>
                     </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-4">Inversión Predecible</div>
-                        <div class="text-4xl font-mono font-bold text-[#C4B5FD] mb-2">Fijo</div>
-                        <p class="text-sm text-[#A99FC4] leading-relaxed">Costo mensual fijo y predecible sin importar el volumen de uso de tu equipo.</p>
+                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-4">Inversión Predecible</div>
+                        <div class="text-4xl font-mono font-bold text-[#8CBFF9] mb-2">Fijo</div>
+                        <p class="text-sm text-[#A0AEC6] leading-relaxed">Costo mensual fijo y predecible sin importar el volumen de uso de tu equipo.</p>
                     </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-4">Capacidad Reutilizable</div>
+                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-4">Capacidad Reutilizable</div>
                         <div class="text-4xl font-mono font-bold text-white mb-2">5x ROI</div>
-                        <p class="text-sm text-[#A99FC4] leading-relaxed">Absorbe múltiples automatizaciones en la misma infraestructura sin costos adicionales.</p>
+                        <p class="text-sm text-[#A0AEC6] leading-relaxed">Absorbe múltiples automatizaciones en la misma infraestructura sin costos adicionales.</p>
                     </div>
                 </div>
                 <div id="evidence-dots" class="carousel-dots hidden justify-center gap-2 mt-6"></div>
@@ -1125,27 +1192,27 @@
             <div class="space-y-6 mt-12">
                 
                 <!-- Caso de Estudio Card -->
-                <div id="caso-estudio" class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-300">
+                <div id="caso-estudio" class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#1F2940] hover:border-[#8CBFF9]/40 transition-colors duration-300">
                     <button id="caso-estudio-trigger" class="w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
                         <div>
-                            <span class="font-mono text-[10px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-1.5 block">Caso de Estudio</span>
+                            <span class="font-mono text-[10px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-1.5 block">Caso de Estudio</span>
                             <h3 class="text-base sm:text-lg font-bold tracking-[-0.5px] text-white">¿Es más barato tener infraestructura propia de IA que pagar por API?</h3>
                         </div>
-                        <span id="caso-estudio-icon" class="text-[#C4B5FD] text-xl font-mono shrink-0 ml-3 w-8 h-8 rounded-full bg-[#160F2B] border border-[#2E2350] flex items-center justify-center hover:bg-[#7C3AED]/20 transition-all duration-300">+</span>
+                        <span id="caso-estudio-icon" class="text-[#8CBFF9] text-xl font-mono shrink-0 ml-3 w-8 h-8 rounded-full bg-[#0F1526] border border-[#1F2940] flex items-center justify-center hover:bg-[#8CBFF9]/20 transition-all duration-300">+</span>
                     </button>
 
                     <div id="caso-estudio-body" class="hidden">
-                        <div class="pt-5 border-t border-[#2E2350] mt-5 space-y-4 text-xs sm:text-sm">
-                            <p class="text-[#ECE8F7] font-semibold leading-relaxed border-l-2 border-l-[#7C3AED] pl-3.5 bg-[#7C3AED]/10 py-2.5 rounded-r-md">
-                                Sí. En un caso real de 200.000 ejecuciones mensuales con 10.000 tokens por procesamiento, el despliegue de una GPU dedicada representó un costo mensual de <strong class="text-white">US$579,46</strong>, logrando un ahorro del <strong class="text-[#C4B5FD]">74,2%</strong> frente a un proveedor premium de pago por token y del <strong class="text-[#C4B5FD]">39,3%</strong> frente a proveedores económicos.
+                        <div class="pt-5 border-t border-[#1F2940] mt-5 space-y-4 text-xs sm:text-sm">
+                            <p class="text-[#EDF2FA] font-semibold leading-relaxed border-l-2 border-l-[#8CBFF9] pl-3.5 bg-[#8CBFF9]/10 py-2.5 rounded-r-md">
+                                Sí. En un caso real de 200.000 ejecuciones mensuales con 10.000 tokens por procesamiento, el despliegue de una GPU dedicada representó un costo mensual de <strong class="text-white">US$579,46</strong>, logrando un ahorro del <strong class="text-[#8CBFF9]">74,2%</strong> frente a un proveedor premium de pago por token y del <strong class="text-[#8CBFF9]">39,3%</strong> frente a proveedores económicos.
                             </p>
-                            <p class="text-[#A99FC4] leading-relaxed">
+                            <p class="text-[#A0AEC6] leading-relaxed">
                                 Al comparar una <strong class="text-white">plataforma privada de IA vs API de OpenAI</strong>, el factor crucial es el cobro. El pago variable por token penaliza a empresas con alto tráfico, mientras que un servidor dedicado brinda capacidad constante a un costo mensual fijo y predecible.
                             </p>
 
-                            <div class="overflow-x-auto rounded-xl border border-[#2E2350] bg-[#160F2B]/60 backdrop-blur-md">
-                                <table class="w-full text-left text-xs text-[#A99FC4] min-w-[500px]">
-                                    <thead class="bg-[#0B0716] border-b border-[#2E2350] font-mono text-[10px] uppercase tracking-widest text-[#ECE8F7]">
+                            <div class="overflow-x-auto rounded-xl border border-[#1F2940] bg-[#0F1526]/80 backdrop-blur-md">
+                                <table class="w-full text-left text-xs text-[#A0AEC6] min-w-[500px]">
+                                    <thead class="bg-[#090A17] border-b border-[#1F2940] font-mono text-[10px] uppercase tracking-widest text-[#EDF2FA]">
                                         <tr>
                                             <th class="p-3.5">Alternativa</th>
                                             <th class="p-3.5">Modelo de Cobro</th>
@@ -1153,31 +1220,31 @@
                                             <th class="p-3.5">Ahorro</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-[#2E2350]">
-                                        <tr class="hover:bg-[#160F2B] transition">
+                                    <tbody class="divide-y divide-[#1F2940]">
+                                        <tr class="hover:bg-[#1A2238]/40 transition">
                                             <td class="p-3.5 font-semibold text-white">OpenAI / Premium</td>
-                                            <td class="p-3.5 font-mono text-[#8A80A8]">Pago por token</td>
+                                            <td class="p-3.5 font-mono text-[#7E8BA3]">Pago por token</td>
                                             <td class="p-3.5 text-white font-mono font-semibold">US$ 2.250,00</td>
-                                            <td class="p-3.5 text-[#F87171] font-mono font-bold">0% (Base)</td>
+                                            <td class="p-3.5 text-[#7E8BA3] font-mono font-bold">0% (Base)</td>
                                         </tr>
-                                        <tr class="hover:bg-[#160F2B] transition">
+                                        <tr class="hover:bg-[#1A2238]/40 transition">
                                             <td class="p-3.5 font-semibold text-white">Proveedor Económico</td>
-                                            <td class="p-3.5 font-mono text-[#8A80A8]">Pago por token</td>
+                                            <td class="p-3.5 font-mono text-[#7E8BA3]">Pago por token</td>
                                             <td class="p-3.5 text-white font-mono font-semibold">US$ 957,00</td>
-                                            <td class="p-3.5 text-[#C4B5FD] font-mono font-bold">57,4%</td>
+                                            <td class="p-3.5 text-[#EDF2FA] font-mono font-bold">57,4%</td>
                                         </tr>
-                                        <tr class="hover:bg-[#7C3AED]/15 bg-[#7C3AED]/10 transition border-l-2 border-l-[#7C3AED]">
+                                        <tr class="hover:bg-[#8CBFF9]/15 bg-[#8CBFF9]/10 transition border-l-2 border-l-[#8CBFF9]">
                                             <td class="p-3.5 font-bold text-white">Sooniverse (GPU)</td>
-                                            <td class="p-3.5 font-mono text-[#C4B5FD]">Capacidad Fija</td>
+                                            <td class="p-3.5 font-mono text-[#8CBFF9]">Capacidad Fija</td>
                                             <td class="p-3.5 text-white font-mono font-bold">US$ 579,46</td>
-                                            <td class="p-3.5 text-[#C4B5FD] font-mono font-bold">74,2%</td>
+                                            <td class="p-3.5 text-[#8CBFF9] font-mono font-bold">74,2%</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
 
-                            <div class="p-3.5 rounded-xl border border-[#2E2350] bg-[#160F2B]/30 text-center">
-                                <p class="text-xs text-[#8A80A8] font-mono">
+                            <div class="p-3.5 rounded-xl border border-[#1F2940] bg-[#0F1526]/50 text-center">
+                                <p class="text-xs text-[#7E8BA3] font-mono">
                                     Nota: Estimaciones basadas en 200.000 ejecuciones/mes con 10.000 tokens cada una.
                                 </p>
                             </div>
@@ -1186,42 +1253,42 @@
                 </div>
 
                 <!-- Seguridad y Gobierno de Datos Card -->
-                <div id="privacidad" class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-300">
+                <div id="privacidad-card" class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#1F2940] hover:border-[#8CBFF9]/40 transition-colors duration-300">
                     <button id="privacidad-trigger" class="w-full flex items-center justify-between text-left focus:outline-none" aria-expanded="false">
                         <div>
-                            <span class="font-mono text-[10px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-1.5 block">Seguridad y Gobierno de Datos</span>
+                            <span class="font-mono text-[10px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-1.5 block">Seguridad y Gobierno de Datos</span>
                             <h3 class="text-base sm:text-lg font-bold tracking-[-0.5px] text-white">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h3>
                         </div>
-                        <span id="privacidad-icon" class="text-[#C4B5FD] text-xl font-mono shrink-0 ml-3 w-8 h-8 rounded-full bg-[#160F2B] border border-[#2E2350] flex items-center justify-center hover:bg-[#7C3AED]/20 transition-all duration-300">+</span>
+                        <span id="privacidad-icon" class="text-[#8CBFF9] text-xl font-mono shrink-0 ml-3 w-8 h-8 rounded-full bg-[#0F1526] border border-[#1F2940] flex items-center justify-center hover:bg-[#8CBFF9]/20 transition-all duration-300">+</span>
                     </button>
 
                     <div id="privacidad-body" class="hidden">
-                        <div class="pt-5 border-t border-[#2E2350] mt-5 space-y-4 text-xs sm:text-sm">
-                            <p class="text-[#ECE8F7] font-semibold leading-relaxed border-l-2 border-l-[#7C3AED] pl-3.5 bg-[#7C3AED]/10 py-2.5 rounded-r-md">
+                        <div class="pt-5 border-t border-[#1F2940] mt-5 space-y-4 text-xs sm:text-sm">
+                            <p class="text-[#EDF2FA] font-semibold leading-relaxed border-l-2 border-l-[#8CBFF9] pl-3.5 bg-[#8CBFF9]/10 py-2.5 rounded-r-md">
                                 Al implementar una infraestructura de inferencia privada, se elimina la dependencia de terceros, garantizando trazabilidad total, gobierno de datos y estricto control de accesos.
                             </p>
-                            <p class="text-[#A99FC4] leading-relaxed">
+                            <p class="text-[#A0AEC6] leading-relaxed">
                                 Confiar en APIs externas para procesar contratos legales, finanzas o soporte genera riesgos regulatorios. Sooniverse despliega plataformas privadas dedicadas asegurando que los datos nunca salgan de tu red interna.
                             </p>
 
                             <div class="grid sm:grid-cols-2 gap-4 mt-2">
-                                <div class="p-3.5 rounded-xl bg-[#160F2B] border border-[#2E2350]">
+                                <div class="p-3.5 rounded-xl bg-[#0F1526] border border-[#1F2940]">
                                     <h4 class="text-white font-semibold text-xs flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span> Procesamiento Local
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#8CBFF9] shadow-[0_0_6px_#8CBFF9]"></span> Procesamiento Local
                                     </h4>
-                                    <p class="text-[#A99FC4] text-[11px] mt-1.5 leading-relaxed">Los datos sensibles se procesan en tu propio servidor privado dedicado.</p>
+                                    <p class="text-[#A0AEC6] text-[11px] mt-1.5 leading-relaxed">Los datos sensibles se procesan en tu propio servidor privado dedicado.</p>
                                 </div>
-                                <div class="p-3.5 rounded-xl bg-[#160F2B] border border-[#2E2350]">
+                                <div class="p-3.5 rounded-xl bg-[#0F1526] border border-[#1F2940]">
                                     <h4 class="text-white font-semibold text-xs flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span> Gobierno Completo
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#8CBFF9] shadow-[0_0_6px_#8CBFF9]"></span> Gobierno Completo
                                     </h4>
-                                    <p class="text-[#A99FC4] text-[11px] mt-1.5 leading-relaxed">Auditoría completa sobre accesos al modelo y flujos activos.</p>
+                                    <p class="text-[#A0AEC6] text-[11px] mt-1.5 leading-relaxed">Auditoría completa sobre accesos al modelo y flujos activos.</p>
                                 </div>
                             </div>
 
-                            <div class="glass-panel p-4 rounded-xl border border-[#2E2350] mt-2">
+                            <div class="glass-panel p-4 rounded-xl border border-[#1F2940] mt-2">
                                 <h4 class="font-bold text-white mb-1.5 text-xs">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h4>
-                                <p class="text-[#A99FC4] text-[11px] leading-relaxed">
+                                <p class="text-[#A0AEC6] text-[11px] leading-relaxed">
                                     Un modelo propio mantiene el 100% del procesamiento bajo la gobernanza y red interna de tu empresa, impidiendo fugas de información.
                                 </p>
                             </div>
@@ -1229,53 +1296,57 @@
                     </div>
                 </div>
 
-       <section id="servicios" class="py-24 border-b border-[#2E2350] bg-[#0B0716]">
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios" class="py-24 border-b border-[#1F2940] bg-[#090A17]">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-14">
-                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-3 block">Servicios</span>
+                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-3 block">Servicios</span>
                 <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">IA privada para empresas y soluciones dedicadas.</h2>
-                <p class="mt-4 text-[#A99FC4] text-base sm:text-lg">Diseñamos, desplegamos y administramos plataformas dedicadas para ejecutar tus procesos con total privacidad y menores costos.</p>
+                <p class="mt-4 text-[#A0AEC6] text-base sm:text-lg">Diseñamos, desplegamos y administramos plataformas dedicadas para ejecutar tus procesos con total privacidad y menores costos.</p>
             </div>
 
-            <div class="mb-16 p-[1px] rounded-2xl bg-gradient-to-br from-[#7C3AED]/40 via-[#2E2350] to-[#160F2B]">
-                <div class="bg-[#0B0716] rounded-2xl border border-[#2E2350] p-8 sm:p-10 relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-80 h-80 bg-[#7C3AED]/10 blur-[90px] rounded-full pointer-events-none"></div>
+            <div class="mb-16 p-[1px] rounded-2xl bg-gradient-to-br from-[#1F2940] via-[#0F1526] to-[#1F2940]">
+                <div class="bg-[#0F1526] rounded-2xl border border-[#1F2940] p-8 sm:p-10 relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-80 h-80 bg-[#1F2940]/40 blur-[90px] rounded-full pointer-events-none"></div>
                     <div class="flex items-center gap-2.5 mb-2">
-                        <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF]"></span>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD]">Servicio Principal</span>
+                        <span class="w-2 h-2 rounded-full bg-[#8CBFF9] shadow-[0_0_8px_#8CBFF9]"></span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA]">Servicio Principal</span>
                     </div>
                     <h3 class="text-2xl sm:text-3xl font-bold text-white mb-8">Plataforma de IA Privada</h3>
                     <div class="grid md:grid-cols-2 gap-6 relative">
-                        <div class="glow-card p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                            <div class="w-11 h-11 rounded-xl bg-[#2E1065] border border-[#7C3AED]/30 flex items-center justify-center text-[#C4B5FD] mb-5">
+                        <div class="glow-card p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                            <div class="w-11 h-11 rounded-xl bg-[#1A2238] border border-[#1F2940] flex items-center justify-center text-[#8CBFF9] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             </div>
                             <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Diagnóstico y Auditoría de Consumos</h4>
-                            <p class="text-sm text-[#A99FC4] leading-relaxed">Mapeo completo de procesos actuales y entrega de viabilidad técnica y financiera.</p>
+                            <p class="text-sm text-[#A0AEC6] leading-relaxed">Mapeo completo de procesos actuales y entrega de viabilidad técnica y financiera.</p>
                         </div>
 
-                        <div class="glow-card p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                            <div class="w-11 h-11 rounded-xl bg-[#2E1065] border border-[#7C3AED]/30 flex items-center justify-center text-[#C4B5FD] mb-5">
+                        <div class="glow-card p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                            <div class="w-11 h-11 rounded-xl bg-[#1A2238] border border-[#1F2940] flex items-center justify-center text-[#8CBFF9] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                             </div>
                             <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Despliegue de LLM Privado Dedicado</h4>
-                            <p class="text-sm text-[#A99FC4] leading-relaxed">Configuramos tu modelo en GPU dedicada para garantizar velocidad, disponibilidad y procesamiento constante.</p>
+                            <p class="text-sm text-[#A0AEC6] leading-relaxed">Configuramos tu modelo en GPU dedicada para garantizar velocidad, disponibilidad y procesamiento constante.</p>
                         </div>
 
-                        <div class="glow-card p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                            <div class="w-11 h-11 rounded-xl bg-[#2E1065] border border-[#7C3AED]/30 flex items-center justify-center text-[#C4B5FD] mb-5">
+                        <div class="glow-card p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                            <div class="w-11 h-11 rounded-xl bg-[#1A2238] border border-[#1F2940] flex items-center justify-center text-[#8CBFF9] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
                             <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Asistente Interno y RAG Empresarial</h4>
-                            <p class="text-sm text-[#A99FC4] leading-relaxed">Sistemas de RAG con datos privados y asistentes corporativos que operan con blindaje absoluto de información.</p>
+                            <p class="text-sm text-[#A0AEC6] leading-relaxed">Sistemas de RAG con datos privados y asistentes corporativos que operan con blindaje absoluto de información.</p>
                         </div>
 
-                        <div class="glow-card p-6 rounded-2xl bg-[#160F2B] border border-[#2E2350] hover:border-[#8B5CF6]/50 transition-colors">
-                            <div class="w-11 h-11 rounded-xl bg-[#2E1065] border border-[#7C3AED]/30 flex items-center justify-center text-[#C4B5FD] mb-5">
+                        <div class="glow-card p-6 rounded-2xl bg-[#0F1526] border border-[#1F2940] hover:border-[#8CBFF9]/50 transition-colors">
+                            <div class="w-11 h-11 rounded-xl bg-[#1A2238] border border-[#1F2940] flex items-center justify-center text-[#8CBFF9] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                             </div>
                             <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Interfaz de Control y Métricas</h4>
-                            <p class="text-sm text-[#A99FC4] leading-relaxed">Gestión intuitiva de accesos por equipo y monitoreo en tiempo real de consumos del sistema.</p>
+                            <p class="text-sm text-[#A0AEC6] leading-relaxed">Gestión intuitiva de accesos por equipo y monitoreo en tiempo real de consumos del sistema.</p>
                         </div>
                     </div>
                 </div>
@@ -1291,98 +1362,98 @@
         </div>
     </section>
 
-    <section id="calculadora" class="py-24 relative overflow-hidden bg-[#0B0716] border-b border-[#2E2350]">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7C3AED] opacity-[0.07] blur-[140px] rounded-full pointer-events-none"></div>
+    <section id="calculadora" class="py-24 relative overflow-hidden bg-[#090A17] border-b border-[#1F2940]">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#8CBFF9] opacity-[0.03] blur-[140px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="max-w-3xl mb-12">
-                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-3 block">Calculadora de costos</span>
+                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-3 block">Calculadora de costos</span>
                 <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Estima tu ahorro mensual en tokens.</h2>
-                <p class="mt-4 text-[#A99FC4] text-base sm:text-lg">Ajusta ejecuciones y volumen de tokens. Proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.</p>
+                <p class="mt-4 text-[#A0AEC6] text-base sm:text-lg">Ajusta ejecuciones y volumen de tokens. Proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.</p>
             </div>
 
             <div class="grid lg:grid-cols-5 gap-8">
                 <div class="lg:col-span-2 order-first lg:order-last space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                        <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#2E2350] bg-[#160F2B]/60">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8A80A8] mb-2">Costo base estimado</div>
+                        <div class="glow-card card-legacy p-5 sm:p-6 rounded-2xl border border-[#1F2940] bg-[#0F1526]/70">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-2">Costo base estimado</div>
                             <div class="text-3xl sm:text-4xl font-mono font-bold text-white" id="base-cost">$0</div>
-                            <div class="text-xs text-[#8A80A8] mt-1">USD / mes</div>
-                            <div class="text-xs text-[#A99FC4] mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
+                            <div class="text-xs text-[#7E8BA3] mt-1">USD / mes</div>
+                            <div class="text-xs text-[#A0AEC6] mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
                         </div>
-                        <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-[#7C3AED]/40 bg-[#160F2B]/80 shadow-[0_8px_30px_rgba(124,58,237,0.12)]">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-2">Con Sooniverse</div>
+                        <div class="glow-card card-solution p-5 sm:p-6 rounded-2xl border border-[#8CBFF9]/40 bg-[#0F1526]/90 shadow-[0_8px_30px_rgba(140,191,249,0.12)]">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8CBFF9] mb-2">Con Sooniverse</div>
                             <div class="text-3xl sm:text-4xl font-mono font-bold text-white" id="optimized-cost">$0</div>
-                            <div class="text-xs text-[#8A80A8] mt-1">USD / mes</div>
-                            <div class="text-xs text-[#C4B5FD] mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
+                            <div class="text-xs text-[#7E8BA3] mt-1">USD / mes</div>
+                            <div class="text-xs text-[#8CBFF9] mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
                         </div>
-                        <div class="glass-panel p-5 sm:p-6 sm:col-span-2 lg:col-span-1 rounded-2xl border border-[#2E2350] bg-[#160F2B]/60">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#C4B5FD] mb-2">Ahorro mensual</div>
-                            <div class="text-3xl sm:text-4xl font-mono font-bold text-[#C4B5FD]" id="savings">$0</div>
-                            <div class="text-xs text-[#8A80A8] mt-1">Reducción estimada del <span id="savings-percent" class="text-white font-semibold">0</span>%</div>
-                            <div class="text-xs text-[#A99FC4] mt-1 font-mono" id="savings-cop">~ $0 COP</div>
+                        <div class="glow-card p-5 sm:p-6 sm:col-span-2 lg:col-span-1 rounded-2xl border border-[#1F2940] bg-[#0F1526]/70">
+                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8CBFF9] mb-2">Ahorro mensual</div>
+                            <div class="text-3xl sm:text-4xl font-mono font-bold text-[#8CBFF9]" id="savings">$0</div>
+                            <div class="text-xs text-[#7E8BA3] mt-1">Reducción estimada del <span id="savings-percent" class="text-white font-semibold">0</span>%</div>
+                            <div class="text-xs text-[#A0AEC6] mt-1 font-mono" id="savings-cop">~ $0 COP</div>
                         </div>
                     </div>
-                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold text-white uppercase tracking-wide group">
+                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wide group">
                         <span>Reservar una reunión</span>
                         <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 </div>
 
-                <div class="lg:col-span-3 glass-panel p-6 sm:p-8 rounded-2xl border border-[#2E2350] bg-[#160F2B]/50">
+                <div class="lg:col-span-3 glass-panel p-6 sm:p-8 rounded-2xl border border-[#1F2940] bg-[#0F1526]/60">
                     <div class="space-y-8">
                         <div>
                             <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-[#A99FC4]">Ejecuciones al Mes</label>
-                                <span class="font-mono text-sm text-[#C4B5FD] font-bold" id="executions-display">80.000</span>
+                                <label class="font-mono text-xs uppercase tracking-widest text-[#A0AEC6]">Ejecuciones al Mes</label>
+                                <span class="font-mono text-sm text-[#8CBFF9] font-bold" id="executions-display">80.000</span>
                             </div>
                             <input type="range" id="executions" min="1000" max="1000000" step="1000" value="80000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#8A80A8] uppercase"><span>1k</span><span>1M</span></div>
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#7E8BA3] uppercase"><span>1k</span><span>1M</span></div>
                         </div>
 
                         <div>
                             <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-[#A99FC4]">Tokens de Entrada por Ejecución</label>
-                                <span class="font-mono text-sm text-[#C4B5FD] font-bold" id="input-tokens-display">30.000</span>
+                                <label class="font-mono text-xs uppercase tracking-widest text-[#A0AEC6]">Tokens de Entrada por Ejecución</label>
+                                <span class="font-mono text-sm text-[#8CBFF9] font-bold" id="input-tokens-display">30.000</span>
                             </div>
                             <input type="range" id="input-tokens" min="500" max="120000" step="500" value="30000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#8A80A8] uppercase"><span>500</span><span>120k</span></div>
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#7E8BA3] uppercase"><span>500</span><span>120k</span></div>
                         </div>
 
                         <div>
                             <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-[#A99FC4]">Tokens de Salida por Ejecución</label>
-                                <span class="font-mono text-sm text-[#C4B5FD] font-bold" id="output-tokens-display">8.000</span>
+                                <label class="font-mono text-xs uppercase tracking-widest text-[#A0AEC6]">Tokens de Salida por Ejecución</label>
+                                <span class="font-mono text-sm text-[#8CBFF9] font-bold" id="output-tokens-display">8.000</span>
                             </div>
                             <input type="range" id="output-tokens" min="250" max="40000" step="250" value="8000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#8A80A8] uppercase"><span>250</span><span>40k</span></div>
+                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#7E8BA3] uppercase"><span>250</span><span>40k</span></div>
                         </div>
 
-                        <div class="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[#2E2350]">
+                        <div class="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[#1F2940]">
                             <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#8A80A8] mb-2">Costo por 1M tokens de entrada</label>
-                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#2E2350] bg-[#160F2B]/60">
-                                    <span class="text-[#8A80A8]">$</span>
+                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-2">Costo por 1M tokens de entrada</label>
+                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#1F2940] bg-[#090A17]/70">
+                                    <span class="text-[#7E8BA3]">$</span>
                                     <input type="number" id="input-rate" value="0.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
                                 </div>
                             </div>
                             <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#8A80A8] mb-2">Costo por 1M tokens de salida</label>
-                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#2E2350] bg-[#160F2B]/60">
-                                    <span class="text-[#8A80A8]">$</span>
+                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3] mb-2">Costo por 1M tokens de salida</label>
+                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#1F2940] bg-[#090A17]/70">
+                                    <span class="text-[#7E8BA3]">$</span>
                                     <input type="number" id="output-rate" value="1.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-[#2E2350]">
+                        <div class="pt-4 border-t border-[#1F2940]">
                             <div class="flex justify-between items-center mb-2">
-                                <label class="font-mono text-[10px] uppercase tracking-widest text-[#8A80A8]">Tokens Totales al Mes</label>
+                                <label class="font-mono text-[10px] uppercase tracking-widest text-[#7E8BA3]">Tokens Totales al Mes</label>
                                 <span class="font-mono text-sm text-white font-bold" id="total-tokens-display">10.500.000.000</span>
                             </div>
-                            <div class="w-full h-2.5 bg-[#0B0716] rounded-full overflow-hidden border border-[#2E2350]">
-                                <div id="capacity-bar" class="h-full bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#C4B5FD] transition-all duration-500" style="width: 0%"></div>
+                            <div class="w-full h-2.5 bg-[#090A17] rounded-full overflow-hidden border border-[#1F2940]">
+                                <div id="capacity-bar" class="h-full bg-gradient-to-r from-[#8CBFF9] via-[#A855F7] to-[#8CBFF9] transition-all duration-500" style="width: 0%"></div>
                             </div>
-                            <div class="flex justify-between mt-1.5 text-[10px] font-mono text-[#8A80A8] uppercase">
+                            <div class="flex justify-between mt-1.5 text-[10px] font-mono text-[#7E8BA3] uppercase">
                                 <span id="capacity-used">0% de 1 maquina</span>
                                 <span id="machines-count">1 maquina (15.000M tokens/mes)</span>
                             </div>
@@ -1393,8 +1464,8 @@
         </div>
     </section>
 
-    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-[#2E2350] bg-[#0B0716] relative overflow-hidden">
-        <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-[#7C3AED] opacity-[0.05] blur-[120px] rounded-full pointer-events-none"></div>
+    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-[#1F2940] bg-[#090A17] relative overflow-hidden">
+        <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-[#8CBFF9] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
                 
@@ -1402,103 +1473,103 @@
                 <!-- FAQ:SYNC — mantener 1:1 con el bloque "FAQPage" del JSON-LD (~L106). -->
                 <div class="lg:col-span-7" id="faq">
                     <div>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-3 block">Preguntas Frecuentes</span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-3 block">Preguntas Frecuentes</span>
                         <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Preguntas Frecuentes sobre nuestros servicios</h2>
-                        <p class="mt-4 text-[#A99FC4] text-sm sm:text-base leading-relaxed">Respuestas estructuradas sobre costos, rendimiento y seguridad de datos.</p>
+                        <p class="mt-4 text-[#A0AEC6] text-sm sm:text-base leading-relaxed">Respuestas estructuradas sobre costos, rendimiento y seguridad de datos.</p>
                     </div>
 
                     <div class="space-y-3 mt-8">
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Cómo puede una empresa reducir el gasto en tokens de IA?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Cómo puede una empresa reducir el gasto en tokens de IA?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     Migrando a una plataforma privada de IA con costo fijo mensual. En un caso real de 200.000 ejecuciones/mes con 10.000 tokens, redujo costos un <strong class="text-white">74,2%</strong> frente a modelos de pago por token.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Es más barato tener infraestructura propia de IA que pagar por API?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Es más barato tener infraestructura propia de IA que pagar por API?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
-                                    Sí, para alto volumen de uso. Con 200.000 ejecuciones/mes, una GPU dedicada costó <strong class="text-white">US$579,46/mes</strong>, ahorrando <strong class="text-[#C4B5FD]">74,2%</strong> frente a proveedores premium y <strong class="text-[#C4B5FD]">39,3%</strong> frente a económicos.
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
+                                    Sí, para alto volumen de uso. Con 200.000 ejecuciones/mes, una GPU dedicada costó <strong class="text-white">US$579,46/mes</strong>, ahorrando <strong class="text-[#8CBFF9]">74,2%</strong> frente a proveedores premium y <strong class="text-[#8CBFF9]">39,3%</strong> frente a económicos.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     Desplegando modelos en servidores dedicados bajo tu control directo. Esto elimina intermediarios externos y garantiza trazabilidad, gobierno y estricto control de accesos.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Qué es más seguro, usar la API de OpenAI o un modelo propio?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     Un modelo propio en infraestructura dedicada. Mantiene el 100% del procesamiento confidencial dentro de tu red corporativa, previniendo cualquier filtración de datos a terceros.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Cuánto tiempo dura la implementación?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Cuánto tiempo dura la implementación?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     Entre 1 y 3 semanas desde la auditoría inicial hasta tráfico en producción, con estrategias de despliegue prácticamente sin tiempo de inactividad.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Qué pasa si los ahorros no justifican la implementación?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Qué pasa si los ahorros no justifican la implementación?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     El diagnóstico inicial entrega pronósticos financieros claros. Si los números no favorecen la migración a servidores propios, te lo diremos directamente antes de asumir cualquier compromiso.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Tengo que modificar el código de mis aplicaciones?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Tengo que modificar el código de mis aplicaciones?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     No. Tus flujos y automatizaciones solo actualizan el endpoint de conexión. Cambia el destino de red, no la lógica de tu código.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#C4B5FD] transition-colors pr-4 leading-snug">¿Qué es un LLM privado y en qué se diferencia de ChatGPT?</h3>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-white group-hover:text-[#8CBFF9] transition-colors pr-4 leading-snug">¿Qué es un LLM privado y en qué se diferencia de ChatGPT?</h3>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">
                                     Se ejecuta en servidores dedicados bajo tu control exclusivo. Tus peticiones, documentos y resultados nunca viajan a servidores públicos, cumpliendo con regulaciones de privacidad empresarial.
                                 </p>
                             </div>
@@ -1509,59 +1580,59 @@
                 <!-- Glossary Section (5 cols) -->
                 <div class="lg:col-span-5" id="glosario">
                     <div>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C4B5FD] mb-3 block">Glosario Técnico</span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#C9D6EA] mb-3 block">Glosario Técnico</span>
                         <h2 class="text-2xl sm:text-3xl font-bold tracking-[-1px] text-white">Conceptos Clave de IA</h2>
-                        <p class="mt-4 text-[#A99FC4] text-sm sm:text-base leading-relaxed">Términos esenciales en infraestructura y desarrollo de inteligencia artificial.</p>
+                        <p class="mt-4 text-[#A0AEC6] text-sm sm:text-base leading-relaxed">Términos esenciales en infraestructura y desarrollo de inteligencia artificial.</p>
                     </div>
 
                     <div class="space-y-3 mt-8">
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h4 class="text-xs sm:text-sm font-bold text-[#C4B5FD] font-mono uppercase tracking-wider group-hover:text-white transition-colors">RAG (Generación Aumentada)</h4>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h4 class="text-xs sm:text-sm font-bold text-[#8CBFF9] font-mono uppercase tracking-wider group-hover:text-white transition-colors">RAG (Generación Aumentada)</h4>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">Conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas exactas y actualizadas sin reentrenar modelos.</p>
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">Conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas exactas y actualizadas sin reentrenar modelos.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h4 class="text-xs sm:text-sm font-bold text-[#C4B5FD] font-mono uppercase tracking-wider group-hover:text-white transition-colors">Inferencia</h4>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h4 class="text-xs sm:text-sm font-bold text-[#8CBFF9] font-mono uppercase tracking-wider group-hover:text-white transition-colors">Inferencia</h4>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">Proceso por el cual un modelo entrenado procesa datos entrantes y genera predicciones, resúmenes o respuestas operativas.</p>
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">Proceso por el cual un modelo entrenado procesa datos entrantes y genera predicciones, resúmenes o respuestas operativas.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h4 class="text-xs sm:text-sm font-bold text-[#C4B5FD] font-mono uppercase tracking-wider group-hover:text-white transition-colors">GPU Dedicada</h4>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h4 class="text-xs sm:text-sm font-bold text-[#8CBFF9] font-mono uppercase tracking-wider group-hover:text-white transition-colors">GPU Dedicada</h4>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">Unidad gráfica asignada exclusivamente a tu organización para procesar IA 24/7 sin compartir recursos ni depender de colas ajenas.</p>
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">Unidad gráfica asignada exclusivamente a tu organización para procesar IA 24/7 sin compartir recursos ni depender de colas ajenas.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h4 class="text-xs sm:text-sm font-bold text-[#C4B5FD] font-mono uppercase tracking-wider group-hover:text-white transition-colors">Tokens</h4>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h4 class="text-xs sm:text-sm font-bold text-[#8CBFF9] font-mono uppercase tracking-wider group-hover:text-white transition-colors">Tokens</h4>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">Unidades básicas de procesamiento textual (~4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.</p>
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">Unidades básicas de procesamiento textual (~4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.</p>
                             </div>
                         </div>
 
-                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#2E2350] hover:border-[#7C3AED]/40 transition-colors duration-200">
+                        <div class="accordion-item glass-panel px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border border-[#1F2940] hover:border-[#8CBFF9]/40 bg-[#0F1526]/80 transition-colors duration-200">
                             <button class="accordion-trigger w-full flex items-center justify-between text-left focus:outline-none group" aria-expanded="false">
-                                <h4 class="text-xs sm:text-sm font-bold text-[#C4B5FD] font-mono uppercase tracking-wider group-hover:text-white transition-colors">LLM Privado</h4>
-                                <span class="accordion-icon text-[#C4B5FD] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
+                                <h4 class="text-xs sm:text-sm font-bold text-[#8CBFF9] font-mono uppercase tracking-wider group-hover:text-white transition-colors">LLM Privado</h4>
+                                <span class="accordion-icon text-[#8CBFF9] text-lg font-bold transition-transform duration-300 shrink-0 select-none leading-none">+</span>
                             </button>
                             <div class="accordion-body">
-                                <p class="text-[#A99FC4] text-sm leading-relaxed mt-3 pt-3 border-t border-[#2E2350]/60">Modelo de lenguaje desplegado en tu propia infraestructura. Basado en pesos abiertos, no cobra licencia por token y ningún dato sale de tu red.</p>
+                                <p class="text-[#A0AEC6] text-sm leading-relaxed mt-3 pt-3 border-t border-[#1F2940]/60">Modelo de lenguaje desplegado en tu propia infraestructura. Basado en pesos abiertos, no cobra licencia por token y ningún dato sale de tu red.</p>
                             </div>
                         </div>
                     </div>
