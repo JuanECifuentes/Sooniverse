@@ -26,7 +26,7 @@
           </button>
           {% if q.status == 'COMPLETED' %}
             <button onclick="viewAnswers('{{ q.id }}')"
-                    class="btn-primary px-3.5 py-2 rounded-lg text-[11px] font-bold text-deep uppercase tracking-wide whitespace-nowrap">
+                    class="btn-primary px-3.5 py-2 rounded-lg text-[11px] font-bold text-white uppercase tracking-wide whitespace-nowrap">
               Ver Respuestas
             </button>
           {% else %}
@@ -42,6 +42,6 @@
 {% else %}
   <div class="card p-6 text-center">
     <p class="font-mono text-xs uppercase tracking-widest text-slate">Este lead aún no tiene cuestionarios.</p>
-    <p class="text-slate text-sm mt-2">Pulsa <span class="text-neon font-semibold">Generar Nuevo Link</span> para crear uno.</p>
+    <p class="text-slate text-sm mt-2">Pulsa <span class="text-[#60EFFF] font-semibold">Generar Nuevo Link</span> para crear uno.</p>
   </div>
 {% endif %}

@@ -1,0 +1,242 @@
+Sooniverse | Implementa tu Plataforma Privada de IA - Ahorro en Tokens
+Evidencia
+Servicios
+Calculadora
+FAQ & Glosario
+Login
+Login
+Reservar una reunión
+Evidencia
+Servicios
+Calculadora
+FAQ & Glosario
+Iniciar Sesión (Login)
+Reservar una reunión
+ADVANCED TECH UNIVERSE
+Convierte tu gasto en IA en una
+plataforma privada
+para toda tu empresa.
+Obtén más capacidad de IA por cada dólar que inviertes. Sin sorpresas en la facturación y con privacidad absoluta de tu información.
+Reservar una reunión
+Calcular ahorro
+Costo mensual de inferencia
+Optimizado
+Antes
+$0
+USD / mes
+Con Sooniverse
+$0
+USD / mes
+Ene
+Feb
+Mar
+Abr
+May
+Jun
+Privacidad y Seguridad
+Tus datos jamás salen de tu red corporativa.
+Compara la exposición hacia nubes públicas frente a una arquitectura privada aislada en tu propio perímetro.
+EL PROBLEMA · APIS PÚBLICAS
+Sin perímetro seguro
+Datos expuestos a servidores de terceros
+Datos expuestos a servidores de terceros
+Replicación en nubes públicas y telemetría
+Uso de tu información para reentrenar modelos ajenos
+SOLUCIÓN SOONIVERSE · 100% AISLADA
+Red Privada
+Toda tu información dentro de tu perímetro
+Perímetro restringido en tu propia red privada
+Cero conexión con nubes públicas ni telemetría externa
+Seguridad y cumplimiento normativo absoluto
+Ahorro y Precios
+Hasta 74% de ahorro con costo fijo mensual.
+Elimina la volatilidad del cobro por token y asegura tu presupuesto con infraestructura dedicada de tarifa plana.
+EL PROBLEMA · PAGO POR CONSUMO
+APIs de terceros
+Factura impredecible sin techo de gasto
+COSTO VARIABLE POR TOKEN
+US$ 2,250
+/ mes (estimado)
+▲ Sin techo de gasto
+Factura variable y creciente con cada token
+Cobros sorpresa ante picos de consultas o nuevos usuarios
+Coste marginal continuo que castiga la escala
+SOLUCIÓN SOONIVERSE · DEDICADA
+74% de Ahorro
+Tarifa plana fija mensual sin sorpresas
+COSTO FIJO MENSUAL
+US$ 579
+/ mes (fijo)
+● Tarifa plana ilimitada
+Costo fijo mensual predecible hasta 74% menor
+Consultas y tokens ilimitados a coste marginal cero
+Capacidad dedicada reutilizable para múltiples procesos
+Llamada exploratoria · 30 min
+¿Listo para tener tu propia plataforma de IA?
+Habla sobre tu caso de uso con un especialista en IA de nuestro equipo.
+Reservar una reunión
+Sin compromiso · 30 min
+Evidencia
+Resultados medibles en producción.
+Nuestros clientes reducen costos, blindan sus datos y escalan sin fricción.
+Privacidad Absoluta
+100%
+Blindaje total y privacidad garantizada en todos los datos de tu organización.
+Costo por token
+-74%
+Infraestructura privada donde el costo no escala con el volumen de tokens consumidos.
+Inversión Predecible
+Fijo
+Costo mensual fijo y predecible sin importar el volumen de uso de tu equipo.
+Capacidad Reutilizable
+5x ROI
+Absorbe múltiples automatizaciones en la misma infraestructura sin costos adicionales.
+Caso de Estudio
+¿Es más barato tener infraestructura propia de IA que pagar por API?
++
+Sí. En un caso real de 200.000 ejecuciones mensuales con 10.000 tokens por procesamiento, el despliegue de una GPU dedicada representó un costo mensual de
+US$579,46
+, logrando un ahorro del
+74,2%
+frente a un proveedor premium de pago por token y del
+39,3%
+frente a proveedores económicos.
+Al comparar una
+plataforma privada de IA vs API de OpenAI
+, el factor crucial es el cobro. El pago variable por token penaliza a empresas con alto tráfico, mientras que un servidor dedicado brinda capacidad constante a un costo mensual fijo y predecible.
+Alternativa
+Modelo de Cobro
+Costo Mensual
+Ahorro
+OpenAI / Premium
+Pago por token
+US$ 2.250,00
+0% (Base)
+Proveedor Económico
+Pago por token
+US$ 957,00
+57,4%
+Sooniverse (GPU)
+Capacidad Fija
+US$ 579,46
+74,2%
+Nota: Estimaciones basadas en 200.000 ejecuciones/mes con 10.000 tokens cada una.
+Seguridad y Gobierno de Datos
+¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?
++
+Al implementar una infraestructura de inferencia privada, se elimina la dependencia de terceros, garantizando trazabilidad total, gobierno de datos y estricto control de accesos.
+Confiar en APIs externas para procesar contratos legales, finanzas o soporte genera riesgos regulatorios. Sooniverse despliega plataformas privadas dedicadas asegurando que los datos nunca salgan de tu red interna.
+Procesamiento Local
+Los datos sensibles se procesan en tu propio servidor privado dedicado.
+Gobierno Completo
+Auditoría completa sobre accesos al modelo y flujos activos.
+¿Qué es más seguro, usar la API de OpenAI o un modelo propio?
+Un modelo propio mantiene el 100% del procesamiento bajo la gobernanza y red interna de tu empresa, impidiendo fugas de información.
+Servicios
+IA privada para empresas y soluciones dedicadas.
+Diseñamos, desplegamos y administramos plataformas dedicadas para ejecutar tus procesos con total privacidad y menores costos.
+Servicio Principal
+Plataforma de IA Privada
+Diagnóstico y Auditoría de Consumos
+Mapeo completo de procesos actuales y entrega de viabilidad técnica y financiera.
+Despliegue de LLM Privado Dedicado
+Configuramos tu modelo en GPU dedicada para garantizar velocidad, disponibilidad y procesamiento constante.
+Asistente Interno y RAG Empresarial
+Sistemas de RAG con datos privados y asistentes corporativos que operan con blindaje absoluto de información.
+Interfaz de Control y Métricas
+Gestión intuitiva de accesos por equipo y monitoreo en tiempo real de consumos del sistema.
+Bloque "Desarrollos Complementarios" desactivado por ahora.
+            Existe también como parcial en:
+            core/includes/servicios_complementarios.html
+            Para activarlo: reemplazar este comentario por
+Calculadora de costos
+Estima tu ahorro mensual en tokens.
+Ajusta ejecuciones y volumen de tokens. Proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.
+Costo base estimado
+$0
+USD / mes
+~ $0 COP
+Con Sooniverse
+$0
+USD / mes
+~ $0 COP
+Ahorro mensual
+$0
+Reducción estimada del
+0
+%
+~ $0 COP
+Reservar una reunión
+Ejecuciones al Mes
+80.000
+1k
+1M
+Tokens de Entrada por Ejecución
+30.000
+500
+120k
+Tokens de Salida por Ejecución
+8.000
+250
+40k
+Costo por 1M tokens de entrada
+$
+Costo por 1M tokens de salida
+$
+Tokens Totales al Mes
+10.500.000.000
+0% de 1 maquina
+1 maquina (15.000M tokens/mes)
+Preguntas Frecuentes
+Preguntas Frecuentes sobre nuestros servicios
+Respuestas estructuradas sobre costos, rendimiento y seguridad de datos.
+¿Cómo puede una empresa reducir el gasto en tokens de IA?
++
+Migrando a una plataforma privada de IA con costo fijo mensual. En un caso real de 200.000 ejecuciones/mes con 10.000 tokens, redujo costos un
+74,2%
+frente a modelos de pago por token.
+¿Es más barato tener infraestructura propia de IA que pagar por API?
++
+Sí, para alto volumen de uso. Con 200.000 ejecuciones/mes, una GPU dedicada costó
+US$579,46/mes
+, ahorrando
+74,2%
+frente a proveedores premium y
+39,3%
+frente a económicos.
+¿Cómo proteger datos sensibles al usar inteligencia artificial en una empresa?
++
+Desplegando modelos en servidores dedicados bajo tu control directo. Esto elimina intermediarios externos y garantiza trazabilidad, gobierno y estricto control de accesos.
+¿Qué es más seguro, usar la API de OpenAI o un modelo propio?
++
+Un modelo propio en infraestructura dedicada. Mantiene el 100% del procesamiento confidencial dentro de tu red corporativa, previniendo cualquier filtración de datos a terceros.
+¿Cuánto tiempo dura la implementación?
++
+Entre 1 y 3 semanas desde la auditoría inicial hasta tráfico en producción, con estrategias de despliegue prácticamente sin tiempo de inactividad.
+¿Qué pasa si los ahorros no justifican la implementación?
++
+El diagnóstico inicial entrega pronósticos financieros claros. Si los números no favorecen la migración a servidores propios, te lo diremos directamente antes de asumir cualquier compromiso.
+¿Tengo que modificar el código de mis aplicaciones?
++
+No. Tus flujos y automatizaciones solo actualizan el endpoint de conexión. Cambia el destino de red, no la lógica de tu código.
+¿Qué es un LLM privado y en qué se diferencia de ChatGPT?
++
+Se ejecuta en servidores dedicados bajo tu control exclusivo. Tus peticiones, documentos y resultados nunca viajan a servidores públicos, cumpliendo con regulaciones de privacidad empresarial.
+Glosario Técnico
+Conceptos Clave de IA
+Términos esenciales en infraestructura y desarrollo de inteligencia artificial.
+RAG (Generación Aumentada)
++
+Conecta modelos de IA con bases de datos privadas del negocio para ofrecer respuestas exactas y actualizadas sin reentrenar modelos.
+Inferencia
++
+Proceso por el cual un modelo entrenado procesa datos entrantes y genera predicciones, resúmenes o respuestas operativas.
+GPU Dedicada
++
+Unidad gráfica asignada exclusivamente a tu organización para procesar IA 24/7 sin compartir recursos ni depender de colas ajenas.
+Tokens
++
+Unidades básicas de procesamiento textual (~4 caracteres). El cobro de las APIs comerciales se calcula por millón de tokens procesados.
+LLM Privado
++
+Modelo de lenguaje desplegado en tu propia infraestructura. Basado en pesos abiertos, no cobra licencia por token y ningún dato sale de tu red.

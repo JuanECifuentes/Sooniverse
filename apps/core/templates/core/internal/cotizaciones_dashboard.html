@@ -123,8 +123,8 @@ table.bd .off td { color: var(--slate-dim); }
 .mant-pill:hover { color: var(--white); background: rgba(255, 255, 255, .05); }
 .mant-pill .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--slate-dim); transition: background .15s; }
 .mant-pill.active { background: var(--structural); color: var(--white); border-color: var(--line); font-weight: 600; }
-.mant-pill.active .pill-dot { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
-.mant-pill .pill-tag { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--neon); background: rgba(0, 255, 135, .12); padding: 1px 5px; border-radius: 3px; }
+.mant-pill.active .pill-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.mant-pill .pill-tag { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--cyan); background: rgba(96, 239, 255, .12); padding: 1px 5px; border-radius: 3px; }
 
 .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
 .tier {
@@ -133,25 +133,25 @@ table.bd .off td { color: var(--slate-dim); }
 }
 .tier:hover { border-color: #384f72; transform: translateY(-2px); }
 .tier.tier-selected {
-  border-color: var(--neon) !important;
-  box-shadow: 0 0 0 1px var(--neon), 0 8px 24px rgba(0, 255, 135, .16);
-  background: linear-gradient(180deg, rgba(0, 255, 135, .09), var(--cyber-surface) 60%) !important;
+  border-color: var(--cyan) !important;
+  box-shadow: 0 0 0 1px var(--cyan), 0 8px 24px rgba(96, 239, 255, .16);
+  background: linear-gradient(180deg, rgba(96, 239, 255, .09), var(--cyber-surface) 60%) !important;
 }
-.tier.mid { border-color: rgba(0, 255, 135, .4); background: linear-gradient(180deg, rgba(0, 255, 135, .06), transparent 60%); }
+.tier.mid { border-color: rgba(96, 239, 255, .4); background: linear-gradient(180deg, rgba(96, 239, 255, .06), transparent 60%); }
 .tier h4 { margin: 0 0 3px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #FFFFFF; }
 .tier .price { font-family: 'JetBrains Mono', monospace; font-size: 19px; font-weight: 700; margin: 10px 0 3px; letter-spacing: -0.02em; }
 .tier.mid .price { color: var(--neon); }
 .tier .per { font-size: 11px; color: var(--slate-dim); margin-bottom: 14px; }
 .tier ul { margin: 0; padding-left: 16px; color: var(--slate); font-size: 12.5px; line-height: 1.6; }
 .tier ul li { margin-bottom: 4px; }
-.tier .rec { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--neon); margin-bottom: 6px; display: block; text-transform: uppercase; font-weight: 700; }
+.tier .rec { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--cyan); margin-bottom: 6px; display: block; text-transform: uppercase; font-weight: 700; }
 .tier-select-action {
   margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(36, 52, 76, .6);
   font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center;
   color: var(--slate-dim); transition: color .15s;
 }
 .tier:hover .tier-select-action { color: var(--cyan); }
-.tier.tier-selected .tier-select-action { color: var(--neon); }
+.tier.tier-selected .tier-select-action { color: var(--cyan); }
 
 /* ---------- rail ---------- */
 .rail { position: sticky; top: 88px; }
@@ -205,7 +205,10 @@ table.bd .off td { color: var(--slate-dim); }
 
   <!-- Header -->
   <div class="cotiz-top">
-    <div class="font-mono text-xs font-bold uppercase tracking-brand text-neon mb-2">Herramienta Comercial Interna</div>
+    <div class="inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.25em] text-[#60EFFF] mb-2 font-semibold">
+      <span class="bullet bullet-cyan"></span>
+      <span>Herramienta Comercial Interna</span>
+    </div>
     <h1 class="text-3xl font-bold tracking-[-1px] text-white">Guía de Cotización</h1>
     <p class="cotiz-lede">Un precio que sale de <b>dos números a la vez</b>: lo que te cuesta hacerlo y lo que le vale al cliente. El mayor de los dos manda, con un techo que evita cotizaciones invendibles. Cambia los parámetros y la cotización se recalcula sola en tiempo real.</p>
   </div>
