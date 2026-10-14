@@ -57,7 +57,7 @@ Más del 80% de las compañías procesan información crítica enviándola a ser
 
 No me refiero a redactar un post en la herramienta de escritorio. Me refiero a flujos automáticos donde balances, historias clínicas, tickets legales y bases de datos completas viajan por tuberías públicas. 
 
-Cada prompt que sale de su red entrega una pieza irreemplazable de la propiedad intelectual de su empresa a modelos externos que usted no controla, no audita y que pueden usar esa misma información para entrenar sistemas de la competencia.»
+Cada prompt que sale de su red entrega una pieza irreemplazable de la propiedad intelectual de su empresa a modelos externos que usted no controla, no audita y que pueden usar esa misma información en actividades que usted no conoce.»
 
 ---
 

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -160 320 320" width="100%" height="100%">
+  <defs>
+    <!-- Fondo Morado V3 idéntico a Gemini image (#2A1533) -->
+    <radialGradient id="bgBrandV3" cx="45%" cy="35%" r="85%">
+      <stop offset="0%" stop-color="#32173D" />
+      <stop offset="55%" stop-color="#2A1533" />
+      <stop offset="100%" stop-color="#200E27" />
+    </radialGradient>
+
+    <!-- Gradiente Planetario V3: Basado en el logo de Gemini (#9C47D3 a #260F34) -->
+    <linearGradient id="planetGradV3" x1="25%" y1="10%" x2="75%" y2="90%">
+      <stop offset="0%" stop-color="#9C47D3" />
+      <stop offset="24%" stop-color="#7C32A6" />
+      <stop offset="55%" stop-color="#552473" />
+      <stop offset="85%" stop-color="#3A174F" />
+      <stop offset="100%" stop-color="#260F34" />
+    </linearGradient>
+
+    <!-- Gradiente del Anillo Ecuatorial Frontal -->
+    <linearGradient id="eqRingFront" x1="0%" y1="40%" x2="100%" y2="60%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="45%" stop-color="#C084FC" />
+      <stop offset="75%" stop-color="#DDD6FE" />
+      <stop offset="90%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E9D5FF" />
+    </linearGradient>
+
+    <!-- Gradiente del Anillo Ecuatorial Trasero -->
+    <linearGradient id="eqRingBack" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#6B21A8" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#C084FC" stop-opacity="0.75" />
+    </linearGradient>
+
+    <!-- Gradiente del Gran Bucle Orbital Inclinado -->
+    <linearGradient id="loopGrad" x1="20%" y1="100%" x2="80%" y2="0%">
+      <stop offset="0%" stop-color="#9333EA" />
+      <stop offset="40%" stop-color="#A855F7" />
+      <stop offset="70%" stop-color="#DDD6FE" />
+      <stop offset="95%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#EDE9FE" />
+    </linearGradient>
+
+    <!-- Resplandor Neón de la Luna Inferior -->
+    <filter id="moonGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo Cuadrado de Marca V3 -->
+  <rect x="-160" y="-160" width="320" height="320" fill="url(#bgBrandV3)"/>
+
+  <!-- Sistema Planetario V3 -->
+  <g transform="translate(0, -6)">
+    <!-- 1. Bucle Vertical Trasero (oculto tras el planeta) -->
+    <g transform="rotate(-38)">
+      <path d="M 0,-115 A 50,115 0 0,0 -48,40" fill="none" stroke="#6B21A8" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
+    </g>
+
+    <!-- 2. Anillos Ecuatoriales Traseros -->
+    <g transform="rotate(-21)">
+      <!-- Anillo exterior grueso trasero -->
+      <path d="M -118,0 A 118,34 0 0,1 118,0" fill="none" stroke="url(#eqRingBack)" stroke-width="13" stroke-linecap="round"/>
+      <!-- Anillo interior fino trasero -->
+      <path d="M -90,0 A 90,26 0 0,1 90,0" fill="none" stroke="#C084FC" stroke-width="2.5" opacity="0.6"/>
+    </g>
+
+    <!-- 3. Planeta Esfera Sólida -->
+    <circle cx="0" cy="0" r="48" fill="url(#planetGradV3)"/>
+
+    <!-- Franjas Latitudinales del Planeta -->
+    <path d="M -44,-8 Q 0,4 44,-8" fill="none" stroke="#DDD6FE" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+    <path d="M -47,15 Q 0,27 47,15" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4.5 4" opacity="0.65"/>
+
+    <!-- 4. Anillos Ecuatoriales Delanteros -->
+    <g transform="rotate(-21)">
+      <!-- Anillo interior fino delantero -->
+      <path d="M 90,0 A 90,26 0 0,1 -90,0" fill="none" stroke="#E9D5FF" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- Anillo exterior grueso delantero con degradado y luz -->
+      <path d="M 118,0 A 118,34 0 0,1 -118,0" fill="none" stroke="url(#eqRingFront)" stroke-width="13" stroke-linecap="round"/>
+      <!-- Borde de luz superior en el anillo -->
+      <path d="M 116,-2 A 116,33 0 0,1 -55,19" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.85" stroke-linecap="round"/>
+    </g>
+
+    <!-- 5. Gran Bucle Orbital Delantero (Cruza en frente del planeta y del anillo) -->
+    <g transform="rotate(-38)">
+      <path d="M -48,40 A 50,115 0 0,0 0,-115" fill="none" stroke="url(#loopGrad)" stroke-width="12.5" stroke-linecap="round"/>
+      <!-- Resaltado blanco puro en la cúspide del bucle -->
+      <path d="M 16,-104 A 50,115 0 0,0 0,-115" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.95"/>
+    </g>
+
+    <!-- 6. Satélites / Lunas -->
+    <!-- Satélite 1 (Anillo hueco superior izquierdo) -->
+    <circle cx="-88" cy="-56" r="9.5" fill="none" stroke="#C084FC" stroke-width="3"/>
+    <!-- Satélite 2 (Punto sólido superior izquierdo) -->
+    <circle cx="-64" cy="-74" r="5.5" fill="#C084FC"/>
+
+    <!-- Satélite 3 (Luna brillante inferior derecha con aura de neón) -->
+    <circle cx="68" cy="68" r="16" fill="#8B5CF6" opacity="0.45" filter="url(#moonGlow)"/>
+    <circle cx="68" cy="68" r="8" fill="#DDD6FE"/>
+    <circle cx="67" cy="67" r="4.8" fill="#FFFFFF"/>
+  </g>
+</svg>

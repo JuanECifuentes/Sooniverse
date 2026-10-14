@@ -51,7 +51,7 @@ Sooniverse maneja un esquema claro, modular y transparente compuesto por **Diagn
 | :--- | :--- | :--- | :--- | :--- |
 | **Diagnóstico Técnico & Viabilidad** | Informe numérico de ROI, dimensionamiento de arquitectura y prueba de modelos en DeepInfra | **$1.000.000 COP** | 100% anticipado | **100% descontable** del valor de la implementación si contratan el servicio completo |
 | **Setup & Despliegue de Plataforma** | Ingeniería Terraform, cluster de inferencia, proxy compatible OpenAI, chat corporativo y dashboard | **Desde $35.000.000 COP** | **50% ($17.5M+)** al firmar contrato<br>**50% ($17.5M+)** contra Acta de Aceptación (UAT) | Pago único de implementación (Tarifa base sube según complejidad/nodos) |
-| **Mantenimiento Programado (Opcional)** | Monitoreo proactivo de nodos, parches de seguridad, optimización de VRAM y soporte L3 | **Desde $7.400.000 COP / año** | Anual anticipado o mensualizado (~$616.000 COP/mes) | Mantenimiento preventivo y actualización de modelos |
+| **Mantenimiento Programado (Opcional)** | Monitoreo proactivo de nodos, parches de seguridad, optimización de VRAM y soporte L3 | **Desde $7.400.000 COP / año** | Anual anticipado | Mantenimiento preventivo y actualización de modelos |
 | **Infraestructura Cloud (BYOC)** | 1x GPU NVIDIA L4 (24GB VRAM) encendida 24/7 en la nube del cliente | **~US$ 580 / mes** (~$2.380.000 COP) | Facturado directo por AWS/GCP/Azure al cliente | Capacidad fija dedicada con ejecuciones masivas ilimitadas |
 | **Modalidad Hospedada (HOSTED)** | Para clientes sin nube corporativa (típico en Perfil B) | Cotizado según consumo de GPU + fee de gestión Sooniverse | Facturación mensual directa de Sooniverse | Plataforma administrada llave en mano |
 
