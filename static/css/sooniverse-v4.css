@@ -801,6 +801,24 @@ input[type=range]:focus::-webkit-slider-runnable-track {
     .box-solution .mb-4 {
         margin-bottom: 0.4rem !important;
     }
+
+    /* ── Tipografía Responsiva de Precios en Ahorro y Costo ── */
+    .card-cost-value {
+        font-size: 1.35rem !important;
+        line-height: 1.15 !important;
+    }
+    .card-cost-label {
+        font-size: 0.58rem !important;
+        letter-spacing: 0.05em !important;
+    }
+    .card-cost-unit {
+        font-size: 0.7rem !important;
+    }
+    .card-cost-badge {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.5rem !important;
+    }
+
     .card-legacy .space-y-3 > :not([hidden]) ~ :not([hidden]),
     .card-solution .space-y-3 > :not([hidden]) ~ :not([hidden]) {
         margin-top: 0.4rem !important;
