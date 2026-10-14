@@ -657,7 +657,7 @@
             margin: 0;
         }
 
-        /* ── Barras de Gráfico Hero y Animación Continua ─────── */
+        /* ── Barras de Gráfico Hero y Animación de Carga + Ondas ─────── */
         .hero-chart-container {
             height: 176px !important;
             min-height: 176px;
@@ -671,62 +671,56 @@
             height: var(--bar-height);
             transform: scaleY(0);
             transform-origin: bottom;
-            transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease, box-shadow 0.4s ease;
             will-change: transform;
             cursor: pointer;
         }
-        /* Animación de entrada inicial progresiva garantizada */
-        .hero-bar.entering {
-            animation: heroBarEntrance 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .hero-bar[data-bar-index="0"].entering { animation-delay: 0.12s; }
-        .hero-bar[data-bar-index="1"].entering { animation-delay: 0.24s; }
-        .hero-bar[data-bar-index="2"].entering { animation-delay: 0.36s; }
-        .hero-bar[data-bar-index="3"].entering { animation-delay: 0.48s; }
-        .hero-bar[data-bar-index="4"].entering { animation-delay: 0.60s; }
-        .hero-bar[data-bar-index="5"].entering { animation-delay: 0.72s; }
-
-        @keyframes heroBarEntrance {
-            0% {
-                transform: scaleY(0);
-                opacity: 0.35;
-            }
-            100% {
-                transform: scaleY(1);
-                opacity: 1;
-            }
+        .hero-bar.loaded {
+            transform: scaleY(1);
         }
 
-        /* Animación continua: saltando suavemente en onda rítmica */
-        .hero-bar.bouncing {
-            animation: heroBarBounce 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        /* Animación continua: Ondas suaves en barras variables (Antes) */
+        .hero-bar[data-bar-index="0"].wave,
+        .hero-bar[data-bar-index="1"].wave,
+        .hero-bar[data-bar-index="2"].wave {
+            transition: filter 0.4s ease, box-shadow 0.4s ease;
+            animation: heroBarWaveVariable 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
         }
-        .hero-bar[data-bar-index="0"].bouncing { animation-delay: 0s; }
-        .hero-bar[data-bar-index="1"].bouncing { animation-delay: 0.22s; }
-        .hero-bar[data-bar-index="2"].bouncing { animation-delay: 0.44s; }
-        .hero-bar[data-bar-index="3"].bouncing { animation-delay: 0.66s; }
-        .hero-bar[data-bar-index="4"].bouncing { animation-delay: 0.88s; }
-        .hero-bar[data-bar-index="5"].bouncing { animation-delay: 1.10s; }
+        .hero-bar[data-bar-index="0"].wave { animation-delay: 0s; }
+        .hero-bar[data-bar-index="1"].wave { animation-delay: 0.35s; }
+        .hero-bar[data-bar-index="2"].wave { animation-delay: 0.70s; }
 
-        @keyframes heroBarBounce {
+        @keyframes heroBarWaveVariable {
             0%, 100% {
                 transform: scaleY(1);
             }
-            28% {
-                transform: scaleY(1.15);
+            30% {
+                transform: scaleY(1.08);
             }
-            48% {
-                transform: scaleY(0.96);
-            }
-            68% {
-                transform: scaleY(1.05);
-            }
-            84% {
-                transform: scaleY(0.99);
+            70% {
+                transform: scaleY(0.93);
             }
         }
 
-        /* Hover ultrasuave con iluminación y halo sin cortes ni congelamientos */
+        /* Animación continua: Barras cyan (Con Sooniverse) en bloque conjunto, al mismo tiempo, con movimiento casi nulo (Precio fijo) */
+        .hero-bar[data-bar-index="3"].wave,
+        .hero-bar[data-bar-index="4"].wave,
+        .hero-bar[data-bar-index="5"].wave {
+            transition: filter 0.4s ease, box-shadow 0.4s ease;
+            animation: heroBarFixedPrice 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+            animation-delay: 0s;
+        }
+
+        @keyframes heroBarFixedPrice {
+            0%, 100% {
+                transform: scaleY(1);
+            }
+            50% {
+                transform: scaleY(1.018);
+            }
+        }
+
+        /* Hover ultrasuave con iluminación y halo (intacto) */
         .hero-bar:hover {
             filter: brightness(1.35) drop-shadow(0 0 16px rgba(96, 239, 255, 0.65));
             z-index: 30;
@@ -738,6 +732,56 @@
             transform: translate(-50%, -3px) scale(1.35);
             box-shadow: 0 0 16px #60EFFF, 0 0 24px rgba(96, 239, 255, 0.85);
             border-color: #FFFFFF;
+        }
+
+        /* ── Fondos Cósmicos con Degradados Únicos por Sección ── */
+        .bg-section-privacidad {
+            background:
+                radial-gradient(ellipse 55% 50% at 12% 20%, rgba(15, 23, 42, 0.85), transparent 70%),
+                radial-gradient(ellipse 40% 45% at 85% 75%, rgba(96, 239, 255, 0.05), transparent 65%),
+                radial-gradient(ellipse 50% 40% at 20% 90%, rgba(99, 102, 241, 0.08), transparent 70%),
+                #070A12;
+        }
+        .bg-section-ahorro {
+            background:
+                radial-gradient(ellipse 50% 45% at 90% 18%, rgba(0, 255, 135, 0.05), transparent 65%),
+                radial-gradient(ellipse 45% 55% at 10% 80%, rgba(138, 43, 226, 0.08), transparent 70%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(15, 23, 42, 0.8), transparent 70%),
+                #070A12;
+        }
+        .bg-section-contacto {
+            background:
+                radial-gradient(ellipse 60% 70% at 50% 50%, rgba(138, 43, 226, 0.12), transparent 75%),
+                radial-gradient(ellipse 40% 60% at 85% 20%, rgba(96, 239, 255, 0.08), transparent 60%),
+                #070A12;
+        }
+        .bg-section-evidencia {
+            background:
+                radial-gradient(ellipse 55% 50% at 8% 30%, rgba(96, 239, 255, 0.06), transparent 70%),
+                radial-gradient(ellipse 50% 60% at 92% 70%, rgba(15, 23, 42, 0.9), transparent 70%),
+                radial-gradient(ellipse 45% 45% at 75% 15%, rgba(138, 43, 226, 0.07), transparent 65%),
+                #070A12;
+        }
+        .bg-section-servicios {
+            background:
+                radial-gradient(ellipse 50% 60% at 5% 50%, rgba(138, 43, 226, 0.10), transparent 70%),
+                radial-gradient(ellipse 45% 45% at 80% 25%, rgba(96, 239, 255, 0.05), transparent 65%),
+                radial-gradient(ellipse 60% 40% at 60% 95%, rgba(15, 23, 42, 0.8), transparent 70%),
+                #070A12;
+        }
+        .bg-section-calculadora {
+            background:
+                radial-gradient(ellipse 65% 50% at 50% 0%, rgba(96, 239, 255, 0.07), transparent 70%),
+                radial-gradient(ellipse 50% 50% at 15% 75%, rgba(0, 255, 135, 0.04), transparent 65%),
+                radial-gradient(ellipse 45% 45% at 88% 85%, rgba(138, 43, 226, 0.08), transparent 70%),
+                #070A12;
+        }
+        .bg-section-faq {
+            background:
+                radial-gradient(ellipse 50% 45% at 85% 30%, rgba(99, 102, 241, 0.08), transparent 70%),
+                radial-gradient(ellipse 55% 50% at 15% 85%, rgba(15, 23, 42, 0.9), transparent 70%),
+                radial-gradient(ellipse 40% 40% at 45% 10%, rgba(96, 239, 255, 0.04), transparent 65%),
+                #070A12;
         }
 
         /* ── Sistema de fondo Órbitas v3.0 ───────────────────── */
@@ -914,7 +958,7 @@
             .animate-pulse-slow,
             .node,
             .cosmic-bg::before, .cosmic-bg::after { animation: none !important; }
-            .hero-bar, .hero-bar.entering, .hero-bar.bouncing { transition: none !important; animation: none !important; transform: scaleY(1) !important; }
+            .hero-bar, .hero-bar.loaded, .hero-bar.wave { transition: none !important; animation: none !important; transform: scaleY(1) !important; }
             html { scroll-behavior: auto; }
         }
     </style>
@@ -999,7 +1043,7 @@
                 <div>
                     <div class="inline-flex items-center gap-2 glass-panel px-3 py-1.5 mb-6">
                         <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
-                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2.5px] text-[#60EFFF]">ADVANCED TECH UNIVERSE</span>
+                        <span class="font-mono text-[11px] font-bold uppercase tracking-[2.5px] text-[#60EFFF]">Optimización de IA para empresas</span>
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.05] tracking-[-1.5px] text-white">
                         Convierte tu gasto en IA en una <span class="text-highlight">plataforma privada</span> para toda tu empresa.
@@ -1016,9 +1060,6 @@
                             <span>Calcular ahorro</span>
                             <svg class="w-4 h-4 text-[#60EFFF] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
-                    </div>
-                    <div class="mt-4 font-mono text-xs uppercase tracking-wider text-[#64748B]">
-                        Sin compromiso · Para empresas con alto volumen de tokens
                     </div>
                 </div>
 
@@ -1058,22 +1099,22 @@
                                 <path id="hero-trend-path" d="" fill="none" stroke="url(#trendLineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
 
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:85%" data-bar-index="0">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:85%" data-bar-index="0">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#0F172A] border-2 border-[#94A3B8] shadow-[0_0_8px_rgba(148,163,184,0.6)] z-20"></div>
                             </div>
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:78%" data-bar-index="1">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:78%" data-bar-index="1">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#0F172A] border-2 border-[#94A3B8] shadow-[0_0_8px_rgba(148,163,184,0.6)] z-20"></div>
                             </div>
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:92%" data-bar-index="2">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#1E293B] to-[#334155] rounded-t-md relative" style="--bar-height:92%" data-bar-index="2">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#0F172A] border-2 border-[#94A3B8] shadow-[0_0_8px_rgba(148,163,184,0.6)] z-20"></div>
                             </div>
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="3">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="3">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#070A12] border-2 border-[#60EFFF] shadow-[0_0_10px_#60EFFF] z-20"></div>
                             </div>
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="4">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="4">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#070A12] border-2 border-[#60EFFF] shadow-[0_0_10px_#60EFFF] z-20"></div>
                             </div>
-                            <div class="hero-bar chart-bar entering flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="5">
+                            <div class="hero-bar chart-bar flex-1 bg-gradient-to-t from-[#0284C7] to-[#60EFFF] rounded-t-md shadow-[0_0_18px_rgba(96,239,255,0.35)] relative" style="--bar-height:55%" data-bar-index="5">
                                 <div class="hero-bar-dot absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#070A12] border-2 border-[#60EFFF] shadow-[0_0_10px_#60EFFF] z-20"></div>
                             </div>
                         </div>
@@ -1085,7 +1126,7 @@
     </section>
 
     <!-- SECCIÓN 1: PRIVACIDAD (1 VIEWPORT) -->
-    <section id="privacidad" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1E293B] bg-[#070A12]">
+    <section id="privacidad" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1E293B] bg-section-privacidad">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
             <div class="max-w-3xl mb-8">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1175,7 +1216,7 @@
     </section>
 
     <!-- SECCIÓN 2: AHORRO (1 VIEWPORT) -->
-    <section id="ahorro" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1E293B] bg-[#070A12]">
+    <section id="ahorro" class="min-h-screen py-16 sm:py-20 flex flex-col justify-center border-b border-[#1E293B] bg-section-ahorro">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
             <div class="max-w-3xl mb-8">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1291,7 +1332,7 @@
     </section>
 
     <!-- CTA → Banda transversal hacia el booking público (/agendar/) -->
-    <section id="contacto" class="relative py-24 sm:py-28 border-y border-[#1E293B] bg-[#070A12] overflow-hidden">
+    <section id="contacto" class="relative py-24 sm:py-28 border-y border-[#1E293B] bg-section-contacto overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(96,239,255,0.06),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(15,23,42,0.7),transparent_55%)] pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
@@ -1314,7 +1355,7 @@
         </div>
     </section>
 
-    <section id="evidencia" class="py-24 border-b border-[#1E293B] bg-[#070A12]">
+    <section id="evidencia" class="py-24 border-b border-[#1E293B] bg-section-evidencia">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-12">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1335,7 +1376,7 @@
                     <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
                         <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Costo por token</div>
                         <div class="text-4xl font-mono font-bold text-white mb-2">-74%</div>
-                        <p class="text-sm text-[#94A3B8] leading-relaxed">Infraestructura privada donde el costo no escala con el volumen de tokens consumidos.</p>
+                        <p class="text-sm text-[#94A3B8] leading-relaxed">Infraestructura privada donde el costo no escala con el consumo de tokens. Permitiendo mayor capacidad de procesamiento por el mismo presupuesto.</p>
                     </div>
                     <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
                         <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Inversión Predecible</div>
@@ -1463,7 +1504,7 @@
         </div>
     </section>
 
-    <section id="servicios" class="py-24 border-b border-[#1E293B] bg-[#070A12]">
+    <section id="servicios" class="py-24 border-b border-[#1E293B] bg-section-servicios">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-14">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1488,14 +1529,14 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             </div>
                             <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Diagnóstico y Auditoría de Consumos</h4>
-                            <p class="text-sm text-[#94A3B8] leading-relaxed">Mapeo completo de procesos actuales y entrega de viabilidad técnica y financiera.</p>
+                            <p class="text-sm text-[#94A3B8] leading-relaxed">Mapeo completo de procesos actuales de tu empresa y entrega de viabilidad técnica y financiera.</p>
                         </div>
 
                         <div class="glow-card p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
                             <div class="w-11 h-11 rounded-xl bg-[#1E293B] border border-[#1E293B] flex items-center justify-center text-[#60EFFF] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                             </div>
-                            <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Despliegue de LLM Privado Dedicado</h4>
+                            <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Despliegue de LLM Privado y Dedicado</h4>
                             <p class="text-sm text-[#94A3B8] leading-relaxed">Configuramos tu modelo en GPU dedicada para garantizar velocidad, disponibilidad y procesamiento constante.</p>
                         </div>
 
@@ -1528,7 +1569,7 @@
         </div>
     </section>
 
-    <section id="calculadora" class="py-24 relative overflow-hidden bg-[#070A12] border-b border-[#1E293B]">
+    <section id="calculadora" class="py-24 relative overflow-hidden bg-section-calculadora border-b border-[#1E293B]">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#60EFFF] opacity-[0.03] blur-[140px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="max-w-3xl mb-12">
@@ -1633,7 +1674,7 @@
         </div>
     </section>
 
-    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-[#1E293B] bg-[#070A12] relative overflow-hidden">
+    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-[#1E293B] bg-section-faq relative overflow-hidden">
         <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-[#60EFFF] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -2162,16 +2203,28 @@
                 const heroAfter = document.getElementById('hero-after');
                 const heroBars = document.querySelectorAll('.hero-bar');
 
-                if (heroBefore) animateCountUp(heroBefore, parseFloat(heroBefore.dataset.target) || 0, 1500);
-                if (heroAfter) animateCountUp(heroAfter, parseFloat(heroAfter.dataset.target) || 0, 1500);
+                // Asegurar que el navegador pinte el estado inicial (scaleY 0) antes de iniciar la subida
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        // Carga progresiva de números de antes y con Sooniverse (commit 9cde107)
+                        if (heroBefore) animateCountUp(heroBefore, parseFloat(heroBefore.dataset.target) || 0, 1500);
+                        if (heroAfter) animateCountUp(heroAfter, parseFloat(heroAfter.dataset.target) || 0, 1500);
 
-                // Transición fluida a rebote suave continuo tras completarse la animación de entrada
-                setTimeout(() => {
-                    heroBars.forEach(bar => {
-                        bar.classList.remove('entering');
-                        bar.classList.add('bouncing');
+                        // Carga progresiva de barras correspondientes (restaurado de commit 9cde107)
+                        heroBars.forEach((bar, index) => {
+                            setTimeout(() => {
+                                bar.classList.add('loaded');
+                            }, index * 150);
+                        });
+
+                        // Animación continua de ondas suaves sin interacción del cursor
+                        setTimeout(() => {
+                            heroBars.forEach(bar => {
+                                bar.classList.add('wave');
+                            });
+                        }, 2100);
                     });
-                }, 1900);
+                });
 
                 // Cálculo dinámico en tiempo real de línea de tendencia SVG sobre los puntos
                 const trendSvg = document.getElementById('hero-trend-svg');
