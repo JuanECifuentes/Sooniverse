@@ -10,6 +10,7 @@
 <style>
 /* ===========================================================
    PORTADA DE PÁGINA DE FACEBOOK — 1640 x 924 px
+   Sistema de marca Sooniverse v4.0 (Deep Space Tech)
    Escritorio muestra 820x312  ->  banda central de 624 px
    Móvil muestra 640x360       ->  lienzo completo
    Zona muerta: esquina inferior izquierda (foto de perfil)
@@ -20,22 +21,24 @@
 :root{
   --deep-space:#070A12;--cyber-surface:#0F172A;--structural:#1E293B;
   --white:#FFFFFF;--slate:#94A3B8;--neon:#00FF87;--cyan:#60EFFF;--violet:#8A2BE2;
+  --indigo:#6366F1;
   --cosmic:linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%);
+  --btn-gradient:linear-gradient(135deg,#60EFFF 0%,#6366F1 50%,#8A2BE2 100%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#05070D;min-height:100vh;padding:34px 18px 80px;
+body{background:#070A12;min-height:100vh;padding:34px 18px 80px;
   font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#fff;
   display:flex;flex-direction:column;align-items:center;gap:20px}
 .hdr{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:5px;
-  text-transform:uppercase;color:var(--neon);text-align:center}
+  text-transform:uppercase;color:var(--cyan);text-align:center}
 .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;
   font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.6px;
   text-transform:uppercase;color:var(--slate)}
 .controls button{font:inherit;letter-spacing:1.6px;text-transform:uppercase;background:transparent;
   border:1.5px solid var(--cyan);color:#fff;border-radius:12px;padding:9px 16px;cursor:pointer;transition:all .3s ease}
 .controls button:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(96,239,255,.35)}
-.controls button[aria-pressed="true"]{background:var(--cosmic);color:var(--deep-space);border-color:transparent}
-.controls button:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+.controls button[aria-pressed="true"]{background:var(--btn-gradient);color:#FFFFFF;border-color:transparent;box-shadow:0 0 20px rgba(96,239,255,.45)}
+.controls button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .viewport{width:100%;max-width:1640px;overflow:auto}
 .scaler{transform-origin:top left}
 
@@ -62,15 +65,15 @@ body{background:#05070D;min-height:100vh;padding:34px 18px 80px;
 .wordmark{font-size:50px;font-weight:800;letter-spacing:-1.8px;line-height:1}
 .wordmark .a{color:#fff}
 .wordmark .b{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
-.tagline{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:6.5px;
-  text-transform:uppercase;color:var(--neon);padding-left:2px}
+.tagline{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:#A0AEC6;padding-left:2px}
 
 /* contenido, alineado a la derecha y dentro de la banda central */
 .band{position:absolute;z-index:3;left:0;right:0;top:150px;height:624px;
   display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
   padding:0 78px 0 460px;text-align:right}
 .eyebrow{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;letter-spacing:7px;
-  text-transform:uppercase;color:var(--neon);text-shadow:0 0 16px rgba(0,255,135,.45)}
+  text-transform:uppercase;color:var(--cyan);text-shadow:0 0 16px rgba(96,239,255,.45)}
 h1{font-size:84px;font-weight:800;letter-spacing:-3.2px;line-height:1.05}
 h1 .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{margin-top:18px;font-size:25px;line-height:1.4;color:#CBD5E1;font-weight:500;max-width:960px}
@@ -85,8 +88,9 @@ h1 .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:t
 .metric .l{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;letter-spacing:2.6px;
   text-transform:uppercase;color:#E2E8F0;text-align:left;line-height:1.35}
 .cta{margin-top:46px;display:inline-flex;align-items:center;gap:18px;padding:23px 42px;border-radius:14px;
-  background:var(--cosmic);color:var(--deep-space);font-weight:700;font-size:29px;letter-spacing:-.2px;
-  box-shadow:0 0 44px rgba(0,255,135,.3)}
+  background:var(--btn-gradient);color:#FFFFFF !important;font-weight:700;font-size:29px;letter-spacing:-.2px;
+  box-shadow:0 4px 20px rgba(96,239,255,.35), 0 0 44px rgba(138,43,226,.35);
+  text-shadow:0 2px 4px rgba(7,10,18,.5)}
 .cta .mono{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:25px;letter-spacing:1.2px}
 
 /* guías */
@@ -187,7 +191,7 @@ h1 .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:t
         </div>
       </div>
       <div class="cta">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#070A12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
         <span>Agenda tu reunión</span>
         <span class="mono">sooniverse.co/agendar</span>
       </div>

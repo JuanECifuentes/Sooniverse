@@ -11,7 +11,9 @@
 :root{
   --deep-space:#070A12;--cyber-surface:#0F172A;--structural:#1E293B;
   --white:#FFFFFF;--slate:#94A3B8;--neon:#00FF87;--cyan:#60EFFF;--violet:#8A2BE2;
+  --indigo:#6366F1;
   --cosmic:linear-gradient(135deg,#00FF87 0%,#60EFFF 50%,#8A2BE2 100%);
+  --btn-gradient:linear-gradient(135deg,#60EFFF 0%,#6366F1 50%,#8A2BE2 100%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(900px 600px at 12% -8%,rgba(0,255,135,.06),transparent 60%),
@@ -20,7 +22,7 @@ body{background:radial-gradient(900px 600px at 12% -8%,rgba(0,255,135,.06),trans
   padding:clamp(20px,4vw,48px) clamp(14px,3vw,36px) 90px}
 .wrap{max-width:1240px;margin:0 auto}
 .kicker{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:6.5px;
-  text-transform:uppercase;color:var(--neon);margin-bottom:14px}
+  text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
 h1.page{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1.2px;line-height:1.1}
 h1.page .g{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lead{margin-top:14px;max-width:72ch;font-size:15.5px;line-height:1.65;color:var(--slate)}
@@ -33,13 +35,13 @@ code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
   text-transform:uppercase;background:transparent;border:1.5px solid var(--cyan);color:#fff;
   border-radius:12px;padding:9px 15px;cursor:pointer;transition:all .3s ease}
 .toolbar button:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(96,239,255,.35)}
-.toolbar button[aria-pressed="true"]{background:var(--cosmic);color:var(--deep-space);border-color:transparent}
-.toolbar button:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+.toolbar button[aria-pressed="true"]{background:var(--btn-gradient);color:#FFFFFF;border-color:transparent;box-shadow:0 0 20px rgba(96,239,255,.45)}
+.toolbar button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 
 .group{margin-top:36px}
 .group-hd{display:flex;align-items:center;gap:13px;margin-bottom:14px}
-.group-hd .num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--deep-space);
-  background:var(--cosmic);border-radius:8px;padding:5px 9px;letter-spacing:1px}
+.group-hd .num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#FFFFFF;
+  background:var(--btn-gradient);border-radius:8px;padding:5px 9px;letter-spacing:1px}
 .group-hd h3{font-size:19px;font-weight:700;letter-spacing:-.3px}
 .group-hd .cnt{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--slate);
   text-transform:uppercase}
@@ -81,8 +83,9 @@ code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
 .st-body{position:absolute;left:0;right:0;top:250px;bottom:250px;z-index:3;
   display:flex;flex-direction:column;justify-content:center;padding:0 78px}
 .st-badge{align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;
-  letter-spacing:6px;text-transform:uppercase;color:var(--neon);padding:14px 24px;border-radius:10px;
-  border:1px solid rgba(0,255,135,.4);background:rgba(0,255,135,.07)}
+  letter-spacing:6px;text-transform:uppercase;color:var(--cyan);padding:14px 24px;border-radius:10px;
+  border:1px solid rgba(96,239,255,.4);background:rgba(96,239,255,.08);box-shadow:0 0 16px rgba(96,239,255,.12)}
+.st-badge.save{color:var(--neon);border-color:rgba(0,255,135,.4);background:rgba(0,255,135,.08);box-shadow:0 0 16px rgba(0,255,135,.12)}
 .st-q{margin-top:50px;font-size:86px;font-weight:800;letter-spacing:-3.2px;line-height:1.06}
 .st-q .g{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
 .st-rule{margin-top:38px;width:200px;height:5px;border-radius:99px;background:var(--cosmic)}
@@ -106,8 +109,10 @@ code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
 .st-chip .l{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;letter-spacing:2.6px;
   text-transform:uppercase;color:#E2E8F0;line-height:1.3;text-align:left}
 .st-cta{margin-top:56px;align-self:flex-start;display:inline-flex;align-items:center;gap:22px;
-  padding:32px 52px;border-radius:16px;background:var(--cosmic);color:var(--deep-space);
-  font-size:42px;font-weight:700;letter-spacing:-.8px;box-shadow:0 0 60px rgba(0,255,135,.32)}
+  padding:32px 52px;border-radius:16px;background:var(--btn-gradient);color:#FFFFFF !important;
+  font-size:42px;font-weight:700;letter-spacing:-.8px;
+  box-shadow:0 4px 24px rgba(96,239,255,.35), 0 0 55px rgba(138,43,226,.4);
+  text-shadow:0 2px 4px rgba(7,10,18,.5)}
 
 .st-foot{position:absolute;left:78px;right:78px;bottom:146px;z-index:3;display:flex;
   align-items:center;justify-content:space-between;gap:20px}
@@ -120,7 +125,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
 .story.cover .st-body{justify-content:center;align-items:center;padding:0}
 .story.cover .ico{width:520px;height:520px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;border:5px solid rgba(96,239,255,.42);background:rgba(15,23,42,.72);
-  box-shadow:0 0 90px rgba(96,239,255,.3) inset,0 0 80px rgba(0,255,135,.16)}
+  box-shadow:0 0 90px rgba(96,239,255,.35) inset,0 0 80px rgba(138,43,226,.25)}
 
 /* zonas seguras */
 .st-safe{position:absolute;inset:0;z-index:6;display:none}
@@ -136,9 +141,9 @@ code{font-family:'JetBrains Mono',monospace;font-size:.92em;color:var(--cyan)}
   border-radius:50%;border:3px dashed rgba(255,214,0,.85)}
 
 .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-top:16px}
-.note{background:rgba(15,23,42,.8);border:1px solid var(--structural);border-left:2px solid var(--neon);
+.note{background:rgba(15,23,42,.8);border:1px solid var(--structural);border-left:2px solid var(--cyan);
   border-radius:0 12px 12px 0;padding:16px 18px}
-.note:nth-child(even){border-left-color:var(--cyan)}
+.note:nth-child(even){border-left-color:var(--neon)}
 .note b{display:block;font-size:14.5px;font-weight:700;margin-bottom:6px}
 .note p{font-size:13.5px;line-height:1.6;color:#CBD5E1}
 </style>
@@ -301,14 +306,15 @@ const TOP = `<div class="st-top">${LOGO(74)}
 const CHROME = `<div class="st-grid"></div>${ORB}${TOP}`;
 
 function storyHTML(g, s, i, total, id){
-  let body = `<div class="st-badge">${g.t}</div><div class="st-q">${s.q}</div><div class="st-rule"></div>`;
+  const badgeCls = g.t === 'Beneficios' ? 'st-badge save' : 'st-badge';
+  let body = `<div class="${badgeCls}">${g.t}</div><div class="st-q">${s.q}</div><div class="st-rule"></div>`;
   if (s.big)   body += `<div class="st-big"><div class="n">${s.big}</div><div class="u">${s.unit}</div></div>`;
   if (s.a)     body += `<div class="st-a">${s.a}</div>`;
   if (s.chips) body += `<div class="st-chips">${s.chips.map(c=>
                   `<div class="st-chip ${c.c}"><div class="n">${c.n}</div><div class="l">${c.l}</div></div>`).join('')}</div>`;
   if (s.note)  body += `<div class="st-note">${s.note}</div>`;
   if (s.cta)   body += `<div class="st-cta">
-      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#070A12" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
       ${s.cta}</div>`;
   const foot = `<div class="st-foot"><div class="url">${URL}</div>
     <div class="nx">${i<total-1?'Desliza →':'Escríbenos'}</div></div>`;
