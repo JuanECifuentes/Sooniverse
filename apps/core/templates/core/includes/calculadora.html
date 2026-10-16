@@ -647,10 +647,73 @@ Uso: {% include "core/includes/calculadora.html" %}
         });
     }
 
+    // Animación suave de descenso a la calculadora cuando se accede con #calculadora
+    let hasAnimatedToCalc = false;
+    function checkAndSmoothScrollToCalculadora() {
+        if (hasAnimatedToCalc) return;
+        if (window.location.hash && window.location.hash.toLowerCase() === '#calculadora') {
+            hasAnimatedToCalc = true;
+            const target = document.getElementById('calculadora');
+            if (!target) return;
+
+            const header = document.getElementById('main-header');
+            const headerHeight = header ? header.offsetHeight : 80;
+            const targetY = Math.max(0, target.getBoundingClientRect().top + window.scrollY - headerHeight - 16);
+            const startY = window.scrollY;
+            const distance = targetY - startY;
+            const duration = 950; // Mismo tiempo que el click del navbar
+            let startTime = null;
+
+            function easeInOutCubic(t, b, c, d) {
+                t /= d / 2;
+                if (t < 1) return c / 2 * t * t * t + b;
+                t -= 2;
+                return c / 2 * (t * t * t + 2) + b;
+            }
+
+            function step(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const elapsed = currentTime - startTime;
+                const progress = easeInOutCubic(elapsed, startY, distance, duration);
+                window.scrollTo(0, progress);
+                if (elapsed < duration) {
+                    requestAnimationFrame(step);
+                } else {
+                    window.scrollTo(0, targetY);
+                    // Una vez completada la bajada, limpiamos el hash de la URL
+                    // para que cualquier recarga posterior (F5 o Shift+R) suba a la hero section
+                    try {
+                        if (window.history && window.history.replaceState) {
+                            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                        }
+                    } catch (err) {}
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initCalculator);
+        document.addEventListener('DOMContentLoaded', () => {
+            initCalculator();
+            // Breve retardo para que primero cargue y se aprecie la landing/hero antes de descender
+            setTimeout(checkAndSmoothScrollToCalculadora, 350);
+        });
     } else {
         initCalculator();
+        setTimeout(checkAndSmoothScrollToCalculadora, 350);
     }
+
+    window.addEventListener('load', () => {
+        setTimeout(checkAndSmoothScrollToCalculadora, 350);
+    });
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash && window.location.hash.toLowerCase() === '#calculadora') {
+            hasAnimatedToCalc = false;
+            checkAndSmoothScrollToCalculadora();
+        }
+    });
 })();
 </script>

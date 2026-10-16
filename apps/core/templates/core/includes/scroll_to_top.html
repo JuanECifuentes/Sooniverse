@@ -5,6 +5,9 @@ if ('scrollRestoration' in history) {
 }
 
 function scrollToPageTop() {
+  if (window.location.hash && window.location.hash.toLowerCase() === '#calculadora') {
+    return;
+  }
   const target = document.getElementById('page-top') || document.documentElement;
   const header = document.querySelector('header');
   const headerHeight = header ? header.offsetHeight : 0;
