@@ -1052,8 +1052,22 @@
             html { scroll-behavior: auto; }
         }
     </style>
+    <script>
+        // Si se carga la página con #calculadora, forzar inicio en hero para permitir la animación suave de bajada
+        if (window.location.hash && window.location.hash.toLowerCase() === '#calculadora') {
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
 </head>
 <body class="antialiased">
+    <script>
+        if (window.location.hash && window.location.hash.toLowerCase() === '#calculadora') {
+            window.scrollTo(0, 0);
+        }
+    </script>
 
     <div class="noise-overlay"></div>
     <div class="cosmic-bg" aria-hidden="true"></div>
@@ -1065,11 +1079,19 @@
                 <img src="{% static 'logos_v1/animado.svg' %}" alt="Sooniverse" class="logo-img w-auto">
             </a>
 
-            <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-[#94A3B8]">
+            <div class="hidden md:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 text-sm font-medium text-[#94A3B8]">
                 <a href="#evidencia" class="nav-link">Evidencia</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
                 <a href="#calculadora" class="nav-link">Calculadora</a>
                 <a href="#glosario-faq" class="nav-link">FAQ & Glosario</a>
+                {% with target_demo_url=DEMO_URL|default:demo_url %}
+                {% if target_demo_url %}
+                <a href="{{ target_demo_url }}" target="_blank" rel="noopener noreferrer" class="nav-link inline-flex items-center gap-1.5" title="Ver demostración interactiva">
+                    <span>Ver Demo</span>
+                    <svg class="w-3.5 h-3.5 text-current transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+                {% endif %}
+                {% endwith %}
             </div>
 
             <div class="flex items-center justify-end gap-3 md:gap-4 md:justify-self-end">
@@ -1090,6 +1112,14 @@
                 <a href="#servicios" class="hover:text-white transition">Servicios</a>
                 <a href="#calculadora" class="hover:text-white transition">Calculadora</a>
                 <a href="#glosario-faq" class="hover:text-white transition">FAQ & Glosario</a>
+                {% with target_demo_url=DEMO_URL|default:demo_url %}
+                {% if target_demo_url %}
+                <a href="{{ target_demo_url }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition inline-flex items-center gap-1.5">
+                    <span>Ver Demo</span>
+                    <svg class="w-3.5 h-3.5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+                {% endif %}
+                {% endwith %}
                 <a href="{% url 'core:internal_leads' %}" class="btn-secondary px-4 py-2.5 rounded-xl text-center text-xs font-bold text-white uppercase tracking-wide">Login</a>
                 <a href="{% url 'core:booking_publico' %}" class="btn-primary mt-1 px-5 py-3 rounded-xl text-center text-sm font-bold uppercase tracking-wide inline-flex items-center justify-center gap-2 transition-all group">
                     <span>Reservar una reunión</span>

@@ -57,7 +57,10 @@ def landing(request):
     return render(
         request,
         "core/landing.html",
-        {"trm_contractual": getattr(settings, "TRM_CONTRACTUAL", 4100.0)},
+        {
+            "trm_contractual": getattr(settings, "TRM_CONTRACTUAL", 4100.0),
+            "demo_url": getattr(settings, "DEMO_URL", "").strip(),
+        },
     )
 
 

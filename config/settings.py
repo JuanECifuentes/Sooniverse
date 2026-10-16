@@ -24,6 +24,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     LOCAL=(bool, False),
     TRM_CONTRACTUAL=(float, 4100.0),
+    DEMO_URL=(str, ""),
 )
 
 env_file = BASE_DIR / ".env"
@@ -221,6 +222,7 @@ if not DEBUG:
 # Commercial settings
 # ──────────────────────────────────────────────
 TRM_CONTRACTUAL = env("TRM_CONTRACTUAL")
+DEMO_URL = env("DEMO_URL", default="")
 
 # ──────────────────────────────────────────────
 # Notification & Rate Limiting Settings
