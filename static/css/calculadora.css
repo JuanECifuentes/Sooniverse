@@ -1,0 +1,235 @@
+/* ==========================================================================
+   Calculadora de Costos Sooniverse - Component Styles (Multi-Automatización)
+   ========================================================================== */
+
+/* Fondo ambiental original Sooniverse (exacto del commit anterior sin luces cyan externas) */
+.bg-section-calculadora {
+    background:
+        radial-gradient(ellipse 65% 50% at 50% 0%, rgba(96, 239, 255, 0.07), transparent 70%),
+        radial-gradient(ellipse 50% 50% at 15% 75%, rgba(0, 255, 135, 0.04), transparent 65%),
+        radial-gradient(ellipse 45% 45% at 88% 85%, rgba(138, 43, 226, 0.08), transparent 70%),
+        #070A12;
+}
+
+/* Card Calculadora Con Sooniverse (Borde y Hover Cyan) */
+.card-calculator-sooniverse {
+    --card-spotlight: rgba(96, 239, 255, 0.18);
+    --card-glow-shadow: rgba(96, 239, 255, 0.45);
+    --card-border-hover: #60EFFF;
+    border: 2px solid #60EFFF !important;
+    box-shadow: 0 0 25px rgba(96, 239, 255, 0.18);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-calculator-sooniverse:hover {
+    border-color: #60EFFF !important;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(96, 239, 255, 0.35) !important;
+}
+
+/* Card Calculadora Ahorro Mensual (Borde y Hover Verde) */
+.card-savings {
+    --card-spotlight: rgba(0, 255, 135, 0.22);
+    --card-glow-shadow: rgba(0, 255, 135, 0.50);
+    --card-border-hover: #00FF87;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-savings:hover {
+    border-color: #00FF87 !important;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 255, 135, 0.40) !important;
+}
+
+/* Card de Automatización Individual Compacta */
+.automation-card {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid #1E293B;
+    border-radius: 0.875rem;
+    padding: 0.875rem 1rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+.automation-card:hover {
+    border-color: rgba(96, 239, 255, 0.35);
+    background: rgba(15, 23, 42, 0.85);
+}
+
+/* Badge de tokens en la automatización: sin borde, fondo oscuro limpio */
+.automation-badge {
+    background: #070A12 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #60EFFF !important;
+    font-weight: 600;
+}
+
+/* Scrollbar personalizada sutil para el contenedor de automatizaciones */
+#automations-container,
+.automations-scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 239, 255, 0.25) rgba(15, 23, 42, 0.4);
+}
+#automations-container::-webkit-scrollbar,
+.automations-scroll-container::-webkit-scrollbar {
+    width: 5px;
+}
+#automations-container::-webkit-scrollbar-track,
+.automations-scroll-container::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 4px;
+}
+#automations-container::-webkit-scrollbar-thumb,
+.automations-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(96, 239, 255, 0.25);
+    border-radius: 4px;
+}
+#automations-container::-webkit-scrollbar-thumb:hover,
+.automations-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 239, 255, 0.5);
+}
+
+/* Altura contenida para encajar en Viewport (Desktop y Móvil) */
+.automations-scroll-container {
+    max-height: min(44vh, 370px);
+    overflow-y: auto;
+}
+
+@media (max-width: 1023px) {
+    .automations-scroll-container {
+        max-height: 350px;
+    }
+}
+
+/* Chip de preset rápido */
+.preset-chip {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(30, 41, 59, 0.8);
+    background: rgba(7, 10, 18, 0.6);
+}
+.preset-chip:hover {
+    border-color: #60EFFF;
+    background: rgba(96, 239, 255, 0.1);
+    color: #60EFFF;
+    transform: translateY(-1px);
+}
+
+/* Botón Añadir Automatización Compacto */
+.btn-add-automation {
+    background: linear-gradient(135deg, rgba(96, 239, 255, 0.12), rgba(0, 255, 135, 0.08));
+    border: 1px dashed rgba(96, 239, 255, 0.4);
+    color: #60EFFF;
+    transition: all 0.2s ease;
+}
+.btn-add-automation:hover {
+    background: linear-gradient(135deg, rgba(96, 239, 255, 0.22), rgba(0, 255, 135, 0.15));
+    border-color: #60EFFF;
+    box-shadow: 0 0 16px rgba(96, 239, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Sliders e Inputs de la Calculadora */
+#calculadora input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    touch-action: pan-y !important;
+}
+
+#calculadora input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #60EFFF;
+    border: 2px solid #070A12;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 0 12px rgba(96, 239, 255, 0.75);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#calculadora input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 18px rgba(96, 239, 255, 1);
+}
+
+#calculadora input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--sv-border, #1E293B);
+    border-radius: 2px;
+}
+
+#calculadora input[type=range]:focus::-webkit-slider-runnable-track {
+    background: rgba(96, 239, 255, 0.4);
+}
+
+/* Soporte Firefox para Sliders */
+#calculadora input[type=range]::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #60EFFF;
+    border: 2px solid #070A12;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(96, 239, 255, 0.75);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#calculadora input[type=range]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 18px rgba(96, 239, 255, 1);
+}
+
+#calculadora input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--sv-border, #1E293B);
+    border-radius: 2px;
+}
+
+#calculadora input[type=range]:focus::-moz-range-track {
+    background: rgba(96, 239, 255, 0.4);
+}
+
+/* Quitar botones de incremento/decremento en inputs numéricos */
+#calculadora input[type=number]::-webkit-inner-spin-button,
+#calculadora input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#calculadora input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Blindaje de fondos: garantizar que NINGÚN input se torne blanco por estilos del navegador */
+#calculadora input,
+#calculadora input[type="text"],
+#calculadora input[type="number"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+
+#calculadora input[type="text"]:focus,
+#calculadora input[type="number"]:focus {
+    background-color: transparent !important;
+    background: transparent !important;
+    outline: none !important;
+}
+
+/* Animación de pulso para sobrecarga */
+@keyframes capacityPulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.35); }
+    50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
+}
+.capacity-warning {
+    animation: capacityPulse 2s infinite ease-in-out;
+}
