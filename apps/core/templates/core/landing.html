@@ -692,19 +692,155 @@
             border-radius: var(--sv-radius-card);
         }
 
-        .carousel-dots .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 9999px;
-            background-color: var(--sv-border);
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .carousel-dots .dot.active {
-            background-color: var(--sv-neon-green);
-            transform: scale(1.25);
-        }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── Ticker de beneficios (cierre del Hero) ─────────────── */
+        .hero-content { padding-bottom: 3rem; }
+        @media (min-width: 640px) { .hero-content { padding-bottom: 4rem; } }
+        .hero-ticker {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            border-top: 1px solid var(--sv-border);
+            border-bottom: 1px solid var(--sv-border);
+            background: rgba(7, 10, 18, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--sv-text-tertiary);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+        }
+        .hero-ticker__track {
+            display: flex;
+            width: max-content;
+            animation: svTicker 64s linear infinite;
+        }
+        .hero-ticker:hover .hero-ticker__track { animation-play-state: paused; }
+        .hero-ticker__group {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            margin: 0;
+            padding: 14px 48px 14px 0;
+            list-style: none;
+        }
+        .hero-ticker__group li {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hero-ticker__group li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 9999px;
+            background-color: var(--sv-electric-cyan);
+            box-shadow: 0 0 8px rgba(96, 239, 255, 0.8);
+            margin-right: 6px;
+        }
+        .hero-ticker b { color: var(--sv-text-heading); font-weight: 700; }
+        .hero-ticker b.is-cyan { color: var(--sv-electric-cyan); }
+        .hero-ticker b.is-green { color: var(--sv-neon-green); }
+        @keyframes svTicker { to { transform: translateX(-50%); } }
+        @media (max-width: 767px) {
+            #hero { padding-bottom: 0 !important; } /* el ticker cierra el hero */
+            .hero-ticker { font-size: 10px; letter-spacing: 1.5px; }
+            .hero-ticker__track { animation-duration: 48s; }
+            .hero-ticker__group { gap: 36px; padding: 12px 36px 12px 0; }
+        }
+
+        /* ── Carrusel de noticias del sector (Evidencia) ────────── */
+        .news-track {
+            display: flex;
+            gap: 16px;
+            margin: 0;
+            padding: 8px 0 4px;
+            list-style: none;
+            overflow-x: auto;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+        }
+        .news-card {
+            flex: 0 0 auto;
+            width: min(82vw, 400px);
+        }
+        .news-card figure { margin: 0; }
+        .news-frame {
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid var(--sv-border);
+            background-color: var(--sv-bg-surface);
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .news-card:hover .news-frame {
+            border-color: rgba(96, 239, 255, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 0 28px rgba(96, 239, 255, 0.18);
+        }
+        .news-frame__bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--sv-border);
+            background-color: #070A12;
+        }
+        .news-frame__bar i {
+            width: 7px;
+            height: 7px;
+            border-radius: 9999px;
+            background-color: var(--sv-border-muted);
+        }
+        .news-frame__bar span {
+            margin-left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--sv-text-tertiary);
+        }
+        .news-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            object-position: top;
+        }
+        .news-card figcaption { padding: 16px 4px 0; }
+        .news-source {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--sv-electric-cyan);
+        }
+        .news-card h3 {
+            margin-top: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: -0.5px;
+            color: var(--sv-text-heading);
+        }
+        .news-disclaimer {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 9px;
+            color: #1E293B;
+        }
+        @media (min-width: 768px) {
+            .news-track { gap: 24px; }
+            .news-card h3 { font-size: 18px; }
+        }
 
 
         /* ── Barras de Gráfico Hero y Animación de Carga + Ondas ─────── */
@@ -1050,6 +1186,7 @@
         @media (prefers-reduced-motion: reduce) {
             .cosmic-bg::before, .cosmic-bg::after { animation: none !important; }
             html { scroll-behavior: auto; }
+            .news-card:hover .news-frame { transform: none; }
         }
     </style>
     <script>
@@ -1129,7 +1266,7 @@
         </div>
     </header>
 
-    <section id="hero" class="orbits min-h-screen flex items-center pt-32 pb-16 md:pt-24">
+    <section id="hero" class="orbits min-h-screen flex flex-col pt-32 md:pt-24">
         <svg class="orbits__layer" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <defs>
                 <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
@@ -1157,8 +1294,8 @@
             </g>
         </svg>
 
-        <div class="orbits__content max-w-7xl mx-auto px-6 lg:px-8 w-full">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="orbits__content hero-content flex-1 flex items-center max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 items-center w-full">
                 <div>
                     <div class="inline-flex items-center gap-2 glass-panel px-3 py-1.5 mb-6">
                         <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
@@ -1240,6 +1377,28 @@
                         <div class="mt-4 flex justify-between font-mono text-[10px] uppercase tracking-widest text-[#64748B]"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Ticker de beneficios: cierre del Hero -->
+        <div class="hero-ticker" role="region" aria-label="Beneficios clave de Sooniverse">
+            <div class="hero-ticker__track">
+                <ul class="hero-ticker__group">
+                    <li>Privacidad absoluta · <b class="is-cyan">100%</b></li>
+                    <li>Costo por token · <b class="is-green">−74%</b></li>
+                    <li>Inversión predecible · <b>Fijo</b></li>
+                    <li>Capacidad reutilizable · <b class="is-green">5x ROI</b></li>
+                    <li>Nube · <b>AWS</b> / <b>GCP</b> / <b>Azure</b></li>
+                    <li>API · <b>Compatible con OpenAI</b></li>
+                </ul>
+                <ul class="hero-ticker__group" aria-hidden="true">
+                    <li>Privacidad absoluta · <b class="is-cyan">100%</b></li>
+                    <li>Costo por token · <b class="is-green">−74%</b></li>
+                    <li>Inversión predecible · <b>Fijo</b></li>
+                    <li>Capacidad reutilizable · <b class="is-green">5x ROI</b></li>
+                    <li>Nube · <b>AWS</b> / <b>GCP</b> / <b>Azure</b></li>
+                    <li>API · <b>Compatible con OpenAI</b></li>
+                </ul>
             </div>
         </div>
     </section>
@@ -1481,34 +1640,74 @@
                     <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
                     <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#60EFFF]">Evidencia</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Resultados medibles en producción.</h2>
-                <p class="mt-4 text-[#94A3B8] text-base sm:text-lg">Nuestros clientes reducen costos, blindan sus datos y escalan sin fricción.</p>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Las grandes empresas ya están dando el paso.</h2>
+                <p class="mt-4 text-[#94A3B8] text-base sm:text-lg">Así reducen costos y recuperan el control de su IA.</p>
             </div>
 
             <div class="relative">
-                <div id="evidence-carousel" class="flex overflow-x-auto scrollbar-none gap-4 md:grid md:grid-cols-4 md:overflow-visible">
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Privacidad Absoluta</div>
-                        <div class="text-4xl font-mono font-bold text-white mb-2">100%</div>
-                        <p class="text-sm text-[#94A3B8] leading-relaxed">Blindaje total y privacidad garantizada en todos los datos de tu organización.</p>
-                    </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Costo por token</div>
-                        <div class="text-4xl font-mono font-bold text-white mb-2">-74%</div>
-                        <p class="text-sm text-[#94A3B8] leading-relaxed">Infraestructura privada donde el costo no escala con el consumo de tokens. Permitiendo mayor capacidad de procesamiento por el mismo presupuesto.</p>
-                    </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Inversión Predecible</div>
-                        <div class="text-4xl font-mono font-bold text-[#60EFFF] mb-2">Fijo</div>
-                        <p class="text-sm text-[#94A3B8] leading-relaxed">Costo mensual fijo y predecible sin importar el volumen de uso de tu equipo.</p>
-                    </div>
-                    <div class="glow-card snap-center shrink-0 w-[85vw] md:w-auto p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
-                        <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold mb-4">Capacidad Reutilizable</div>
-                        <div class="text-4xl font-mono font-bold text-white mb-2">5x ROI</div>
-                        <p class="text-sm text-[#94A3B8] leading-relaxed">Absorbe múltiples automatizaciones en la misma infraestructura sin costos adicionales.</p>
-                    </div>
-                </div>
-                <div id="evidence-dots" class="carousel-dots hidden justify-center gap-2 mt-6"></div>
+                <ul id="news-carousel" class="news-track scrollbar-none" aria-label="Noticias del sector">
+                    <li class="news-card">
+                        <figure>
+                            <div class="news-frame">
+                                <div class="news-frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>aidatainsider.com</span></div>
+                                <img src="{% static 'noticias/shopify-qwen.webp' %}" alt="Portada del artículo de AI &amp; Data Insider: Shopify Uses Qwen 3 to Cut Inference Cost by 75x" width="1200" height="750" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>
+                                <span class="news-source">AI &amp; Data Insider · Abr 2026</span>
+                                <h3>Shopify usa Qwen 3 para reducir 75 veces su costo de inferencia</h3>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <li class="news-card">
+                        <figure>
+                            <div class="news-frame">
+                                <div class="news-frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>forbes.com</span></div>
+                                <img src="{% static 'noticias/airbnb-forbes.webp' %}" alt="Portada del artículo de Forbes sobre Brian Chesky, CEO de Airbnb, y la IA china" width="1200" height="750" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>
+                                <span class="news-source">Forbes · May 2026</span>
+                                <h3>El CEO de Airbnb calificó la IA china de “rápida y barata”; ahora el Congreso pide respuestas</h3>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <li class="news-card">
+                        <figure>
+                            <div class="news-frame">
+                                <div class="news-frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>wsj.com</span></div>
+                                <img src="{% static 'noticias/att-wsj.webp' %}" alt="Portada del artículo de The Wall Street Journal: Why AT&amp;T Is Betting Big on Open-Weight AI" width="1200" height="750" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>
+                                <span class="news-source">The Wall Street Journal · Ago 2026</span>
+                                <h3>Por qué AT&amp;T apuesta fuerte por la IA de pesos abiertos</h3>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <li class="news-card">
+                        <figure>
+                            <div class="news-frame">
+                                <div class="news-frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>cio.com</span></div>
+                                <img src="{% static 'noticias/cio-control.webp' %}" alt="Portada del artículo de CIO: With AI, control matters more than capability" width="1200" height="750" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>
+                                <span class="news-source">CIO · Jul 2026</span>
+                                <h3>Con la IA, el control importa más que la capacidad</h3>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <li class="news-card">
+                        <figure>
+                            <div class="news-frame">
+                                <div class="news-frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>axios.com</span></div>
+                                <img src="{% static 'noticias/microsoft-axios.webp' %}" alt="Portada del artículo de Axios: Microsoft weighs DeepSeek for Copilot Cowork" width="1200" height="750" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>
+                                <span class="news-source">Axios · Jun 2026</span>
+                                <h3>Microsoft evalúa DeepSeek para Copilot Cowork</h3>
+                            </figcaption>
+                        </figure>
+                    </li>
+                </ul>
+                <p class="news-disclaimer">Marcas y contenidos propiedad de sus respectivos titulares. Sooniverse no está afiliada a estos medios.</p>
             </div>
 
             <!-- Accordion Cards (Caso de estudio & Privacidad) -->
@@ -1663,8 +1862,8 @@
                             <div class="w-11 h-11 rounded-xl bg-[#1E293B] border border-[#1E293B] flex items-center justify-center text-[#60EFFF] mb-5">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
-                            <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Asistente Interno y RAG Empresarial</h4>
-                            <p class="text-sm text-[#94A3B8] leading-relaxed">Sistemas de RAG con datos privados y asistentes corporativos que operan con blindaje absoluto de información.</p>
+                            <h4 class="text-base sm:text-lg font-semibold text-white mb-2">Red Privada y Segura</h4>
+                            <p class="text-sm text-[#94A3B8] leading-relaxed">Tu información se queda dentro de tu empresa. Nadie externo puede verla, guardarla ni usarla.</p>
                         </div>
 
                         <div class="glow-card p-6 rounded-2xl bg-[#0F172A] border border-[#1E293B] hover:border-[#60EFFF]/50 transition-colors">
@@ -1951,69 +2150,52 @@
                 });
             });
 
-            // Continuous infinite carousel for evidence on mobile (< 768px)
-            function initContinuousEvidenceCarousel() {
-                const carousel = document.getElementById('evidence-carousel');
-                const dotsContainer = document.getElementById('evidence-dots');
+            // Continuous infinite carousel (news in Evidencia section)
+            function initContinuousCarousel(trackId) {
+                const carousel = document.getElementById(trackId);
                 if (!carousel) return;
 
-                if (dotsContainer) {
-                    dotsContainer.classList.add('hidden');
-                }
-
-                // Preserve reference to the original items
                 const originalItems = Array.from(carousel.children);
                 if (originalItems.length === 0) return;
 
-                let clones = [];
+                originalItems.forEach(item => {
+                    const clone = item.cloneNode(true);
+                    clone.setAttribute('data-clone', 'true');
+                    clone.setAttribute('aria-hidden', 'true');
+                    carousel.appendChild(clone);
+                });
+
                 let isPaused = false;
+                let isVisible = false;
                 let animId = null;
                 let scrollPos = carousel.scrollLeft;
                 let resumeTimeout = null;
 
                 function getCycleWidth() {
+                    const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
                     let total = 0;
                     for (let i = 0; i < originalItems.length; i++) {
-                        total += originalItems[i].offsetWidth + 16; // 16px is gap-4
+                        total += originalItems[i].offsetWidth + gap;
                     }
                     return total;
                 }
 
-                function setupClones() {
-                    cleanupClones();
-                    if (window.innerWidth < 768) {
-                        originalItems.forEach(item => {
-                            const clone = item.cloneNode(true);
-                            clone.setAttribute('data-clone', 'true');
-                            carousel.appendChild(clone);
-                            clones.push(clone);
-                        });
-                    }
-                }
-
-                function cleanupClones() {
-                    clones.forEach(c => c.remove());
-                    clones = [];
-                }
-
                 function tick() {
-                    if (window.innerWidth < 768) {
-                        if (!isPaused) {
-                            const cycleWidth = getCycleWidth();
-                            scrollPos += 0.65; // ~39px/s continuous gentle drift
-                            if (cycleWidth > 0 && scrollPos >= cycleWidth) {
-                                scrollPos -= cycleWidth;
-                            }
-                            carousel.scrollLeft = scrollPos;
-                        } else {
-                            scrollPos = carousel.scrollLeft;
+                    if (!isPaused) {
+                        const cycleWidth = getCycleWidth();
+                        scrollPos += 0.35; // ~21px/s continuous gentle drift
+                        if (cycleWidth > 0 && scrollPos >= cycleWidth) {
+                            scrollPos -= cycleWidth;
                         }
-                        animId = requestAnimationFrame(tick);
+                        carousel.scrollLeft = scrollPos;
+                    } else {
+                        scrollPos = carousel.scrollLeft;
                     }
+                    animId = requestAnimationFrame(tick);
                 }
 
                 function start() {
-                    if (!animId && window.innerWidth < 768) {
+                    if (!animId && isVisible) {
                         scrollPos = carousel.scrollLeft;
                         animId = requestAnimationFrame(tick);
                     }
@@ -2035,35 +2217,27 @@
                     }, 1200);
                 }
 
-                // Touch & mouse events for manual interaction without fighting continuous drift
+                // Touch, mouse & focus interaction without fighting the drift
                 carousel.addEventListener('touchstart', () => { isPaused = true; }, { passive: true });
                 carousel.addEventListener('touchmove', () => { isPaused = true; }, { passive: true });
                 carousel.addEventListener('touchend', pauseTemporary, { passive: true });
                 carousel.addEventListener('mouseenter', () => { isPaused = true; });
                 carousel.addEventListener('mouseleave', () => { isPaused = false; });
+                carousel.addEventListener('focusin', () => { isPaused = true; });
+                carousel.addEventListener('focusout', () => { isPaused = false; });
 
-                let wasMobile = window.innerWidth < 768;
-                if (wasMobile) {
-                    setupClones();
+                // Only animate while on screen
+                if ('IntersectionObserver' in window) {
+                    new IntersectionObserver((entries) => {
+                        isVisible = entries[0].isIntersecting;
+                        isVisible ? start() : stop();
+                    }).observe(carousel);
+                } else {
+                    isVisible = true;
                     start();
                 }
-
-                window.addEventListener('resize', () => {
-                    const isMobileNow = window.innerWidth < 768;
-                    if (isMobileNow !== wasMobile) {
-                        wasMobile = isMobileNow;
-                        if (isMobileNow) {
-                            setupClones();
-                            start();
-                        } else {
-                            stop();
-                            cleanupClones();
-                            carousel.scrollLeft = 0;
-                        }
-                    }
-                });
             }
-            initContinuousEvidenceCarousel();
+            initContinuousCarousel('news-carousel');
 
 
             function formatNumber(num) {

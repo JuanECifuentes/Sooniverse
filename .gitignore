@@ -2,6 +2,12 @@
 # Sooniverse - Git Ignore
 # ──────────────────────────────────────────────
 
+
+# Claude
+.claude/*
+!.claude/skills
+
+
 # Python
 __pycache__/
 *.py[cod]
