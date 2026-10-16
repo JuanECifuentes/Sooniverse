@@ -683,33 +683,6 @@
             background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-border-hover), transparent 65%);
         }
 
-        /* Card Calculadora Con Sooniverse (Borde y Hover Cyan) */
-        .card-calculator-sooniverse {
-            --card-spotlight: rgba(96, 239, 255, 0.18);
-            --card-glow-shadow: rgba(96, 239, 255, 0.45);
-            --card-border-hover: #60EFFF;
-            border: 2px solid #60EFFF !important;
-            box-shadow: 0 0 25px rgba(96, 239, 255, 0.18);
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-        }
-        .card-calculator-sooniverse:hover {
-            border-color: #60EFFF !important;
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(96, 239, 255, 0.35) !important;
-        }
-
-        /* Card Calculadora Ahorro Mensual (Borde y Hover Verde) */
-        .card-savings {
-            --card-spotlight: rgba(0, 255, 135, 0.22);
-            --card-glow-shadow: rgba(0, 255, 135, 0.50);
-            --card-border-hover: #00FF87;
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-        }
-        .card-savings:hover {
-            border-color: #00FF87 !important;
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 255, 135, 0.40) !important;
-        }
 
         .glass-panel {
             background-color: var(--sv-bg-glass);
@@ -733,38 +706,6 @@
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ── Sliders & Inputs v3.0 ───────────────────────────── */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 18px;
-            width: 18px;
-            border-radius: 50%;
-            background: #60EFFF;
-            border: 2px solid #070A12;
-            cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 0 14px rgba(96, 239, 255, 0.65);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-            box-shadow: 0 0 20px rgba(96, 239, 255, 0.90);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: var(--sv-border);
-            border-radius: 2px;
-        }
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: rgba(96, 239, 255, 0.35);
-        }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
 
         /* ── Barras de Gráfico Hero y Animación de Carga + Ondas ─────── */
         .hero-chart-container {
@@ -926,13 +867,6 @@
                 radial-gradient(ellipse 50% 60% at 5% 50%, rgba(138, 43, 226, 0.10), transparent 70%),
                 radial-gradient(ellipse 45% 45% at 80% 25%, rgba(96, 239, 255, 0.05), transparent 65%),
                 radial-gradient(ellipse 60% 40% at 60% 95%, rgba(15, 23, 42, 0.8), transparent 70%),
-                #070A12;
-        }
-        .bg-section-calculadora {
-            background:
-                radial-gradient(ellipse 65% 50% at 50% 0%, rgba(96, 239, 255, 0.07), transparent 70%),
-                radial-gradient(ellipse 50% 50% at 15% 75%, rgba(0, 255, 135, 0.04), transparent 65%),
-                radial-gradient(ellipse 45% 45% at 88% 85%, rgba(138, 43, 226, 0.08), transparent 70%),
                 #070A12;
         }
         .bg-section-faq {
@@ -1487,7 +1421,7 @@
     </section>
 
     <!-- CTA → Banda transversal hacia el booking público (/agendar/) -->
-    <section id="contacto" class="relative py-24 sm:py-28 border-y border-[#1E293B] bg-section-contacto overflow-hidden">
+    <section id="contacto" class="relative py-16 sm:py-20 border-y border-[#1E293B] bg-section-contacto overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(96,239,255,0.06),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(15,23,42,0.7),transparent_55%)] pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
@@ -1510,7 +1444,7 @@
         </div>
     </section>
 
-    <section id="evidencia" class="py-24 border-b border-[#1E293B] bg-section-evidencia">
+    <section id="evidencia" class="py-16 sm:py-20 border-b border-[#1E293B] bg-section-evidencia">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-12">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1659,7 +1593,7 @@
         </div>
     </section>
 
-    <section id="servicios" class="py-24 border-b border-[#1E293B] bg-section-servicios">
+    <section id="servicios" class="py-16 sm:py-20 border-b border-[#1E293B] bg-section-servicios">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="max-w-3xl mb-14">
                 <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
@@ -1724,112 +1658,9 @@
         </div>
     </section>
 
-    <section id="calculadora" class="py-24 relative overflow-hidden bg-section-calculadora border-b border-[#1E293B]">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#60EFFF] opacity-[0.03] blur-[140px] rounded-full pointer-events-none"></div>
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
-            <div class="max-w-3xl mb-12">
-                <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
-                    <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
-                    <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#60EFFF]">Calculadora de costos</span>
-                </div>
-                <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Estima tu ahorro mensual en tokens.</h2>
-                <p class="mt-4 text-[#94A3B8] text-base sm:text-lg">Ajusta ejecuciones y volumen de tokens. Proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.</p>
-            </div>
+    {% include "core/includes/calculadora.html" %}
 
-            <div class="grid lg:grid-cols-5 gap-8">
-                <div class="lg:col-span-2 order-first lg:order-last space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                        <div class="glow-card card-legacy p-5 sm:p-6 rounded-2xl border border-[#1E293B] bg-[#0F172A]/70">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-2">Costo base estimado</div>
-                            <div class="text-3xl sm:text-4xl font-bold text-white" id="base-cost">$0</div>
-                            <div class="text-xs text-[#64748B] mt-1">USD / mes</div>
-                            <div class="text-xs text-[#94A3B8] mt-1 font-mono" id="base-cost-cop">~ $0 COP</div>
-                        </div>
-                        <div class="glow-card card-calculator-sooniverse p-5 sm:p-6 rounded-2xl border-2 border-[#60EFFF] bg-gradient-to-b from-[#0F172A] to-[#070A12] shadow-[0_0_25px_rgba(96,239,255,0.18)]">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] mb-2">Con Sooniverse</div>
-                            <div class="text-3xl sm:text-4xl font-extrabold text-[#60EFFF]" id="optimized-cost">$0</div>
-                            <div class="text-xs text-[#64748B] mt-1">USD / mes</div>
-                            <div class="text-xs text-[#60EFFF] mt-1 font-mono" id="optimized-cost-cop">~ $0 COP</div>
-                        </div>
-                        <div class="glow-card card-savings p-5 sm:p-6 sm:col-span-2 lg:col-span-1 rounded-2xl border border-[#1E293B] bg-[#0F172A]/70">
-                            <div class="font-mono text-[10px] uppercase tracking-widest text-[#00FF87] mb-2">Ahorro mensual</div>
-                            <div class="text-3xl sm:text-4xl font-bold text-[#00FF87]" id="savings">$0</div>
-                            <div class="text-xs text-[#64748B] mt-1">Reducción estimada del <span id="savings-percent" class="text-white font-semibold">0</span>%</div>
-                            <div class="text-xs text-[#94A3B8] mt-1 font-mono" id="savings-cop">~ $0 COP</div>
-                        </div>
-                    </div>
-                    <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wide group">
-                        <span>Reservar una reunión</span>
-                        <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
-                </div>
-
-                <div class="lg:col-span-3 glass-panel p-6 sm:p-8 rounded-2xl border border-[#1E293B] bg-[#0F172A]/60">
-                    <div class="space-y-8">
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-white font-semibold flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span>Ejecuciones al Mes</label>
-                                <span class="font-mono text-sm text-[#60EFFF] font-bold" id="executions-display">80.000</span>
-                            </div>
-                            <input type="range" id="executions" min="1000" max="1000000" step="1000" value="80000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#64748B] uppercase"><span>1k</span><span>1M</span></div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-white font-semibold flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span>Tokens de Entrada por Ejecución</label>
-                                <span class="font-mono text-sm text-[#60EFFF] font-bold" id="input-tokens-display">30.000</span>
-                            </div>
-                            <input type="range" id="input-tokens" min="500" max="120000" step="500" value="30000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#64748B] uppercase"><span>500</span><span>120k</span></div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="font-mono text-xs uppercase tracking-widest text-white font-semibold flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span>Tokens de Salida por Ejecución</label>
-                                <span class="font-mono text-sm text-[#60EFFF] font-bold" id="output-tokens-display">8.000</span>
-                            </div>
-                            <input type="range" id="output-tokens" min="250" max="40000" step="250" value="8000">
-                            <div class="flex justify-between mt-2 text-[10px] font-mono text-[#64748B] uppercase"><span>250</span><span>40k</span></div>
-                        </div>
-
-                        <div class="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[#1E293B]">
-                            <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] mb-2 font-medium">Costo por 1M tokens de entrada</label>
-                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#1E293B] bg-[#070A12]/70">
-                                    <span class="text-[#64748B]">$</span>
-                                    <input type="number" id="input-rate" value="0.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] mb-2 font-medium">Costo por 1M tokens de salida</label>
-                                <div class="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl border border-[#1E293B] bg-[#070A12]/70">
-                                    <span class="text-[#64748B]">$</span>
-                                    <input type="number" id="output-rate" value="1.50" step="0.01" class="bg-transparent w-full text-white text-sm font-mono focus:outline-none">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-[#1E293B]">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] font-medium">Tokens Totales al Mes</label>
-                                <span class="font-mono text-sm text-white font-bold" id="total-tokens-display">10.500.000.000</span>
-                            </div>
-                            <div class="w-full h-2.5 bg-[#070A12] rounded-full overflow-hidden border border-[#1E293B]">
-                                <div id="capacity-bar" class="h-full bg-gradient-to-r from-[#00FF87] via-[#60EFFF] to-[#8A2BE2] transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between mt-1.5 text-[10px] font-mono text-[#64748B] uppercase">
-                                <span id="capacity-used">0% de 1 maquina</span>
-                                <span id="machines-count">1 maquina (15.000M tokens/mes)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="glosario-faq" class="py-20 lg:py-24 border-t border-[#1E293B] bg-section-faq relative overflow-hidden">
+    <section id="glosario-faq" class="py-16 sm:py-20 border-t border-[#1E293B] bg-section-faq relative overflow-hidden">
         <div class="absolute left-10 bottom-10 w-[300px] h-[300px] bg-[#60EFFF] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -2204,134 +2035,29 @@
             }
             initContinuousEvidenceCarousel();
 
-            const inputTokens = document.getElementById('input-tokens');
-            const outputTokens = document.getElementById('output-tokens');
-            const executions = document.getElementById('executions');
-            const inputRate = document.getElementById('input-rate');
-            const outputRate = document.getElementById('output-rate');
-            const displayInput = document.getElementById('input-tokens-display');
-            const displayOutput = document.getElementById('output-tokens-display');
-            const displayExec = document.getElementById('executions-display');
-            const totalTokensDisplay = document.getElementById('total-tokens-display');
-            const capacityBar = document.getElementById('capacity-bar');
-            const capacityUsed = document.getElementById('capacity-used');
-            const machinesCount = document.getElementById('machines-count');
-            const baseCostEl = document.getElementById('base-cost');
-            const optimizedCostEl = document.getElementById('optimized-cost');
-            const savingsEl = document.getElementById('savings');
-            const savingsPercentEl = document.getElementById('savings-percent');
-            const baseCostCopEl = document.getElementById('base-cost-cop');
-            const optimizedCostCopEl = document.getElementById('optimized-cost-cop');
-            const savingsCopEl = document.getElementById('savings-cop');
-            const trmValueEl = document.getElementById('trm-value');
 
-            const SOONIVERSE_MACHINE_CAPACITY = 15000_000_000;
-            const SOONIVERSE_BUFFER = 0.80;
-            const SOONIVERSE_THRESHOLD = SOONIVERSE_MACHINE_CAPACITY * SOONIVERSE_BUFFER;
-            const SOONIVERSE_BATCH_THRESHOLD = 32000;
-            const SOONIVERSE_MACHINE_COST_SMALL = 695;
-            const SOONIVERSE_MACHINE_COST_LARGE = 1384.58;
-            const TRM = parseFloat(trmValueEl?.dataset.value || '4100');
-
-            function formatNumber(num) { return new Intl.NumberFormat('es-ES').format(Math.round(num)); }
+            function formatNumber(num) {
+                return new Intl.NumberFormat('es-ES').format(Math.round(num));
+            }
             function formatCompact(num) {
-                if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2).replace('.', ',') + 'MM';
-                if (num >= 1_000_000) return (num / 1_000_000).toFixed(2).replace('.', ',') + 'M';
-                if (num >= 1_000) return (num / 1_000).toFixed(1).replace('.', ',') + 'k';
-                return num.toFixed(0);
-            }
-            function formatCurrency(num) {
-                const sign = num < 0 ? '-' : '';
-                const absNum = Math.abs(num);
-                if (absNum >= 1_000_000) return sign + '$' + (absNum / 1_000_000).toFixed(2).replace('.', ',') + 'M';
-                if (absNum >= 1_000) return sign + '$' + (absNum / 1_000).toFixed(1).replace('.', ',') + 'k';
-                return sign + '$' + absNum.toFixed(2).replace('.', ',');
-            }
-            function formatCardCurrency(num) {
-                const sign = num < 0 ? '-' : '';
-                const absNum = Math.abs(num);
-                let value, suffix;
-                if (absNum >= 1_000_000) {
-                    value = absNum / 1_000_000;
-                    suffix = 'M';
-                } else if (absNum >= 1_000) {
-                    value = absNum / 1_000;
-                    suffix = 'k';
-                } else {
-                    value = absNum;
-                    suffix = '';
+                if (num >= 1_000_000_000) {
+                    const v = num / 1_000_000_000;
+                    return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)).replace('.', ',') + 'MM';
                 }
-                const rounded = Math.round(value * 10) / 10;
-                const hasDecimal = rounded % 1 !== 0;
-                const integerPart = Math.floor(rounded);
-                const decimalPart = hasDecimal ? (rounded - integerPart).toFixed(1).slice(1).replace('.', ',') : '';
-                const formattedInteger = new Intl.NumberFormat('es-ES').format(integerPart);
-                return sign + '$' + formattedInteger + decimalPart + suffix;
-            }
-            function formatCop(num) {
-                return '$' + new Intl.NumberFormat('es-CO').format(Math.round(num));
-            }
-            function formatPercent(num) {
-                return num.toFixed(1).replace('.', ',');
+                if (num >= 1_000_000) {
+                    const v = num / 1_000_000;
+                    return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)).replace('.', ',') + 'M';
+                }
+                if (num >= 1_000) {
+                    const v = num / 1_000;
+                    return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)).replace('.', ',') + 'k';
+                }
+                return Math.round(num).toString();
             }
 
-            function machineCost(tokensPerExecution) {
-                return tokensPerExecution > SOONIVERSE_BATCH_THRESHOLD ? SOONIVERSE_MACHINE_COST_LARGE : SOONIVERSE_MACHINE_COST_SMALL;
-            }
-
-            function requiredMachines(totalTokens) {
-                if (totalTokens <= SOONIVERSE_THRESHOLD) return 1;
-                return Math.ceil(totalTokens / SOONIVERSE_THRESHOLD);
-            }
-
-            function calculate() {
-                const execs = parseInt(executions.value, 10) || 0;
-                const inTokensPerExec = parseInt(inputTokens.value, 10) || 0;
-                const outTokensPerExec = parseInt(outputTokens.value, 10) || 0;
-                const inRateVal = parseFloat(inputRate.value) || 0;
-                const outRateVal = parseFloat(outputRate.value) || 0;
-
-                const tokensPerExecution = inTokensPerExec + outTokensPerExec;
-                const totalTokens = execs * tokensPerExecution;
-                const inputTokensTotal = execs * inTokensPerExec;
-                const outputTokensTotal = execs * outTokensPerExec;
-
-                displayExec.textContent = formatNumber(execs);
-                displayInput.textContent = formatNumber(inTokensPerExec);
-                displayOutput.textContent = formatNumber(outTokensPerExec);
-                totalTokensDisplay.textContent = formatNumber(totalTokens);
-
-                const baseInputCost = (inputTokensTotal / 1_000_000) * inRateVal;
-                const baseOutputCost = (outputTokensTotal / 1_000_000) * outRateVal;
-                const baseTotal = baseInputCost + baseOutputCost;
-
-                const machines = requiredMachines(totalTokens);
-                const unitMachineCost = machineCost(tokensPerExecution);
-                const optimizedTotal = machines * unitMachineCost;
-                const savings = baseTotal - optimizedTotal;
-                const savingsPercent = baseTotal > 0 ? ((savings / baseTotal) * 100) : 0;
-
-                const totalCapacity = machines * SOONIVERSE_MACHINE_CAPACITY;
-                const capacityRatio = Math.min((totalTokens / totalCapacity) * 100, 100);
-                capacityBar.style.width = capacityRatio + '%';
-                capacityUsed.textContent = capacityRatio.toFixed(1).replace('.', ',') + '% de ' + machines + (machines === 1 ? ' maquina' : ' maquinas');
-                machinesCount.textContent = machines + (machines === 1 ? ' maquina' : ' maquinas') + ' (' + formatCompact(totalCapacity) + ' tokens/mes)';
-
-                baseCostEl.textContent = formatCardCurrency(baseTotal);
-                optimizedCostEl.textContent = formatCardCurrency(optimizedTotal);
-                savingsEl.textContent = formatCardCurrency(savings);
-                savingsPercentEl.textContent = formatPercent(savingsPercent);
-
-                if (baseCostCopEl) baseCostCopEl.textContent = '~ ' + formatCop(baseTotal * TRM) + ' COP';
-                if (optimizedCostCopEl) optimizedCostCopEl.textContent = '~ ' + formatCop(optimizedTotal * TRM) + ' COP';
-                if (savingsCopEl) savingsCopEl.textContent = '~ ' + formatCop(savings * TRM) + ' COP';
-            }
-
-            [executions, inputTokens, outputTokens, inputRate, outputRate].forEach(el => el.addEventListener('input', calculate));
-            calculate();
-
-            // Hero progressive load animation
+            // Hero progressive load animation con valor objetivo fijo garantizado
             function animateCountUp(element, target, duration) {
+                if (!element) return;
                 const startTime = performance.now();
                 function easeOutQuint(t) { return 1 - Math.pow(1 - t, 5); }
                 function step(now) {
@@ -2339,15 +2065,11 @@
                     const progress = Math.min(elapsed / duration, 1);
                     const eased = easeOutQuint(progress);
                     const current = target * eased;
-                    if (current >= 1000) {
-                        element.textContent = '$' + formatCompact(current);
+                    element.textContent = '$' + formatCompact(current);
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
                     } else {
-                        element.textContent = '$' + current.toFixed(0);
-                    }
-                    if (progress < 1) requestAnimationFrame(step);
-                    else {
-                        if (target >= 1000) element.textContent = '$' + formatCompact(target);
-                        else element.textContent = '$' + target.toFixed(0);
+                        element.textContent = '$' + formatCompact(target);
                     }
                 }
                 requestAnimationFrame(step);

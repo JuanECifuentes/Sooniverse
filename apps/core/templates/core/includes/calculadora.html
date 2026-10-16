@@ -1,0 +1,656 @@
+{% load static %}
+{% comment %}
+Componente: Calculadora de Costos Sooniverse (Multi-Automatización)
+Permite configurar múltiples procesos de IA compartiendo la misma infraestructura fija.
+Incluye su propio stylesheet CSS y lógica JS encapsulada.
+Uso: {% include "core/includes/calculadora.html" %}
+{% endcomment %}
+<link rel="stylesheet" href="{% static 'css/calculadora.css' %}">
+
+<section id="calculadora" class="py-16 sm:py-20 relative overflow-hidden bg-section-calculadora border-b border-[#1E293B]">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
+        <!-- Encabezado de la Sección -->
+        <div class="max-w-3xl mb-12 sm:mb-14">
+            <div class="inline-flex items-center gap-2 glass-panel px-3 py-1 mb-3">
+                <span class="w-2 h-2 rounded-full bg-[#60EFFF] shadow-[0_0_8px_#60EFFF] animate-pulse-slow"></span>
+                <span class="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#60EFFF]">Calculadora de costos</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-[-1px] text-white">Estima tu ahorro en IA.</h2>
+            <p class="mt-4 text-[#94A3B8] text-base sm:text-lg">
+                Ajusta ejecuciones, tokens de entrada y tokens de salida. El motor proyecta tu costo base comercial y el ahorro con la infraestructura fija de Sooniverse.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+            <!-- Columna Izquierda: Configurador de Automatizaciones (7 cols) -->
+            <div class="lg:col-span-7 space-y-3 sm:space-y-3.5">
+                <!-- Barra de Acciones y Presets Compacta -->
+                <div class="glass-panel p-3 rounded-xl border border-[#1E293B] bg-[#0F172A]/60 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-mono text-[11px] uppercase tracking-wider text-white font-semibold flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#00FF87] shadow-[0_0_6px_#00FF87]"></span>
+                            Automatizaciones (<span id="automations-count" class="text-[#60EFFF]">1</span>)
+                        </span>
+                        <button type="button" id="btn-add-automation" class="btn-add-automation inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider cursor-pointer">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                            <span>Agregar</span>
+                        </button>
+                    </div>
+
+                    <!-- Presets Rápidos -->
+                    <div class="pt-2 border-t border-[#1E293B]/70 flex flex-wrap items-center gap-1.5">
+                        <span class="text-[9px] font-mono uppercase tracking-wider text-[#64748B]">Plantillas:</span>
+                        <button type="button" class="preset-chip px-2 py-0.5 rounded text-[10px] font-mono text-[#94A3B8]" data-preset="documentos">
+                            📑 Documentos Extensos
+                        </button>
+                        <button type="button" class="preset-chip px-2 py-0.5 rounded text-[10px] font-mono text-[#94A3B8]" data-preset="chatbot">
+                            💬 Chatbot / RAG
+                        </button>
+                        <button type="button" class="preset-chip px-2 py-0.5 rounded text-[10px] font-mono text-[#94A3B8]" data-preset="clasificacion">
+                            ⚡ Clasificación & Triaje
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenedor Scrolleable de Automatizaciones que respeta el Viewport -->
+                <div id="automations-container" class="automations-scroll-container space-y-3.5 sm:space-y-4 pr-1.5">
+                    <!-- Se inyectan dinámicamente vía JavaScript -->
+                </div>
+
+                <!-- Configuración de Tarifas de Referencia (Colapsable con animación suave tipo FAQ) -->
+                <div class="glass-panel p-3 rounded-xl border border-[#1E293B] bg-[#0F172A]/40 transition-colors duration-200">
+                    <button type="button" id="toggle-rates-btn" class="w-full flex justify-between items-center text-left focus:outline-none group cursor-pointer" aria-expanded="false">
+                        <span class="font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] group-hover:text-white font-semibold flex items-center gap-1.5 transition-colors">
+                            <svg class="w-3.5 h-3.5 text-[#60EFFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Tarifas Comerciales de Referencia
+                        </span>
+                        <span id="rates-chevron" class="text-[#64748B] group-hover:text-[#60EFFF] text-[10px] font-mono transition-transform duration-300 shrink-0 select-none">▼</span>
+                    </button>
+
+                    <div id="rates-panel">
+                        <div class="grid grid-cols-2 gap-3 pt-3 mt-2 border-t border-[#1E293B]">
+                            <div>
+                                <label class="block font-mono text-[9px] uppercase tracking-wider text-[#64748B] mb-1">Entrada / 1M tokens</label>
+                                <div class="flex items-center gap-1 px-2.5 py-1 rounded border border-[#1E293B] bg-[#070A12]/90">
+                                    <span class="text-[#64748B] text-xs">$</span>
+                                    <input type="number" id="input-rate" value="0.50" step="0.01" class="bg-transparent w-full text-white text-xs font-mono focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-mono text-[9px] uppercase tracking-wider text-[#64748B] mb-1">Salida / 1M tokens</label>
+                                <div class="flex items-center gap-1 px-2.5 py-1 rounded border border-[#1E293B] bg-[#070A12]/90">
+                                    <span class="text-[#64748B] text-xs">$</span>
+                                    <input type="number" id="output-rate" value="2.50" step="0.01" class="bg-transparent w-full text-white text-xs font-mono focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capacidad y Monitor de la Infraestructura -->
+                <div class="glass-panel p-3 sm:p-3.5 rounded-xl border border-[#1E293B] bg-[#0F172A]/60 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] font-medium flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF] shadow-[0_0_6px_#60EFFF]"></span>
+                            Carga Total de Infraestructura
+                        </span>
+                        <span class="font-mono text-xs text-white font-bold" id="total-tokens-display">0 tokens</span>
+                    </div>
+
+                    <!-- Barra de Capacidad -->
+                    <div class="w-full h-2.5 bg-[#070A12] rounded-full overflow-hidden border border-[#1E293B] p-0.5">
+                        <div id="capacity-bar" class="h-full bg-gradient-to-r from-[#00FF87] via-[#60EFFF] to-[#8A2BE2] rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+
+                    <div class="flex justify-between items-center text-[10px] font-mono text-[#64748B]">
+                        <span id="capacity-used" class="text-[#60EFFF] font-semibold">0% utilizado</span>
+                        <span id="machines-count" class="text-white font-medium">Infraestructura Dedicada (8.000M tokens/mes)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Tarjetas de Resultados y Ahorro (5 cols, Sticky) -->
+            <div class="lg:col-span-5 space-y-3 sm:space-y-3.5 lg:sticky lg:top-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                    <!-- Card 1: Costo Base Comercial -->
+                    <div class="glow-card card-legacy p-4 sm:p-4.5 rounded-xl border border-[#1E293B] bg-[#0F172A]/70">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-mono text-[10px] uppercase tracking-widest text-[#64748B]">Costo Base Comercial</span>
+                            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-[#1E293B] text-[#94A3B8]">Pago por Token</span>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-bold text-white tracking-tight" id="base-cost">$0</div>
+                        <div class="text-xs text-[#64748B] mt-0.5 font-mono">USD / mes</div>
+                        <div class="text-[11px] text-[#94A3B8] mt-0.5 font-mono" id="base-cost-cop">~ $0 COP</div>
+                    </div>
+
+                    <!-- Card 2: Con Sooniverse -->
+                    <div class="glow-card card-calculator-sooniverse p-4 sm:p-4.5 rounded-xl border-2 border-[#60EFFF] bg-gradient-to-b from-[#0F172A] to-[#070A12] shadow-[0_0_20px_rgba(96,239,255,0.15)]">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-mono text-[10px] uppercase tracking-widest text-[#60EFFF] font-semibold">Con Sooniverse</span>
+                            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-[#60EFFF]/10 border border-[#60EFFF]/30 text-[#60EFFF]" id="infra-badge">Infraestructura Fija</span>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-[#60EFFF] tracking-tight" id="optimized-cost">$0</div>
+                        <div class="text-xs text-[#64748B] mt-0.5 font-mono">USD / mes</div>
+                        <div class="text-[11px] text-[#60EFFF] mt-0.5 font-mono" id="optimized-cost-cop">~ $0 COP</div>
+                    </div>
+
+                    <!-- Card 3: Ahorro Mensual -->
+                    <div class="glow-card card-savings p-4 sm:p-4.5 sm:col-span-2 lg:col-span-1 rounded-xl border border-[#1E293B] bg-[#0F172A]/70">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-mono text-[10px] uppercase tracking-widest text-[#00FF87] font-semibold">Ahorro Mensual</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00FF87]/10 text-[#00FF87] font-bold" id="savings-percent-badge">-0%</span>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-bold text-[#00FF87] tracking-tight" id="savings">$0</div>
+                        <div class="text-xs text-[#64748B] mt-0.5 font-mono">USD ahorrados al mes</div>
+                        <div class="text-[11px] text-[#94A3B8] mt-0.5 font-mono" id="savings-cop">~ $0 COP</div>
+                    </div>
+                </div>
+
+                <!-- Desglose de Carga con Sumatoria y Desplegable Suave -->
+                <div class="glass-panel p-3 sm:p-3.5 rounded-xl border border-[#1E293B] bg-[#0F172A]/50 transition-colors duration-200">
+                    <button type="button" id="toggle-breakdown-btn" class="w-full flex justify-between items-center text-left focus:outline-none group cursor-pointer" aria-expanded="false">
+                        <span class="font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] group-hover:text-white font-semibold flex items-center gap-1.5 transition-colors">
+                            <svg class="w-3.5 h-3.5 text-[#60EFFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            Desglose de Carga: <span id="breakdown-total" class="text-[#60EFFF] font-bold ml-1 font-mono">0 tokens</span>
+                        </span>
+                        <span id="breakdown-chevron" class="text-[#64748B] group-hover:text-[#60EFFF] text-[10px] font-mono transition-transform duration-300 shrink-0 select-none">▼</span>
+                    </button>
+                    <div id="breakdown-panel">
+                        <div id="breakdown-list" class="pt-2.5 mt-2 border-t border-[#1E293B]/70 space-y-1.5 text-[11px] font-mono max-h-[160px] overflow-y-auto automations-scroll-container pr-1">
+                            <!-- Items inyectados dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón CTA -->
+                <a href="{% url 'core:booking_publico' %}" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wide group shadow-[0_0_20px_rgba(96,239,255,0.2)] hover:shadow-[0_0_30px_rgba(96,239,255,0.35)] transition-all">
+                    <span>Reservar una reunión</span>
+                    <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Template Oculto para Card de Automatización (Sin bordes blancos, fondo oscuro normal en badge) -->
+<template id="automation-card-template">
+    <div class="automation-card" data-id="">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+                <span class="w-2 h-2 rounded-full bg-[#60EFFF] shrink-0"></span>
+                <input type="text" class="automation-name bg-transparent border-b border-transparent hover:border-[#1E293B] focus:border-[#60EFFF] text-white text-xs font-bold font-sans focus:outline-none truncate w-full max-w-[240px]" value="" placeholder="Nombre del proceso">
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="automation-badge font-mono text-[9px] text-[#60EFFF] bg-[#070A12] px-2 py-0.5 rounded">0 M tokens</span>
+                <button type="button" class="btn-duplicate text-[#64748B] hover:text-[#60EFFF] p-1 rounded transition-colors" title="Duplicar">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+                </button>
+                <button type="button" class="btn-delete text-[#64748B] hover:text-[#EF4444] p-1 rounded transition-colors" title="Eliminar">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-2.5">
+            <!-- Slider 1: Ejecuciones al Mes -->
+            <div>
+                <div class="flex justify-between items-center mb-0.5">
+                    <label class="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] flex items-center gap-1.5">
+                        <span class="w-1 h-1 rounded-full bg-[#60EFFF]"></span>Ejecuciones al Mes
+                    </label>
+                    <span class="indicator-exec font-mono text-xs text-[#60EFFF] font-bold">15.000</span>
+                </div>
+                <input type="range" class="slider-exec" min="100" max="300000" step="100" value="15000">
+                <div class="slider-bounds flex justify-between mt-0.5 text-[10px] font-mono text-[#64748B] uppercase"><span>100</span><span>300k</span></div>
+            </div>
+
+            <!-- Slider 2: Tokens de Entrada por Ejecución -->
+            <div>
+                <div class="flex justify-between items-center mb-0.5">
+                    <label class="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] flex items-center gap-1.5">
+                        <span class="w-1 h-1 rounded-full bg-[#60EFFF]"></span>Tokens Entrada / Ejecución
+                    </label>
+                    <span class="indicator-in font-mono text-xs text-[#60EFFF] font-bold">160.000</span>
+                </div>
+                <input type="range" class="slider-in" min="500" max="250000" step="500" value="160000">
+                <div class="slider-bounds flex justify-between mt-0.5 text-[10px] font-mono text-[#64748B] uppercase"><span>500</span><span>250k</span></div>
+            </div>
+
+            <!-- Slider 3: Tokens de Salida por Ejecución -->
+            <div>
+                <div class="flex justify-between items-center mb-0.5">
+                    <label class="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] flex items-center gap-1.5">
+                        <span class="w-1 h-1 rounded-full bg-[#60EFFF]"></span>Tokens Salida / Ejecución
+                    </label>
+                    <span class="indicator-out font-mono text-xs text-[#60EFFF] font-bold">25.000</span>
+                </div>
+                <input type="range" class="slider-out" min="100" max="60000" step="100" value="25000">
+                <div class="slider-bounds flex justify-between mt-0.5 text-[10px] font-mono text-[#64748B] uppercase"><span>100</span><span>60k</span></div>
+            </div>
+        </div>
+
+        <div class="mt-2.5 pt-2 border-t border-[#1E293B]/60 flex justify-between items-center text-[10px] font-mono text-[#64748B]">
+            <span>Volumen: <span class="auto-monthly-tokens text-white font-medium">0 M</span></span>
+            <span>Costo API: <span class="auto-api-cost text-[#94A3B8] font-medium">$0</span></span>
+        </div>
+    </div>
+</template>
+
+<script>
+(function() {
+    function initCalculator() {
+        const automationsContainer = document.getElementById('automations-container');
+        const btnAddAutomation = document.getElementById('btn-add-automation');
+        const automationsCountEl = document.getElementById('automations-count');
+        const presetChips = document.querySelectorAll('.preset-chip');
+        const cardTemplate = document.getElementById('automation-card-template');
+
+        // Tarifas base (Input: 0.50, Output: 2.50)
+        const inputRate = document.getElementById('input-rate');
+        const outputRate = document.getElementById('output-rate');
+        const toggleRatesBtn = document.getElementById('toggle-rates-btn');
+        const ratesPanel = document.getElementById('rates-panel');
+        const ratesChevron = document.getElementById('rates-chevron');
+
+        // Desglose de carga
+        const toggleBreakdownBtn = document.getElementById('toggle-breakdown-btn');
+        const breakdownPanel = document.getElementById('breakdown-panel');
+        const breakdownChevron = document.getElementById('breakdown-chevron');
+        const breakdownTotal = document.getElementById('breakdown-total');
+        const breakdownList = document.getElementById('breakdown-list');
+
+        // Monitores y Salidas
+        const totalTokensDisplay = document.getElementById('total-tokens-display');
+        const capacityBar = document.getElementById('capacity-bar');
+        const capacityUsed = document.getElementById('capacity-used');
+        const machinesCount = document.getElementById('machines-count');
+        const baseCostEl = document.getElementById('base-cost');
+        const optimizedCostEl = document.getElementById('optimized-cost');
+        const savingsEl = document.getElementById('savings');
+        const savingsPercentBadge = document.getElementById('savings-percent-badge');
+        const baseCostCopEl = document.getElementById('base-cost-cop');
+        const optimizedCostCopEl = document.getElementById('optimized-cost-cop');
+        const savingsCopEl = document.getElementById('savings-cop');
+        const infraBadge = document.getElementById('infra-badge');
+        const trmValueEl = document.getElementById('trm-value');
+
+        if (!automationsContainer || !cardTemplate) return;
+
+        // Capacidad con margen de holgura del 90%
+        const INFRA_CAPACITY_PER_UNIT = 8_000_000_000; // 8.000M tokens/mes
+        const SOONIVERSE_BUFFER = 0.90; // Margen de holgura al 90%
+        const THRESHOLD_LONG_CONTEXT = 32_000;
+        const COST_INFRA_LARGE = 1384.58;
+        const COST_INFRA_SMALL = 695.00;
+        let trmRaw = '{{ trm_contractual|default:4100.0 }}';
+        const TRM = (!isNaN(parseFloat(trmRaw)) && parseFloat(trmRaw) > 0) ? parseFloat(trmRaw) : 4100.0;
+
+        // Estado inicial de automatizaciones
+        let automations = [
+            {
+                id: 1,
+                name: 'Análisis de Documentos Extensos',
+                execs: 15000,
+                inTokens: 160000,
+                outTokens: 25000
+            }
+        ];
+        let nextId = 2;
+
+        const PRESETS = {
+            documentos: {
+                name: 'Análisis de Documentos Extensos',
+                execs: 15000,
+                inTokens: 160000,
+                outTokens: 25000
+            },
+            chatbot: {
+                name: 'Chatbot / RAG',
+                execs: 40000,
+                inTokens: 12000,
+                outTokens: 1500
+            },
+            clasificacion: {
+                name: 'Clasificación & Triaje',
+                execs: 80000,
+                inTokens: 4000,
+                outTokens: 500
+            }
+        };
+
+        // Formateadores limpios
+        function formatNumber(num) { return new Intl.NumberFormat('es-CO').format(Math.round(num)); }
+        function formatCompact(num) {
+            if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2).replace('.', ',') + 'MM';
+            if (num >= 1_000_000) return (num / 1_000_000).toFixed(2).replace('.', ',') + 'M';
+            if (num >= 1_000) return (num / 1_000).toFixed(0) + 'k';
+            return num.toFixed(0);
+        }
+        function formatPrice(num) {
+            const sign = num < 0 ? '-' : '';
+            const abs = Math.abs(num);
+            return sign + '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(Math.round(abs));
+        }
+        function formatCop(num) {
+            return '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(Math.round(num)) + ' COP';
+        }
+
+        // Sistema de acordeón suave replicando la animación de preguntas frecuentes
+        function setupSmoothAccordion(trigger, body, chevron, initiallyOpen = false) {
+            if (!trigger || !body) return;
+            let isOpen = initiallyOpen;
+
+            body.style.overflow = 'hidden';
+            body.style.transition = 'height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
+
+            if (!initiallyOpen) {
+                body.style.display = 'none';
+                body.style.height = '0px';
+                body.style.opacity = '0';
+                trigger.setAttribute('aria-expanded', 'false');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            } else {
+                body.style.display = 'block';
+                body.style.height = 'auto';
+                body.style.opacity = '1';
+                trigger.setAttribute('aria-expanded', 'true');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+
+            trigger.addEventListener('click', () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    body.style.display = 'block';
+                    const h = body.scrollHeight;
+                    body.offsetHeight; // force reflow
+                    body.style.height = h + 'px';
+                    body.style.opacity = '1';
+                    trigger.setAttribute('aria-expanded', 'true');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(180deg)';
+                    }
+                    setTimeout(() => {
+                        if (isOpen) body.style.height = 'auto';
+                    }, 300);
+                } else {
+                    body.style.height = body.scrollHeight + 'px';
+                    body.offsetHeight; // force reflow
+                    body.style.height = '0px';
+                    body.style.opacity = '0';
+                    trigger.setAttribute('aria-expanded', 'false');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                    setTimeout(() => {
+                        if (!isOpen) body.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+
+        function renderAutomations() {
+            automationsContainer.innerHTML = '';
+            automationsCountEl.textContent = automations.length;
+
+            automations.forEach((item, index) => {
+                const clone = cardTemplate.content.cloneNode(true);
+                const card = clone.querySelector('.automation-card');
+                card.dataset.id = item.id;
+
+                const nameInput = card.querySelector('.automation-name');
+                const badge = card.querySelector('.automation-badge');
+                const btnDuplicate = card.querySelector('.btn-duplicate');
+                const btnDelete = card.querySelector('.btn-delete');
+
+                const sliderExec = card.querySelector('.slider-exec');
+                const indicatorExec = card.querySelector('.indicator-exec');
+                const sliderIn = card.querySelector('.slider-in');
+                const indicatorIn = card.querySelector('.indicator-in');
+                const sliderOut = card.querySelector('.slider-out');
+                const indicatorOut = card.querySelector('.indicator-out');
+
+                nameInput.value = item.name;
+                sliderExec.value = item.execs;
+                indicatorExec.textContent = formatNumber(item.execs);
+                sliderIn.value = item.inTokens;
+                indicatorIn.textContent = formatNumber(item.inTokens);
+                sliderOut.value = item.outTokens;
+                indicatorOut.textContent = formatNumber(item.outTokens);
+
+                sliderExec.addEventListener('input', (e) => {
+                    item.execs = parseInt(e.target.value, 10) || 0;
+                    indicatorExec.textContent = formatNumber(item.execs);
+                    calculate();
+                });
+
+                sliderIn.addEventListener('input', (e) => {
+                    item.inTokens = parseInt(e.target.value, 10) || 0;
+                    indicatorIn.textContent = formatNumber(item.inTokens);
+                    calculate();
+                });
+
+                sliderOut.addEventListener('input', (e) => {
+                    item.outTokens = parseInt(e.target.value, 10) || 0;
+                    indicatorOut.textContent = formatNumber(item.outTokens);
+                    calculate();
+                });
+
+                nameInput.addEventListener('input', (e) => {
+                    item.name = e.target.value || ('Proceso ' + (index + 1));
+                    updateBreakdownList();
+                });
+
+                btnDuplicate.addEventListener('click', () => {
+                    automations.push({
+                        id: nextId++,
+                        name: item.name + ' (Copia)',
+                        execs: item.execs,
+                        inTokens: item.inTokens,
+                        outTokens: item.outTokens
+                    });
+                    renderAutomations();
+                    calculate();
+                });
+
+                btnDelete.addEventListener('click', () => {
+                    if (automations.length <= 1) return;
+                    automations = automations.filter(a => a.id !== item.id);
+                    renderAutomations();
+                    calculate();
+                });
+
+                if (automations.length === 1) {
+                    btnDelete.style.display = 'none';
+                }
+
+                automationsContainer.appendChild(clone);
+            });
+        }
+
+        function calculate() {
+            const inRateVal = parseFloat(inputRate.value) || 0.50;
+            const outRateVal = parseFloat(outputRate.value) || 2.50;
+
+            let grandTotalTokens = 0;
+            let grandBaseCost = 0;
+            let requiresLargeNode = false;
+
+            automations.forEach(item => {
+                const totalIn = item.execs * item.inTokens;
+                const totalOut = item.execs * item.outTokens;
+                const totalItemTokens = totalIn + totalOut;
+                grandTotalTokens += totalItemTokens;
+
+                if ((item.inTokens + item.outTokens) > THRESHOLD_LONG_CONTEXT) {
+                    requiresLargeNode = true;
+                }
+
+                // Cálculo API directo comercial
+                const itemApiCost = ((totalIn / 1_000_000) * inRateVal) +
+                                    ((totalOut / 1_000_000) * outRateVal);
+
+                grandBaseCost += itemApiCost;
+
+                const cardEl = document.querySelector(`.automation-card[data-id="${item.id}"]`);
+                if (cardEl) {
+                    const badge = cardEl.querySelector('.automation-badge');
+                    const autoTokens = cardEl.querySelector('.auto-monthly-tokens');
+                    const autoCost = cardEl.querySelector('.auto-api-cost');
+                    if (badge) badge.textContent = formatCompact(totalItemTokens) + ' tokens';
+                    if (autoTokens) autoTokens.textContent = formatCompact(totalItemTokens);
+                    if (autoCost) autoCost.textContent = formatPrice(itemApiCost);
+                }
+            });
+
+            // Dimensionamiento con margen de holgura al 90%
+            const safeCapacityPerUnit = INFRA_CAPACITY_PER_UNIT * SOONIVERSE_BUFFER;
+            const requiredUnits = Math.max(1, Math.ceil(grandTotalTokens / safeCapacityPerUnit));
+            const unitCost = requiresLargeNode ? COST_INFRA_LARGE : COST_INFRA_SMALL;
+            const optimizedTotal = requiredUnits * unitCost;
+
+            const savings = grandBaseCost - optimizedTotal;
+            const savingsPercent = grandBaseCost > 0 ? (savings / grandBaseCost) * 100 : 0;
+
+            // Monitor de Capacidad Abstracta
+            const totalClusterCapacity = requiredUnits * INFRA_CAPACITY_PER_UNIT;
+            const utilizationPercent = Math.min((grandTotalTokens / totalClusterCapacity) * 100, 100);
+
+            if (capacityBar) {
+                capacityBar.style.width = utilizationPercent + '%';
+                if (utilizationPercent > 90) {
+                    capacityBar.classList.add('capacity-warning');
+                } else {
+                    capacityBar.classList.remove('capacity-warning');
+                }
+            }
+
+            if (capacityUsed) {
+                capacityUsed.textContent = utilizationPercent.toFixed(1).replace('.', ',') + '% de capacidad utilizada';
+            }
+
+            if (machinesCount) {
+                machinesCount.textContent = (requiredUnits === 1 ? '1 Unidad de Infraestructura' : requiredUnits + ' Unidades de Infraestructura') +
+                    ' (' + formatCompact(totalClusterCapacity) + ' tokens/mes)';
+            }
+
+            if (totalTokensDisplay) {
+                totalTokensDisplay.textContent = formatNumber(grandTotalTokens) + ' tokens/mes';
+            }
+
+            // Actualizar Tarjetas
+            if (baseCostEl) baseCostEl.textContent = formatPrice(grandBaseCost);
+            if (optimizedCostEl) optimizedCostEl.textContent = formatPrice(optimizedTotal);
+            if (savingsEl) savingsEl.textContent = formatPrice(savings);
+
+            if (savingsPercentBadge) {
+                const sign = savingsPercent >= 0 ? '-' : '+';
+                savingsPercentBadge.textContent = sign + Math.abs(savingsPercent).toFixed(0) + '%';
+                if (savingsPercent < 0) {
+                    savingsPercentBadge.classList.replace('text-[#00FF87]', 'text-[#EF4444]');
+                    savingsPercentBadge.classList.replace('bg-[#00FF87]/10', 'bg-[#EF4444]/10');
+                } else {
+                    savingsPercentBadge.classList.replace('text-[#EF4444]', 'text-[#00FF87]');
+                    savingsPercentBadge.classList.replace('bg-[#EF4444]/10', 'bg-[#00FF87]/10');
+                }
+            }
+
+            if (baseCostCopEl) baseCostCopEl.textContent = '~ ' + formatCop(grandBaseCost * TRM);
+            if (optimizedCostCopEl) optimizedCostCopEl.textContent = '~ ' + formatCop(optimizedTotal * TRM);
+            if (savingsCopEl) savingsCopEl.textContent = '~ ' + formatCop(savings * TRM);
+
+            if (infraBadge) {
+                infraBadge.textContent = 'Infraestructura Dedicada';
+            }
+
+            updateBreakdownList();
+        }
+
+        function updateBreakdownList() {
+            if (!breakdownList) return;
+            breakdownList.innerHTML = '';
+            let sumTokens = 0;
+            automations.forEach(item => {
+                const totalItemTokens = item.execs * (item.inTokens + item.outTokens);
+                sumTokens += totalItemTokens;
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center text-[#94A3B8] py-0.5';
+                row.innerHTML = `
+                    <span class="truncate max-w-[200px] text-white flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#60EFFF]/70 shrink-0"></span>
+                        <span class="truncate">${item.name}</span>
+                    </span>
+                    <span class="text-[#60EFFF] font-semibold shrink-0">${formatCompact(totalItemTokens)} tokens</span>
+                `;
+                breakdownList.appendChild(row);
+            });
+
+            if (breakdownTotal) {
+                breakdownTotal.textContent = formatCompact(sumTokens) + ' tokens/mes';
+            }
+        }
+
+        // Inicializar acordeones suaves (Tarifas y Desglose de carga)
+        setupSmoothAccordion(toggleRatesBtn, ratesPanel, ratesChevron, false);
+        setupSmoothAccordion(toggleBreakdownBtn, breakdownPanel, breakdownChevron, false);
+
+        // Botón añadir automatización
+        if (btnAddAutomation) {
+            btnAddAutomation.addEventListener('click', () => {
+                automations.push({
+                    id: nextId++,
+                    name: 'Proceso ' + (automations.length + 1),
+                    execs: 20000,
+                    inTokens: 8000,
+                    outTokens: 1000
+                });
+                renderAutomations();
+                calculate();
+            });
+        }
+
+        // Presets rápidos
+        presetChips.forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                const key = e.currentTarget.dataset.preset;
+                if (PRESETS[key]) {
+                    const preset = PRESETS[key];
+                    automations.push({
+                        id: nextId++,
+                        name: preset.name,
+                        execs: preset.execs,
+                        inTokens: preset.inTokens,
+                        outTokens: preset.outTokens
+                    });
+                    renderAutomations();
+                    calculate();
+                }
+            });
+        });
+
+        // Eventos en inputs de tarifas
+        [inputRate, outputRate].forEach(el => {
+            if (el) el.addEventListener('input', calculate);
+        });
+
+        // Inicialización
+        renderAutomations();
+        calculate();
+
+        // Spotlight effect para glow cards
+        const calcGlowCards = document.querySelectorAll('#calculadora .glow-card');
+        calcGlowCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCalculator);
+    } else {
+        initCalculator();
+    }
+})();
+</script>
